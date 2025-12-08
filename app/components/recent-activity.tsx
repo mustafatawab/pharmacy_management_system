@@ -11,18 +11,20 @@ interface ActivityItem {
 
 export function RecentActivity({ activities }: { activities: ActivityItem[] }) {
   return (
-    <div className="flex flex-col h-full rounded-xl border bg-white p-6 shadow-sm">
+    <div className="flex flex-col h-full rounded-xl border bg-white dark:bg-[#2F2F2F] border-gray-200 dark:border-[#2F2F2F] p-6 shadow-sm">
       <div className="flex items-center gap-2 mb-6">
         <div className="p-2 rounded-lg bg-blue-50">
           <TrendingUp className="h-5 w-5 text-blue-600" />
         </div>
-        <h3 className="font-semibold text-gray-900">Recent Activity</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-white">
+          Recent Activity
+        </h3>
       </div>
       <div className="space-y-6 flex-1">
         {activities.map((activity) => (
           <div key={activity.id} className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 {activity.title}
               </p>
               <p className="text-xs text-gray-500 mt-0.5">{activity.time}</p>
@@ -48,8 +50,8 @@ export function RecentActivity({ activities }: { activities: ActivityItem[] }) {
           </div>
         ))}
       </div>
-      <div className="mt-4 pt-4 border-t border-gray-100 text-center">
-        <button className="text-sm font-medium text-gray-500 hover:text-gray-900">
+      <div className="mt-4 pt-4 border-t border-gray-100 dark:border-[#212121] text-center">
+        <button className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-gray-100">
           View all activity
         </button>
       </div>

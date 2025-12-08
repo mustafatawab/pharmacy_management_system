@@ -10,7 +10,7 @@ interface AppShellProps {
 
 export function AppShell({ title, children }: AppShellProps) {
   return (
-    <div className="flex h-screen bg-[#F6F9FC]">
+    <div className="flex h-screen bg-[#F6F9FC] dark:bg-[#212121]">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header title={title} />

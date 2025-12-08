@@ -17,18 +17,18 @@ interface Product {
 
 export function InventoryTable({ products }: { products: Product[] }) {
   return (
-    <div className="bg-white border rounded-xl shadow-sm">
+    <div className="bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#2F2F2F] rounded-xl shadow-sm">
       {/* Table Header / Controls */}
-      <div className="p-4 border-b flex items-center justify-between gap-4">
+      <div className="p-4 border-b border-gray-200 dark:border-[#2F2F2F] flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search products..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-[#2F2F2F] rounded-lg text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-[#212121] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           />
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+        <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-[#2F2F2F] rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#212121]">
           <Filter className="h-4 w-4" />
           All Products
         </button>
@@ -37,7 +37,7 @@ export function InventoryTable({ products }: { products: Product[] }) {
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-gray-50/50 text-gray-500 font-medium uppercase text-xs">
+          <thead className="bg-gray-50/50 dark:bg-[#212121] text-gray-500 dark:text-gray-400 font-medium uppercase text-xs">
             <tr>
               <th className="px-6 py-4">Product</th>
               <th className="px-6 py-4">Category</th>
@@ -48,12 +48,15 @@ export function InventoryTable({ products }: { products: Product[] }) {
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-[#2F2F2F]">
             {products.map((product) => (
-              <tr key={product.id} className="hover:bg-gray-50/50">
+              <tr
+                key={product.id}
+                className="hover:bg-gray-50/50 dark:hover:bg-[#212121]"
+              >
                 <td className="px-6 py-4">
                   <div>
-                    <div className="font-semibold text-gray-900">
+                    <div className="font-semibold text-gray-900 dark:text-gray-100">
                       {product.name}
                     </div>
                     <div className="text-xs text-gray-500">
@@ -61,13 +64,15 @@ export function InventoryTable({ products }: { products: Product[] }) {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-gray-600">{product.category}</td>
-                <td className="px-6 py-4 font-medium text-gray-900">
+                <td className="px-6 py-4 text-gray-600 dark:text-gray-400">
+                  {product.category}
+                </td>
+                <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">
                   {product.price}
                 </td>
                 <td className="px-6 py-4">
                   <div>
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium text-gray-900 dark:text-gray-100">
                       {product.stock} units
                     </div>
                     <div className="text-xs text-gray-500">
@@ -75,7 +80,9 @@ export function InventoryTable({ products }: { products: Product[] }) {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-gray-600">{product.expiry}</td>
+                <td className="px-6 py-4 text-gray-600 dark:text-gray-400">
+                  {product.expiry}
+                </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col gap-1 items-start">
                     {product.status === "Low Stock" && (

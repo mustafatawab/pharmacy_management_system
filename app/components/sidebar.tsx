@@ -27,13 +27,13 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-white">
-      <div className="flex items-center gap-3 px-6 py-6 border-b border-gray-100">
+    <div className="flex h-screen w-64 flex-col border-r bg-background dark:bg-[#171717] border-gray-200 dark:border-[#2F2F2F]">
+      <div className="flex items-center gap-3 px-6 py-6 border-b border-gray-200 dark:border-[#2F2F2F]">
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600">
           <Pill className="h-6 w-6" />
         </div>
         <div className="flex flex-col">
-          <span className="text-lg font-bold text-gray-900 leading-none">
+          <span className="text-lg font-bold text-foreground leading-none">
             Pharmacy
           </span>
           <span className="text-xs text-gray-500 mt-1">Management System</span>
@@ -66,7 +66,7 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="p-4 border-t border-gray-100">
+      <div className="p-4 border-t border-gray-200 dark:border-[#2F2F2F]">
         <div className="text-xs text-center text-gray-400">
           © {new Date().getFullYear()} Pharmacy Developed By WS
           <br />
