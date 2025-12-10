@@ -1,9 +1,15 @@
+"use client";
 import { mockPurchases } from "@/data/mock-purchases";
 import { PurchasesTable } from "@/components/purchases/purchases-table";
 import { StatCard } from "@/components/stat-card";
 import { TrendingUp, Clock, PackageCheck, Plus } from "lucide-react";
+import { useState } from "react";
+import { NewPurchaseModal } from "@/components/purchases/new-purchase-modal";
+import Link from "next/link";
 
 export default function PurchasesPage() {
+  const [isNewPurchaseModalOpen, setIsNewPurchaseModalOpen] = useState(false);
+
   const totalValue = mockPurchases.reduce((sum, p) => sum + p.total, 0);
   const totalPurchases = mockPurchases.length;
   const pendingPurchases = mockPurchases.filter(
@@ -21,10 +27,15 @@ export default function PurchasesPage() {
           Purchase Management
         </h2>
         <div className="flex gap-3">
-          <button className="px-4 py-2 border border-gray-200 dark:border-[#212121] rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#212121] bg-white dark:bg-[#2F2F2F]">
-            Manage Suppliers
-          </button>
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2">
+          <Link href="/purchases/suppliers">
+            <button className="px-4 py-2 border border-gray-200 dark:border-[#212121] rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#212121] bg-white dark:bg-[#2F2F2F]">
+              Manage Suppliers
+            </button>
+          </Link>
+          <button
+            onClick={() => setIsNewPurchaseModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2"
+          >
             <Plus className="h-4 w-4" />
             New Purchase
           </button>
@@ -71,6 +82,11 @@ export default function PurchasesPage() {
 
       {/* Table */}
       <PurchasesTable purchases={mockPurchases} />
+
+      <NewPurchaseModal
+        isOpen={isNewPurchaseModalOpen}
+        onClose={() => setIsNewPurchaseModalOpen(false)}
+      />
     </div>
   );
 }
