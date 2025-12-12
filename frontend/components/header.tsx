@@ -8,12 +8,18 @@ import {
   Sun,
   ChevronRight,
   Laptop,
+  Menu,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
-export function Header({ title }: { title: string }) {
+interface HeaderProps {
+  title: string;
+  onMenuClick?: () => void;
+}
+
+export function Header({ title, onMenuClick }: HeaderProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isThemeSubmenuOpen, setIsThemeSubmenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -55,25 +61,33 @@ export function Header({ title }: { title: string }) {
   };
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-background dark:bg-[#212121] px-8 border-gray-200 dark:border-[#2F2F2F]">
-      <h1 className="text-xl font-bold text-foreground">{title}</h1>
-      <div className="flex items-center gap-6">
-        <button className="relative text-gray-400 hover:text-gray-500">
+    <header className="flex h-16 items-center justify-between border-b bg-background dark:bg-[#212121] px-4 md:px-8 border-gray-200 dark:border-[#2F2F2F]">
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onMenuClick}
+          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-[#2F2F2F] md:hidden"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+        <h1 className="text-xl font-bold text-foreground">{title}</h1>
+      </div>
+      <div className="flex items-center gap-2 md:gap-6">
+        <button className="relative p-2 text-gray-400 hover:text-gray-500">
           <span className="sr-only">View notifications</span>
           <Bell className="h-6 w-6" />
-          <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
         </button>
 
         {/* Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center gap-3 border-l pl-6 border-gray-200 dark:border-[#2F2F2F] outline-none"
+            className="flex items-center gap-3 border-l pl-4 md:pl-6 border-gray-200 dark:border-[#2F2F2F] outline-none"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">
               <User className="h-5 w-5" />
             </div>
-            <div className="flex flex-col text-left">
+            <div className="hidden flex-col text-left md:flex">
               <span className="text-sm font-medium text-foreground leading-none">
                 Admin User
               </span>
