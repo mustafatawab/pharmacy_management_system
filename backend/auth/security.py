@@ -2,11 +2,13 @@ from pwdlib import PasswordHash
 from pwdlib.hashers.argon2 import Argon2Hasher
 from jose import jwt, JWTError
 from config import get_settings
+from datetime import date, datetime, timedelta
+
 
 settings = get_settings()
 
 
-hash_context = PasswordHash((Argone2Hasher(),))
+hash_context = PasswordHash((Argon2Hasher(),))
 
 
 def hash_password(password: str) -> str:
