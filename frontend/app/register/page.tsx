@@ -8,12 +8,12 @@ import Link from "next/link";
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const [formValue, setFormValue] = useState({
+    full_name: "",
     username: "",
-
+    email: "",
     password: "",
   });
 
@@ -58,6 +58,24 @@ export default function LoginPage() {
               htmlFor="username"
               className="text-sm font-semibold text-gray-700 block"
             >
+              Full Name
+            </label>
+            <input
+              id="full_name"
+              name="full_name"
+              type="text"
+              required
+              value={formValue.full_name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 text-gray-900"
+            />
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="username"
+              className="text-sm font-semibold text-gray-700 block"
+            >
               Username
             </label>
             <input
@@ -71,7 +89,24 @@ export default function LoginPage() {
               className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 text-gray-900"
             />
           </div>
-
+          <div className="space-y-2">
+            <label
+              htmlFor="username"
+              className="text-sm font-semibold text-gray-700 block"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={formValue.email}
+              onChange={handleChange}
+              placeholder="Enter your username"
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 text-gray-900"
+            />
+          </div>
           <div className="space-y-2">
             <label
               htmlFor="password"
@@ -109,18 +144,19 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+          
           <div className="text-xs text-gray-600 space-y-1   rounded-lg inline-block text-left">
             <p>
-              <span className="font-bold text-gray-800">
-                Don&apos;t Have an Account ?{" "}
-              </span>
-              <Link href={"/register"}>Register Here</Link>
+              <span className="font-bold text-gray-800">Already Have an Account ? </span>
+                <Link href={"/login"}>Login Here</Link>
+             
             </p>
+            
           </div>
         </div>
       </div>
