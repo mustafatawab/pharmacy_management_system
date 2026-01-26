@@ -8,7 +8,7 @@ class User(SQLModel, table=True):
     username: str = Field(min_length=6 , unique=True)
     email: EmailStr = Field(unique=True)
     hashed_password: str = Field(min_length=6)
-    created_at : str = Field(str(date.today()))
+    created_at : str = Field(str(datetime.utcnow()))
 
 
 
