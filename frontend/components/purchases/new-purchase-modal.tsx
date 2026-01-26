@@ -61,7 +61,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
       title="New Purchase Order"
       icon={<ShoppingCart className="h-5 w-5" />}
     >
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-6 ">
         {/* Form Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-2">

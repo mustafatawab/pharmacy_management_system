@@ -33,13 +33,13 @@ export function Modal({ isOpen, onClose, title, icon, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 ">
       <div
         className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-4xl transform rounded-2xl bg-white shadow-xl transition-all flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-4xl transform rounded-2xl bg-white dark:bg-[#2F2F2F] shadow-xl transition-all flex flex-col max-h-[90vh]">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
           <div className="flex items-center gap-3">
             {icon && (
@@ -47,7 +47,7 @@ export function Modal({ isOpen, onClose, title, icon, children }: ModalProps) {
                 {icon}
               </div>
             )}
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
           </div>
           <button
             onClick={onClose}
