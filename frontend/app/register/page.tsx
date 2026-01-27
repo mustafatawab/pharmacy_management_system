@@ -149,14 +149,13 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-          
           <div className="text-xs text-gray-600 space-y-1   rounded-lg inline-block text-left">
             <p>
-              <span className="font-bold text-gray-800">Already Have an Account ? </span>
-                <Link href={"/login"}>Login Here</Link>
-             
+              <span className="font-bold text-gray-800">
+                Already Have an Account ?{" "}
+              </span>
+              <Link href={"/login"}>Login Here</Link>
             </p>
-            
           </div>
         </div>
       </div>
