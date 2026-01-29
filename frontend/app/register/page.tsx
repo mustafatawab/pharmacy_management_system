@@ -28,13 +28,28 @@ export default function LoginPage() {
     }));
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     // Simulate login delay
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 1000);
+    return await fetch(`http://localhost:8000/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(formValue),
+    })
+      .then((res) => {
+        const data = res.json();
+        console.log(data);
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      }).finally(() => {
+        setLoading(false)
+      });
   };
 
   return (
