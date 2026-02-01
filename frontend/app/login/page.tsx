@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pill, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import axios from "axios";
 
 export default function LoginPage() {
   const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -33,13 +34,19 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     // Simulate login delay
+
     try {
       const res = await axios.post(
         "http://localhost:8000/auth/login",
         formValue,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
       console.log(res.data);
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.data.access);
       router.push("/dashboard");
     } catch (error) {
       console.log(error);
