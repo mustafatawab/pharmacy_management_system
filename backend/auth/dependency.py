@@ -1,7 +1,7 @@
 from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import select, Session
 from database import get_session
-from security import decode_token
+from auth.security import decode_token
 from models.users import User
 from fastapi import Depends, HTTPException, status
 

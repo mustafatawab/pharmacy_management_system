@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pill, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import axios from "axios";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,13 +29,23 @@ export default function LoginPage() {
     }));
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     // Simulate login delay
-    setTimeout(() => {
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/auth/login",
+        formValue,
+      );
+      console.log(res.data);
+      localStorage.setItem("token", res.data.token);
       router.push("/dashboard");
-    }, 1000);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

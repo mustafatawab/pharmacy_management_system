@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import { StatCard } from "@/components/stat-card";
 import { AlertCard } from "@/components/alert-card";
 import { RecentActivity } from "@/components/recent-activity";
@@ -11,10 +13,20 @@ export default function DashboardPage() {
     day: "numeric",
   });
 
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const res = await fetch("http://localhost:8000/auth/user/me");
+      console.log(res);
+    };
+    getCurrentUser();
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h2>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Dashboard Overview
+        </h2>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <span className="h-4 w-4">📅</span>
           <span>{currentDate}</span>

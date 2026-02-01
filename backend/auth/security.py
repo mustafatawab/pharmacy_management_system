@@ -29,11 +29,11 @@ def create_access_token(data: dict , expire_time: timedelta | None = None) -> st
 
     to_encode.update({"exp"  : expire})
 
-    return jwt.encode(to_encode , settings.jwt_secret_key , settings.jwt_algorithm)
+    return jwt.encode(to_encode , settings.jwt_secret , settings.jwt_algorithm)
 
 
 def decode_token(token) -> dict | None:
     try:
-        return jwt.decode(token, settings.jwt_secret_key , settings.jwt_algorithm)
+        return jwt.decode(token, settings.jwt_secret , settings.jwt_algorithm)
     except JWTError:
         return None

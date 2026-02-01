@@ -43,12 +43,12 @@ export default function LoginPage() {
       .then((res) => {
         const data = res.json();
         console.log(data);
-        
       })
       .catch((error) => {
         console.log(error);
-      }).finally(() => {
-        setLoading(false)
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
