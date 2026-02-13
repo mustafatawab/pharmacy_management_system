@@ -45,7 +45,14 @@ async def login(user:UserLogin,response: Response, session : Session = Depends(g
     return {"message" : "logged in successfully", "token" : token}
 
 
-@router.get("/user/me")
+@router.post("/logout" , response_model=dict)
+def logout(response: Response):
+    response.delete_cookie("access_token")
+    return {"message" : "Logout Successfully !! "}
+
+
+
+@router.get("/user/me" , response_model_exclude={"hashed_password"})
 async def get_current_user(current_user: User = Depends(get_current_user)):
     return current_user
     

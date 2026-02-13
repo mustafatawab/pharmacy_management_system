@@ -12,8 +12,15 @@ oauth2_sheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 async def get_current_user(request: Request, session: Session = Depends(get_session)):
     
     # payload = decode_token(token)
-    payload =  decode_token(request.cookies.get("access_token"))
-    print(payload)
+    token = request.cookies.get("access_token")
+
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED , detail="Not Authenticated")
+    
+    print("\n Token " , token)
+    payload =  decode_token(token=token)
+    
+    print("\n payload " , payload)
 
     if not payload:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")

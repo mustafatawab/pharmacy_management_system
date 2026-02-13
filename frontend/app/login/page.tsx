@@ -36,17 +36,16 @@ export default function LoginPage() {
     // Simulate login delay
 
     try {
-      const res = await axios.post(
-        "http://localhost:8000/auth/login",
-        formValue,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const res = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        body: JSON.stringify(formValue),
+        headers : {
+          "Content-Type": "application/json"
         },
-      );
-      console.log(res.data);
-      localStorage.setItem("access_token", res.data.token);
+        credentials: "include",
+      });
+      const response = await res.json()
+      console.log(response)
       router.push("/dashboard");
     } catch (error) {
       console.log(error);
