@@ -46,7 +46,7 @@ export default function LoginPage() {
         },
       );
       console.log(res.data);
-      localStorage.setItem("token", res.data.access);
+      localStorage.setItem("access_token", res.data.token);
       router.push("/dashboard");
     } catch (error) {
       console.log(error);

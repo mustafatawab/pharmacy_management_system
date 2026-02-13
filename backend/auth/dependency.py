@@ -3,15 +3,17 @@ from sqlmodel import select, Session
 from database import get_session
 from auth.security import decode_token
 from models.users import User
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 
 oauth2_sheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 
-async def get_current_user(token: str = Depends(oauth2_sheme) , session: Session = Depends(get_session)):
+async def get_current_user(request: Request, session: Session = Depends(get_session)):
     
-    payload = decode_token(token)
+    # payload = decode_token(token)
+    payload =  decode_token(request.cookies.get("access_token"))
+    print(payload)
 
     if not payload:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired token")
