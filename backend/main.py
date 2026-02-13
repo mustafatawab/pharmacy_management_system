@@ -12,13 +12,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
 app.include_router(auth_router)
-
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,3 +21,4 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"], 
 )
+

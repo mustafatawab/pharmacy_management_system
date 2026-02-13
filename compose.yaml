@@ -1,4 +1,3 @@
-version: '1.0'
 name : "pharmacy_mangement_system"
 services:
     backend:

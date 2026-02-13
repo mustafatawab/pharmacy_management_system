@@ -28,7 +28,7 @@ export default function LoginPage() {
     }));
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     // Simulate login delay
@@ -40,9 +40,17 @@ export default function LoginPage() {
 
       body: JSON.stringify(formValue),
     })
-      .then((res) => {
-        const data = res.json();
+      .then(async (res) => {
+        const data = await res.json();
         console.log(data);
+        router.push("/login")
+        setFormValue({
+          full_name : "",
+          username : "",
+          email:  "",
+          password : "",
+          
+        })
       })
       .catch((error) => {
         console.log(error);
@@ -67,7 +75,7 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-blue-500/5 ring-1 ring-gray-100 p-8">
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleRegister} className="space-y-6">
           <div className="space-y-2">
             <label
               htmlFor="username"
