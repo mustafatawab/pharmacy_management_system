@@ -3,11 +3,8 @@ import { Shield, ShieldAlert, Pencil, Trash2 } from "lucide-react";
 export interface User {
   id: string;
   name: string;
-  email: string;
-  role: "Admin" | "Staff";
-  status: "Active" | "Inactive";
-  lastLogin: string;
-  permissions: string[];
+  role: "admin" | "staff";
+  is_active: boolean;
   avatar?: string;
 }
 
@@ -31,12 +28,7 @@ export function UserTable({ users }: UserTableProps) {
               <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
                 STATUS
               </th>
-              <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
-                LAST LOGIN
-              </th>
-              <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
-                PERMISSIONS
-              </th>
+              
               <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
                 ACTIONS
               </th>
@@ -53,17 +45,14 @@ export function UserTable({ users }: UserTableProps) {
                     <span className="font-medium text-gray-900 dark:text-white">
                       {user.name}
                     </span>
-                    <span className="text-gray-500 dark:text-gray-400">
-                      {user.email}
-                    </span>
                     <span className="text-gray-400 text-xs">
                       @{user.name.split(" ")[0].toLowerCase()}
                     </span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    {user.role === "Admin" ? (
+                  <div className="flex items-center gap-2 capitalize">
+                    {user.role === "admin" ? (
                       <ShieldAlert className="h-4 w-4 text-red-500" />
                     ) : (
                       <Shield className="h-4 w-4 text-blue-500" />
@@ -76,18 +65,16 @@ export function UserTable({ users }: UserTableProps) {
                 <td className="px-6 py-4">
                   <span
                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      user.status === "Active"
+                      user.is_active
                         ? "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400"
                         : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                     }`}
                   >
-                    {user.status}
+                    {user.is_active}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-gray-600 dark:text-gray-300">
-                  {user.lastLogin}
-                </td>
-                <td className="px-6 py-4">
+               
+                {/* <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-2">
                     {user.permissions.length === 0 ? (
                       <span className="text-gray-400 italic">
@@ -108,7 +95,7 @@ export function UserTable({ users }: UserTableProps) {
                       ))
                     )}
                   </div>
-                </td>
+                </td> */}
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
                     <button className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20">

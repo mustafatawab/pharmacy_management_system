@@ -112,24 +112,7 @@ export default function LoginPage() {
               className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 text-gray-900"
             />
           </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="username"
-              className="text-sm font-semibold text-gray-700 block"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={formValue.email}
-              onChange={handleChange}
-              placeholder="Enter your username"
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 text-gray-900"
-            />
-          </div>
+         
           <div className="space-y-2">
             <label
               htmlFor="password"

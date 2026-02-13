@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Response
 from models.users import User
-from schemas.user_schema import UserCreate, UserLogin
+from schemas.user_schema import UserCreate, UserLogin, UserRead
 from database import get_session
 from sqlmodel import Session, select
 from auth.security import hash_password, verify_password, create_access_token, decode_token
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/auth" , tags=['auth'])
 
 @router.post("/register", response_model=User , response_model_exclude={"hashed_password"})
 async def register_user(user: UserCreate, session: Session = Depends(get_session)):
-    existing_user = session.exec(select(User).where(User.username == user.username, User.email == user.email)).first()
+    existing_user = session.exec(select(User).where(User.username == user.username)).first()
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -17,7 +17,7 @@ async def register_user(user: UserCreate, session: Session = Depends(get_session
         )
     
 
-    add_user = User(full_name=user.full_name, email=user.email, username=user.username, hashed_password=hash_password(user.password))
+    add_user = User(full_name=user.full_name, role="admin", username=user.username, hashed_password=hash_password(user.password))
     session.add(add_user)
     session.commit()
     session.refresh(add_user)
@@ -42,7 +42,7 @@ async def login(user:UserLogin,response: Response, session : Session = Depends(g
         samesite="lax"
     )
 
-    return {"message" : "logged in successfully", "token" : token}
+    return {"message" : "logged in successfully"}
 
 
 @router.post("/logout" , response_model=dict)
@@ -52,7 +52,6 @@ def logout(response: Response):
 
 
 
-@router.get("/user/me" , response_model_exclude={"hashed_password"})
-async def get_current_user(current_user: User = Depends(get_current_user)):
-    return current_user
     
+
+

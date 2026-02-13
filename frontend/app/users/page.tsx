@@ -8,20 +8,14 @@ const MOCK_USERS: User[] = [
   {
     id: "1",
     name: "Admin User",
-    email: "admin@pharmacy.com",
-    role: "Admin",
-    status: "Active",
-    lastLogin: "19/11/2025",
-    permissions: ["All permissions"],
+    role: "admin",
+    is_active : true,
   },
   {
     id: "2",
     name: "Staff User",
-    email: "staff@pharmacy.com",
-    role: "Staff",
-    status: "Active",
-    lastLogin: "20/01/2024",
-    permissions: ["sales", "inventory view"],
+    role: "staff",
+    is_active : true,
   },
 ];
 
@@ -31,8 +25,7 @@ export default function UserManagementPage() {
 
   const filteredUsers = MOCK_USERS.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
