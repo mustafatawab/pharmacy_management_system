@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient, QueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+} from "@tanstack/react-query";
 
 const getUsers = async () => {
   try {
@@ -48,16 +53,26 @@ const addUser = async (
   }
 };
 
-
-
-export function useUsers(){
-   return useQuery({
-    queryKey : ["users"],
-    queryFn : getUsers,
-    staleTime: 1000 * 60,      // 1 min cache (optional)
-    refetchOnWindowFocus: false // prevent automatic refetch on tab focus
-
-   })
-
-
+export function useUsers() {
+  return useQuery({
+    queryKey: ["users"],
+    queryFn: getUsers,
+    staleTime: 1000 * 60, // 1 min cache (optional)
+    refetchOnWindowFocus: false, // prevent automatic refetch on tab focus
+  });
 }
+
+
+export function useAddUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (full_name: string , username:string, password:string , is_active : boolean) => addUser(full_name, username, password, is_active),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+}
+
+
+

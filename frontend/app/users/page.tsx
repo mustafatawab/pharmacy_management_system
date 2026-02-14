@@ -1,8 +1,9 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { Plus, Search, Eye, Loader2Icon , LoaderCircle } from "lucide-react";
+import { Plus, Search, Eye, Loader2Icon, LoaderCircle } from "lucide-react";
 import { User, UserTable } from "@/components/users/user-table";
+import { useUsers, useAddUser } from "@/hooks/useUser";
 
 // const MOCK_USERS: User[] = [
 //   {
@@ -25,47 +26,45 @@ export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false)
-  const [userFormValue , setUserFormValue] = useState({
-    full_name : "",
-    username : "",
-    password : "",
-    is_active: true
-  })
+  const [loading, setLoading] = useState(false);
+  const [userFormValue, setUserFormValue] = useState({
+    full_name: "",
+    username: "",
+    password: "",
+    is_active: true,
+  });
 
-  const handleFormChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault()
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
 
-    const {name ,value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setUserFormValue((prev) => ({
       ...prev,
-      [name] : type == "checkbox" ? checked : value
-    }))
+      [name]: type == "checkbox" ? checked : value,
+    }));
 
-    console.log(userFormValue)
-
-  }
+    console.log(userFormValue);
+  };
 
   const addUser = async () => {
-    setLoading(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user` , {
-      method  :"POST",
-      credentials : "include",
-      headers : {
-        "Content-Type" : "application/json"
+    setLoading(true);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
       },
-      body : JSON.stringify(userFormValue)
-    })
+      body: JSON.stringify(userFormValue),
+    });
 
-    const response = await res.json()
-    console.log(response)
-    setLoading(false)
-  }
-
+    const response = await res.json();
+    console.log(response);
+    setLoading(false);
+  };
 
   useEffect(() => {
     const getUsers = async () => {
-      setLoading(true)
+      setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
         method: "GET",
         credentials: "include",
@@ -73,13 +72,13 @@ export default function UserManagementPage() {
           "Content-Type": "application/json",
         },
       });
-      if (res.ok){
-      const result = await res.json();
-      console.log(result);
-      setUsers(result);
-    }
-    
-    setLoading(false)
+      if (res.ok) {
+        const result = await res.json();
+        console.log(result);
+        setUsers(result);
+      }
+
+      setLoading(false);
     };
     getUsers();
   }, []);
@@ -116,7 +115,10 @@ export default function UserManagementPage() {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <label htmlFor="username" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="username"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Username *
               </label>
               <input
@@ -130,28 +132,34 @@ export default function UserManagementPage() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label htmlFor="full_name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="full_name"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Full Name *
               </label>
               <input
-              id="full_name"
-              name="full_name"
-              onChange={handleFormChange}
-              value={userFormValue.full_name}
+                id="full_name"
+                name="full_name"
+                onChange={handleFormChange}
+                value={userFormValue.full_name}
                 type="text"
                 placeholder="Enter full name"
                 className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
-         
+
             <div className="flex flex-col gap-2">
-              <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Password *
               </label>
               <div className="relative">
                 <input
-                id="password"
-                name="password"
+                  id="password"
+                  name="password"
                   type="password"
                   onChange={handleFormChange}
                   placeholder="Enter password"
@@ -179,7 +187,6 @@ export default function UserManagementPage() {
                 checked={userFormValue.is_active}
                 onChange={handleFormChange}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-
               />
               <label
                 htmlFor="activeUser"
@@ -256,7 +263,10 @@ export default function UserManagementPage() {
             >
               Cancel
             </button>
-            <button onClick={addUser} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            <button
+              onClick={addUser}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
               Add User
             </button>
           </div>
@@ -276,8 +286,13 @@ export default function UserManagementPage() {
       </div>
 
       {/* User Table */}
-      {loading ? <div className="flex items-center justify-center gap-1 "><LoaderCircle /> Wait</div> : <UserTable users={filteredUsers} />}
-      
+      {loading ? (
+        <div className="flex items-center justify-center gap-1 ">
+          <LoaderCircle /> Wait
+        </div>
+      ) : (
+        <UserTable users={filteredUsers} />
+      )}
     </div>
   );
 }
