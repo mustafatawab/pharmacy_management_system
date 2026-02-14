@@ -15,15 +15,16 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const res = await fetch("http://localhost:8000/auth/user/me" , {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/me` , {
         method : "GET",
         headers : {
           "Content-Type" : "application/json"
         },
         credentials : "include"
       });
-      const data = await res.json()
-      console.log(data)
+      const userData = await res.json()
+      console.log(userData)
+      localStorage.setItem("user" , JSON.stringify(userData))
     };
     getCurrentUser();
   }, []);

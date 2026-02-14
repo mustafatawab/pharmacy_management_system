@@ -9,10 +9,12 @@ import {
   ChevronRight,
   Laptop,
   Menu,
+  LoaderCircle
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface HeaderProps {
   title: string;
@@ -24,6 +26,8 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const [isThemeSubmenuOpen, setIsThemeSubmenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
   // Ensure we are mounted before showing theme based content to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
 
@@ -59,6 +63,28 @@ export function Header({ title, onMenuClick }: HeaderProps) {
     if (theme === "dark") return "Dark";
     return "Light";
   };
+
+  const handleLogout = async () => {
+    console.log(process.env.NEXT_PUBLIC_API_URL)
+    setLoading(true)
+    
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout` , {
+      method : "POST",
+      credentials : "include",
+      headers : {
+        "Content-Type" : "appplication/json"
+      }
+    })
+    if (res.ok){
+      const response = await res.json()
+      router.push("/login")
+      toast.success("logout successfully")
+
+    }
+
+    setLoading(false)
+
+  }
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background dark:bg-[#212121] px-4 md:px-8 border-gray-200 dark:border-[#2F2F2F]">
@@ -98,7 +124,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           {isProfileOpen && (
             <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-gray-100 dark:border-[#2F2F2F] bg-background dark:bg-[#2F2F2F] shadow-lg py-1 z-50">
               <button
-                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center justify-between group"
+                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-50 hover:dark:text-gray-700 hover:bg-gray-50 flex items-center justify-between group"
                 onClick={() => setIsThemeSubmenuOpen(!isThemeSubmenuOpen)}
               >
                 <div className="flex items-center gap-2">
@@ -116,7 +142,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
                       theme === "light"
                         ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700"
+                        : "text-gray-700 dark:text-gray-50 dark:hover:text-gray-700"
                     }`}
                   >
                     <Sun className="h-4 w-4" />
@@ -127,7 +153,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
                       theme === "dark"
                         ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700"
+                        : "text-gray-700 dark:text-gray-50 dark:hover:text-gray-700"
                     }`}
                   >
                     <Moon className="h-4 w-4" />
@@ -138,7 +164,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                     className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
                       theme === "system"
                         ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700"
+                        : "text-gray-700 dark:text-gray-50 dark:hover:text-gray-700"
                     }`}
                   >
                     <Laptop className="h-4 w-4" />
@@ -149,13 +175,14 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
               <div className="my-1 border-t border-gray-100" />
 
-              <Link
-                href="/login"
+              <button
+                onClick={handleLogout}
                 className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
               >
                 <LogOut className="h-4 w-4" />
-                Sign out
-              </Link>
+                {loading ? <span><LoaderCircle /> Signing Out </span> : "Sign out"}
+                
+              </button>
             </div>
           )}
         </div>

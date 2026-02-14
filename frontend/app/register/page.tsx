@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Pill, Eye, EyeOff } from "lucide-react";
+import { Pill, Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -32,7 +32,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     // Simulate login delay
-    return await fetch(`http://localhost:8000/auth/register`, {
+    return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

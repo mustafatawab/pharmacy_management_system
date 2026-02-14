@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
-
+import { Toaster } from "react-hot-toast";
 export const metadata = {
   title: "Pharmacy Management System",
   description: "Pharmacy Management System developed by WS",
@@ -22,6 +22,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

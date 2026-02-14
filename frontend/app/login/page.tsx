@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Pill, Eye, EyeOff } from "lucide-react";
+import { Pill, Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function LoginPage() {
     // Simulate login delay
 
     try {
-      const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         body: JSON.stringify(formValue),
         headers : {
@@ -47,6 +48,7 @@ export default function LoginPage() {
       const response = await res.json()
       console.log(response)
       router.push("/dashboard");
+      toast.success("Logged In Successfully")
     } catch (error) {
       console.log(error);
     } finally {
@@ -126,7 +128,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? <span className="flex items-center gap-2"> <Loader2Icon /> Signing in...</span> : "Sign in"}
           </button>
         </form>
 
