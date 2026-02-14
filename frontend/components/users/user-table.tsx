@@ -2,7 +2,8 @@ import { Shield, ShieldAlert, Pencil, Trash2 } from "lucide-react";
 
 export interface User {
   id: string;
-  name: string;
+  full_name: string;
+  username: string;
   role: "admin" | "staff";
   is_active: boolean;
   avatar?: string;
@@ -20,7 +21,10 @@ export function UserTable({ users }: UserTableProps) {
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50 dark:border-[#2F2F2F] dark:bg-[#2F2F2F]">
               <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
-                USER
+                FULLNAME
+              </th>
+              <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
+                USERNAME
               </th>
               <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
                 ROLE
@@ -40,13 +44,21 @@ export function UserTable({ users }: UserTableProps) {
                 key={user.id}
                 className="hover:bg-gray-50 dark:hover:bg-[#2F2F2F]/50"
               >
+                  <td className="px-6 py-4">
+                  <div className="flex flex-col">
+                    <span className="font-medium text-gray-900 dark:text-white capitalize">
+                      {user.full_name}
+                    </span>
+                    
+                  </div>
+                </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-900 dark:text-white">
-                      {user.name}
+                      {user.username}
                     </span>
                     <span className="text-gray-400 text-xs">
-                      @{user.name.split(" ")[0].toLowerCase()}
+                      @{user.username.split(" ")[0].toLowerCase()}
                     </span>
                   </div>
                 </td>
@@ -70,7 +82,7 @@ export function UserTable({ users }: UserTableProps) {
                         : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                     }`}
                   >
-                    {user.is_active}
+                    {user.is_active ? "Active" : "In-Active" } 
                   </span>
                 </td>
                

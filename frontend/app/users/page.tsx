@@ -1,36 +1,99 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Search, Eye } from "lucide-react";
+import { Suspense, useEffect, useState } from "react";
+import { Plus, Search, Eye, Loader2Icon , LoaderCircle } from "lucide-react";
 import { User, UserTable } from "@/components/users/user-table";
 
-const MOCK_USERS: User[] = [
-  {
-    id: "1",
-    name: "Admin User",
-    role: "admin",
-    is_active : true,
-  },
-  {
-    id: "2",
-    name: "Staff User",
-    role: "staff",
-    is_active : true,
-  },
-];
+// const MOCK_USERS: User[] = [
+//   {
+//     id: "1",
+//     username: "",
+//     full_name: "Admin User",
+//     role: "admin",
+//     is_active: true,
+//   },
+//   {
+//     id: "2",
+//     username: "",
+//     full_name: "Staff User",
+//     role: "staff",
+//     is_active: true,
+//   },
+// ];
 
 export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingUser, setIsAddingUser] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false)
+  const [userFormValue , setUserFormValue] = useState({
+    full_name : "",
+    username : "",
+    password : "",
+    is_active: true
+  })
 
-  const filteredUsers = MOCK_USERS.filter(
+  const handleFormChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+
+    const {name ,value, type, checked } = e.target
+    setUserFormValue((prev) => ({
+      ...prev,
+      [name] : type == "checkbox" ? checked : value
+    }))
+
+    console.log(userFormValue)
+
+  }
+
+  const addUser = async () => {
+    setLoading(true)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user` , {
+      method  :"POST",
+      credentials : "include",
+      headers : {
+        "Content-Type" : "application/json"
+      },
+      body : JSON.stringify(userFormValue)
+    })
+
+    const response = await res.json()
+    console.log(response)
+    setLoading(false)
+  }
+
+
+  useEffect(() => {
+    const getUsers = async () => {
+      setLoading(true)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.ok){
+      const result = await res.json();
+      console.log(result);
+      setUsers(result);
+    }
+    
+    setLoading(false)
+    };
+    getUsers();
+  }, []);
+
+  const filteredUsers = users.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
+
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">
           User Management
@@ -53,42 +116,44 @@ export default function UserManagementPage() {
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="username" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Username *
               </label>
               <input
+                id="username"
+                name="username"
+                value={userFormValue.username}
+                onChange={handleFormChange}
                 type="text"
                 placeholder="Enter username"
                 className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="full_name" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Full Name *
               </label>
               <input
+              id="full_name"
+              name="full_name"
+              onChange={handleFormChange}
+              value={userFormValue.full_name}
                 type="text"
                 placeholder="Enter full name"
                 className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
+         
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email *
-              </label>
-              <input
-                type="email"
-                placeholder="Enter email address"
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password *
               </label>
               <div className="relative">
                 <input
+                id="password"
+                name="password"
                   type="password"
+                  onChange={handleFormChange}
                   placeholder="Enter password"
                   className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
                 />
@@ -96,7 +161,7 @@ export default function UserManagementPage() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Role *
               </label>
@@ -104,14 +169,17 @@ export default function UserManagementPage() {
                 <option value="Staff">Staff</option>
                 <option value="Admin">Admin</option>
               </select>
-            </div>
+            </div> */}
 
             <div className="flex items-center gap-2 pt-8">
               <input
                 type="checkbox"
                 id="activeUser"
+                name="is_active"
+                checked={userFormValue.is_active}
+                onChange={handleFormChange}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                defaultChecked
+
               />
               <label
                 htmlFor="activeUser"
@@ -122,7 +190,7 @@ export default function UserManagementPage() {
             </div>
           </div>
 
-          <div className="mt-8">
+          {/* <div className="mt-8">
             <h3 className="mb-4 text-sm font-medium text-gray-700 dark:text-gray-300">
               Permissions
             </h3>
@@ -179,7 +247,7 @@ export default function UserManagementPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-[#2F2F2F]">
             <button
@@ -188,7 +256,7 @@ export default function UserManagementPage() {
             >
               Cancel
             </button>
-            <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            <button onClick={addUser} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
               Add User
             </button>
           </div>
@@ -208,7 +276,8 @@ export default function UserManagementPage() {
       </div>
 
       {/* User Table */}
-      <UserTable users={filteredUsers} />
+      {loading ? <div className="flex items-center justify-center gap-1 "><LoaderCircle /> Wait</div> : <UserTable users={filteredUsers} />}
+      
     </div>
   );
 }

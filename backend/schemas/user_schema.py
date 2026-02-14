@@ -2,11 +2,19 @@ from pydantic import BaseModel, EmailStr
 from models.users import UserRole
 from uuid import UUID
 
+class UserRegister(BaseModel):
+    full_name: str
+    username: str
+    password : str
+    role : UserRole = UserRole.STAFF
+
+
 class UserCreate(BaseModel):
     full_name: str
     username: str
     password : str
     role : UserRole = UserRole.STAFF
+    is_active : bool
 
 class UserLogin(BaseModel):
     username: str
