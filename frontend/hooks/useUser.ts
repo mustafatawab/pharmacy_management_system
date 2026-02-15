@@ -62,17 +62,18 @@ export function useUsers() {
   });
 }
 
-
 export function useAddUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (full_name: string , username:string, password:string , is_active : boolean) => addUser(full_name, username, password, is_active),
+    mutationFn: (
+      full_name: string,
+      username: string,
+      password: string,
+      is_active: boolean,
+    ) => addUser(full_name, username, password, is_active),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 }
-
-
-
