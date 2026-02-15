@@ -80,7 +80,6 @@ export default function UserManagementPage() {
       console.log(response);
       setLoading(false);
       getUsers();
-
       setUserFormValue({
         full_name: "",
         username: "",
