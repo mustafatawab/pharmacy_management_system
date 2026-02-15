@@ -46,6 +46,24 @@ export default function UserManagementPage() {
     console.log(userFormValue);
   };
 
+  const getUsers = async () => {
+    setLoading(true);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (res.ok) {
+      const result = await res.json();
+      console.log(result);
+      setUsers(result);
+    }
+
+    setLoading(false);
+  };
+
   const addUser = async () => {
     setLoading(true);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
@@ -57,29 +75,23 @@ export default function UserManagementPage() {
       body: JSON.stringify(userFormValue),
     });
 
-    const response = await res.json();
-    console.log(response);
-    setLoading(false);
+    if (res.ok) {
+      const response = await res.json();
+      console.log(response);
+      setLoading(false);
+      getUsers();
+
+      setUserFormValue({
+        full_name: "",
+        username: "",
+        password: "",
+        is_active: true,
+      });
+      setIsAddingUser(false);
+    }
   };
 
   useEffect(() => {
-    const getUsers = async () => {
-      setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (res.ok) {
-        const result = await res.json();
-        console.log(result);
-        setUsers(result);
-      }
-
-      setLoading(false);
-    };
     getUsers();
   }, []);
 
