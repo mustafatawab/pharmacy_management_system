@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { Plus, Search, Eye, Loader2Icon, LoaderCircle } from "lucide-react";
 import { User, UserTable } from "@/components/users/user-table";
-import { useUsers, useAddUser } from "@/hooks/useUser";
+// import { useUsers, useAddUser } from "@/hooks/useUser";
 
 // const MOCK_USERS: User[] = [
 //   {
