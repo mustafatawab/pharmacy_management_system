@@ -1,33 +1,14 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus, Search, Eye, Loader2Icon, LoaderCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { User, UserTable } from "@/components/users/user-table";
 import { useUsers, useAddUser } from "@/hooks/useUser";
 
-// const MOCK_USERS: User[] = [
-//   {
-//     id: "1",
-//     username: "",
-//     full_name: "Admin User",
-//     role: "admin",
-//     is_active: true,
-//   },
-//   {
-//     id: "2",
-//     username: "",
-//     full_name: "Staff User",
-//     role: "staff",
-//     is_active: true,
-//   },
-// ];
-
 export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingUser, setIsAddingUser] = useState(false);
-  // const [users, setUsers] = useState<User[]>([]);
-  // const [loading, setLoading] = useState(false);
   const [userFormValue, setUserFormValue] = useState({
     full_name: "",
     username: "",
@@ -50,26 +31,7 @@ export default function UserManagementPage() {
     console.log(userFormValue);
   };
 
-  // const getUsers = async () => {
-  //   setLoading(true);
-  //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
-  //     method: "GET",
-  //     credentials: "include",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   if (res.ok) {
-  //     const result = await res.json();
-  //     console.log(result);
-  //     setUsers(result);
-  //   }
-
-  //   setLoading(false);
-  // };
-
   const addUser = async () => {
-    // Basic validation
     if (
       !userFormValue.username ||
       !userFormValue.full_name ||
@@ -95,10 +57,6 @@ export default function UserManagementPage() {
       },
     });
   };
-
-  // useEffect(() => {
-  //   getUsers();
-  // }, []);
 
   const filteredUsers = users.filter(
     (user: User) =>
