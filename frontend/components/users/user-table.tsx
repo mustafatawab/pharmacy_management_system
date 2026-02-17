@@ -32,7 +32,7 @@ export function UserTable({ users }: UserTableProps) {
               <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
                 STATUS
               </th>
-              
+
               <th className="px-6 py-4 font-medium text-gray-500 dark:text-gray-400">
                 ACTIONS
               </th>
@@ -44,12 +44,11 @@ export function UserTable({ users }: UserTableProps) {
                 key={user.id}
                 className="hover:bg-gray-50 dark:hover:bg-[#2F2F2F]/50"
               >
-                  <td className="px-6 py-4">
+                <td className="px-6 py-4">
                   <div className="flex flex-col">
                     <span className="font-medium text-gray-900 dark:text-white capitalize">
                       {user.full_name}
                     </span>
-                    
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -58,7 +57,9 @@ export function UserTable({ users }: UserTableProps) {
                       {user.username}
                     </span>
                     <span className="text-gray-400 text-xs">
-                      @{user.username.split(" ")[0].toLowerCase()}
+                      @
+                      {user.username?.split(" ")[0]?.toLowerCase() ||
+                        user.username.toLowerCase()}
                     </span>
                   </div>
                 </td>
@@ -82,10 +83,10 @@ export function UserTable({ users }: UserTableProps) {
                         : "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400"
                     }`}
                   >
-                    {user.is_active ? "Active" : "In-Active" } 
+                    {user.is_active ? "Active" : "In-Active"}
                   </span>
                 </td>
-               
+
                 {/* <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-2">
                     {user.permissions.length === 0 ? (

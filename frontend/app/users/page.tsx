@@ -2,8 +2,9 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { Plus, Search, Eye, Loader2Icon, LoaderCircle } from "lucide-react";
+import toast from "react-hot-toast";
 import { User, UserTable } from "@/components/users/user-table";
-// import { useUsers, useAddUser } from "@/hooks/useUser";
+import { useUsers, useAddUser } from "@/hooks/useUser";
 
 // const MOCK_USERS: User[] = [
 //   {
@@ -25,14 +26,17 @@ import { User, UserTable } from "@/components/users/user-table";
 export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingUser, setIsAddingUser] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [users, setUsers] = useState<User[]>([]);
+  // const [loading, setLoading] = useState(false);
   const [userFormValue, setUserFormValue] = useState({
     full_name: "",
     username: "",
     password: "",
     is_active: true,
   });
+
+  const { data: users = [], isLoading } = useUsers();
+  const addUserMutation = useAddUser();
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -46,56 +50,58 @@ export default function UserManagementPage() {
     console.log(userFormValue);
   };
 
-  const getUsers = async () => {
-    setLoading(true);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (res.ok) {
-      const result = await res.json();
-      console.log(result);
-      setUsers(result);
-    }
+  // const getUsers = async () => {
+  //   setLoading(true);
+  //   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+  //     method: "GET",
+  //     credentials: "include",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   if (res.ok) {
+  //     const result = await res.json();
+  //     console.log(result);
+  //     setUsers(result);
+  //   }
 
-    setLoading(false);
-  };
+  //   setLoading(false);
+  // };
 
   const addUser = async () => {
-    setLoading(true);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userFormValue),
-    });
-
-    if (res.ok) {
-      const response = await res.json();
-      console.log(response);
-      setLoading(false);
-      getUsers();
-      setUserFormValue({
-        full_name: "",
-        username: "",
-        password: "",
-        is_active: true,
-      });
-      setIsAddingUser(false);
+    // Basic validation
+    if (
+      !userFormValue.username ||
+      !userFormValue.full_name ||
+      !userFormValue.password
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
     }
+
+    addUserMutation.mutate(userFormValue, {
+      onSuccess: () => {
+        toast.success("User added successfully");
+        setIsAddingUser(false);
+        setUserFormValue({
+          full_name: "",
+          username: "",
+          password: "",
+          is_active: true,
+        });
+      },
+      onError: (error: any) => {
+        toast.error(error.message || "Failed to add user");
+      },
+    });
   };
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
 
   const filteredUsers = users.filter(
-    (user) =>
+    (user: User) =>
       user.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -276,9 +282,14 @@ export default function UserManagementPage() {
             </button>
             <button
               onClick={addUser}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              disabled={addUserMutation.isPending}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Add User
+              {addUserMutation.isPending ? (
+                <LoaderCircle className="animate-spin" />
+              ) : (
+                "Add User"
+              )}
             </button>
           </div>
         </div>
@@ -297,7 +308,7 @@ export default function UserManagementPage() {
       </div>
 
       {/* User Table */}
-      {loading ? (
+      {isLoading ? (
         <div className="flex items-center justify-center gap-1 ">
           <LoaderCircle /> Wait
         </div>

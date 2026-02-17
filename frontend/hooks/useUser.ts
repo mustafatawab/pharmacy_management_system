@@ -5,51 +5,49 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const getUsers = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+    const res = await fetch(`${API_URL}/user`, {
       method: "GET",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
     });
-    if (res.ok) {
-      const result = await res.json();
-      console.log(result);
-      return result;
+    if (!res.ok) {
+      throw new Error("Failed to fetch users");
     }
+    const result = await res.json();
+    return result;
   } catch (error) {
-    return error;
+    throw error instanceof Error ? error : new Error(String(error));
   }
 };
 
-const addUser = async (
-  full_name: string,
-  username: string,
-  password: string,
-  is_active: boolean,
-) => {
+const addUser = async (data: {
+  full_name: string;
+  username: string;
+  password: string;
+  is_active: boolean;
+}) => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user`, {
+    const res = await fetch(`${API_URL}/user`, {
       method: "POST",
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        full_name,
-        username,
-        password,
-        is_active,
-      }),
+      body: JSON.stringify(data),
     });
-    if (res.ok) {
-      const response = await res.json();
-      return response;
+    if (!res.ok) {
+      throw new Error("Failed to add user");
     }
+    const response = await res.json();
+    return response;
   } catch (error) {
-    return error;
+    throw error instanceof Error ? error : new Error(String(error));
   }
 };
 
@@ -62,18 +60,18 @@ export function useUsers() {
   });
 }
 
-// export function useAddUser() {
-//   const queryClient = useQueryClient();
+export function useAddUser() {
+  const queryClient = useQueryClient();
 
-//   return useMutation({
-//     mutationFn: (
-//       full_name: string,
-//       username: string,
-//       password: string,
-//       is_active: boolean,
-//     ) => addUser(full_name, username, password, is_active),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["users"] });
-//     },
-//   });
-// }
+  return useMutation({
+    mutationFn: (newUser: {
+      full_name: string;
+      username: string;
+      password: string;
+      is_active: boolean;
+    }) => addUser(newUser),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+}

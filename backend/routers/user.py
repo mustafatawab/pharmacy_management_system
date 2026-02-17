@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Response
 from models.users import User
-from schemas.user_schema import UserCreate, UserLogin, UserRead
+from schemas.user_schema import UserCreate, UserLogin, UserRead, UserUpdate
 from database import get_session
 from sqlmodel import Session, select
 from auth.security import hash_password, verify_password, create_access_token, decode_token
@@ -42,3 +42,22 @@ async def create_user(user: UserCreate, session: Session = Depends(get_session))
 @router.get("/me" , response_model_exclude={"hashed_password"} , response_model=UserRead)
 async def get_current_user(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.put("/{id}" , response_model=UserRead)
+async def update_user(id: str , update_user: UserUpdate , session : Session = Depends(get_session) , current_user: User = Depends(get_current_user)):
+    user = session.exec(select(User).where(User.id == id)).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    user.full_name = update_user.full_name or user.full_name
+    user.username = update_user.username or user.username
+    user.password = update_user.password or user.password
+    user.role = update_user.role or user.role
+    user.is_active = update_user.is_active or user.is_active
+    
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+    

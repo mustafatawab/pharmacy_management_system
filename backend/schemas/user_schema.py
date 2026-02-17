@@ -30,3 +30,10 @@ class UserRead(BaseModel):
     created_at: str
     updated_at: str
 
+
+class UserUpdate(BaseModel):
+    full_name: str = None
+    username: str = None
+    password : str = None
+    role : UserRole = None
+    is_active : bool = None

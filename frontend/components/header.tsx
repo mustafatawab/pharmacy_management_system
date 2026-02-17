@@ -9,7 +9,7 @@ import {
   ChevronRight,
   Laptop,
   Menu,
-  LoaderCircle
+  LoaderCircle,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
@@ -26,8 +26,8 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const [isThemeSubmenuOpen, setIsThemeSubmenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   // Ensure we are mounted before showing theme based content to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
 
@@ -65,26 +65,24 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   };
 
   const handleLogout = async () => {
-    console.log(process.env.NEXT_PUBLIC_API_URL)
-    setLoading(true)
-    
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout` , {
-      method : "POST",
-      credentials : "include",
-      headers : {
-        "Content-Type" : "appplication/json"
-      }
-    })
-    if (res.ok){
-      const response = await res.json()
-      router.push("/login")
-      toast.success("logout successfully")
+    console.log(process.env.NEXT_PUBLIC_API_URL);
+    setLoading(true);
 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "appplication/json",
+      },
+    });
+    if (res.ok) {
+      const response = await res.json();
+      router.push("/login");
+      toast.success("logout successfully");
     }
 
-    setLoading(false)
-
-  }
+    setLoading(false);
+  };
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background dark:bg-[#212121] px-4 md:px-8 border-gray-200 dark:border-[#2F2F2F]">
@@ -180,8 +178,13 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                 className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
               >
                 <LogOut className="h-4 w-4" />
-                {loading ? <span><LoaderCircle /> Signing Out </span> : "Sign out"}
-                
+                {loading ? (
+                  <span>
+                    <LoaderCircle /> Signing Out{" "}
+                  </span>
+                ) : (
+                  "Sign out"
+                )}
               </button>
             </div>
           )}

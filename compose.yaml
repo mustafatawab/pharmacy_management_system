@@ -1,16 +1,16 @@
 name : "pharmacy_mangement_system"
 services:
-    db:
-        image: postgres:16-alpine
-        container_name: pharmacy_db
-        environment:
-            - POSTGRES_USER=postgres
-            - POSTGRES_PASSWORD=postgres
-            - POSTGRES_DB=pms
-        ports:
-            - "5432:5432"
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
+    # db:
+    #     image: postgres:16-alpine
+    #     container_name: pharmacy_db
+    #     environment:
+    #         - POSTGRES_USER=postgres
+    #         - POSTGRES_PASSWORD=postgres
+    #         - POSTGRES_DB=pms
+    #     ports:
+    #         - "5432:5432"
+    #     volumes:
+    #         - postgres_data:/var/lib/postgresql/data
 
     backend:
         container_name: "pharmacy_mangement_system_backend"
@@ -41,5 +41,5 @@ services:
         depends_on:
             - backend
 
-volumes:
-    postgres_data:
+# volumes:
+#     postgres_data:
