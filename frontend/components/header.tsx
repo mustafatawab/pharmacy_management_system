@@ -15,6 +15,7 @@ import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { User as UserType } from "./users/user-table";
 
 interface HeaderProps {
   title: string;
@@ -30,9 +31,28 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const [loading, setLoading] = useState(false);
   // Ensure we are mounted before showing theme based content to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to fetch user");
+
+      const userData = await res.json();
+      localStorage.setItem("user", JSON.stringify(userData));
+      console.log(userData);
+    };
+    getCurrentUser();
   }, []);
 
   // Close dropdown on outside click
@@ -113,9 +133,11 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             </div>
             <div className="hidden flex-col text-left md:flex">
               <span className="text-sm font-medium text-foreground leading-none">
-                Admin User
+                {currentUser ? currentUser.full_name : "Admin"}
               </span>
-              <span className="text-xs text-gray-500 mt-0.5">Admin</span>
+              <span className="text-xs text-gray-500 mt-0.5">
+                {currentUser ? currentUser.role : "Admin"}
+              </span>
             </div>
           </button>
 

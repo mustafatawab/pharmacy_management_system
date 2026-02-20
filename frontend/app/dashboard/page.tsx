@@ -13,22 +13,6 @@ export default function DashboardPage() {
     day: "numeric",
   });
 
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/me` , {
-        method : "GET",
-        headers : {
-          "Content-Type" : "application/json"
-        },
-        credentials : "include"
-      });
-      const userData = await res.json()
-      console.log(userData)
-      localStorage.setItem("user" , JSON.stringify(userData))
-    };
-    getCurrentUser();
-  }, []);
-
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">

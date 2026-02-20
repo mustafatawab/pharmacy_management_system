@@ -9,7 +9,6 @@ export interface User {
   username: string;
   role: "admin" | "staff";
   is_active: boolean;
-  avatar?: string;
 }
 
 interface UserTableProps {

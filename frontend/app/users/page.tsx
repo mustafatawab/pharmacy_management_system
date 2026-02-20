@@ -268,7 +268,7 @@ export default function UserManagementPage() {
       {/* User Table */}
       {isLoading ? (
         <div className="flex items-center justify-center gap-1 ">
-          <LoaderCircle /> Wait
+          <Loader2Icon /> Loading
         </div>
       ) : (
         <UserTable users={filteredUsers} />
