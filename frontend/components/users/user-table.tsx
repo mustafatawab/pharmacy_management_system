@@ -1,5 +1,8 @@
+"use client";
 import { Shield, ShieldAlert, Pencil, Trash2 } from "lucide-react";
-
+import { Modal } from "../modal";
+import { useDeleteUser } from "@/hooks/useUser";
+import { useState } from "react";
 export interface User {
   id: string;
   full_name: string;
@@ -14,6 +17,19 @@ interface UserTableProps {
 }
 
 export function UserTable({ users }: UserTableProps) {
+  const deleteUser = useDeleteUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+  const handleDeleteUser = () => {
+    console.log(selectedUserId);
+    if (selectedUserId) {
+      deleteUser.mutate(selectedUserId);
+      setIsModalOpen(false);
+      setSelectedUserId(null);
+    }
+  };
+
   return (
     <div className="rounded-xl border border-gray-200 bg-white dark:border-[#212121] dark:bg-[#212121] overflow-hidden">
       <div className="overflow-x-auto">
@@ -114,7 +130,13 @@ export function UserTable({ users }: UserTableProps) {
                     <button className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20">
                       <Pencil className="h-4 w-4" />
                     </button>
-                    <button className="rounded-full p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">
+                    <button
+                      onClick={() => {
+                        setSelectedUserId(user.id);
+                        setIsModalOpen(true);
+                      }}
+                      className="rounded-full p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                    >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
@@ -123,6 +145,50 @@ export function UserTable({ users }: UserTableProps) {
             ))}
           </tbody>
         </table>
+
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Delete User"
+        >
+          <div className="flex flex-col items-center gap-6 p-6">
+            <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
+              Are you sure you want to delete this user?
+            </p>
+            <div className="flex gap-4">
+              {/* Cancel */}
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="
+                  flex items-center justify-center
+                  rounded-md border border-gray-300
+                  bg-white dark:bg-[#212121] dark:border-gray-600
+                  px-5 py-2 text-sm font-medium
+                  text-gray-700 dark:text-gray-300
+                  hover:bg-gray-50 dark:hover:bg-gray-700
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+                  focus-visible:ring-primary-500
+                "
+              >
+                No, keep it
+              </button>
+              {/* Confirm */}
+              <button
+                onClick={handleDeleteUser}
+                className="
+                  flex items-center justify-center
+                  rounded-md bg-primary-600 hover:bg-primary-700
+                  px-5 py-2 text-sm font-medium
+                  text-white
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+                  focus-visible:ring-primary-500
+                "
+              >
+                Yes, delete
+              </button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </div>
   );

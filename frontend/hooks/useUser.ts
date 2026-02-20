@@ -51,6 +51,25 @@ const addUser = async (data: {
   }
 };
 
+const deleteUser = async (id: string) => {
+  try {
+    const res = await fetch(`${API_URL}/user/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      throw new Error("Failed to delete user");
+    }
+    const response = await res.json();
+    return response;
+  } catch (error) {
+    throw error instanceof Error ? error : new Error(String(error));
+  }
+};
+
 export function useUsers() {
   return useQuery({
     queryKey: ["users"],
@@ -70,6 +89,17 @@ export function useAddUser() {
       password: string;
       is_active: boolean;
     }) => addUser(newUser),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+}
+
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => deleteUser(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
