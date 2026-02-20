@@ -40,17 +40,18 @@ export default function LoginPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         body: JSON.stringify(formValue),
-        headers : {
-          "Content-Type": "application/json"
+        headers: {
+          "Content-Type": "application/json",
         },
         credentials: "include",
       });
-      const response = await res.json()
-      console.log(response)
+      const response = await res.json();
+      console.log(response);
       router.push("/dashboard");
-      toast.success("Logged In Successfully")
+      toast.success("Logged In Successfully");
     } catch (error) {
       console.log(error);
+      toast.error("Invalid Credentials");
     } finally {
       setLoading(false);
     }
@@ -128,7 +129,14 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {loading ? <span className="flex items-center gap-2"> <Loader2Icon /> Signing in...</span> : "Sign in"}
+            {loading ? (
+              <span className="flex items-center gap-2">
+                {" "}
+                <Loader2Icon /> Signing in...
+              </span>
+            ) : (
+              "Sign in"
+            )}
           </button>
         </form>
 

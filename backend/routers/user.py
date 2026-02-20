@@ -5,7 +5,7 @@ from database import get_session
 from sqlmodel import Session, select
 from auth.security import hash_password, verify_password, create_access_token, decode_token
 from auth.dependency import get_current_user
-
+from uuid import UUID
 
 router = APIRouter(prefix="/user" , tags=['user'])
 
@@ -22,7 +22,11 @@ async def get_all_users(current_user: User = Depends(get_current_user) , session
 
 
 @router.post("", response_model=User , response_model_exclude={"hashed_password"})
-async def create_user(user: UserCreate, session: Session = Depends(get_session)):
+async def create_user(user: UserCreate,current_user: User = Depends(get_current_user),  session: Session = Depends(get_session)):
+    if  current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can create users...")    
+    
+    
     existing_user = session.exec(select(User).where(User.username == user.username)).first()
     if existing_user:
         raise HTTPException(
@@ -44,8 +48,24 @@ async def get_current_user(current_user: User = Depends(get_current_user)):
     return current_user
 
 
+@router.get('/{id}' , response_model=UserRead)
+async def get_single_user(id: UUID, current_user: User = Depends(get_current_user) , session : Session = Depends(get_session)):
+    
+    if  current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can see...")    
+   
+
+    user = session.exec(select(User).where(User.id == id)).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User Not found")
+    return user
+
+
 @router.put("/{id}" , response_model=UserRead)
 async def update_user(id: str , update_user: UserUpdate , session : Session = Depends(get_session) , current_user: User = Depends(get_current_user)):
+    if  current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can see...")    
+    
     user = session.exec(select(User).where(User.id == id)).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
@@ -61,3 +81,17 @@ async def update_user(id: str , update_user: UserUpdate , session : Session = De
     session.refresh(user)
     return user
     
+
+
+@router.delete("/{id}", response_model=dict)
+async def delete_user(id: UUID , current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+    if current_user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can delete users...")
+    
+    user = session.exec(select(User).where(User.id == id)).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    
+    session.delete(user)
+    session.commit()
+    return {"message" : "user deleted successfully"}
