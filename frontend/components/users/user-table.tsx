@@ -1,7 +1,14 @@
 "use client";
-import { Shield, ShieldAlert, Pencil, Trash2, Eye } from "lucide-react";
+import {
+  Shield,
+  ShieldAlert,
+  Pencil,
+  Trash2,
+  Eye,
+  LoaderCircle,
+} from "lucide-react";
 import { Modal } from "../modal";
-import { useDeleteUser } from "@/hooks/useUser";
+import { useDeleteUser, useUpdateUser } from "@/hooks/useUser";
 import { useState } from "react";
 import toast from "react-hot-toast";
 export interface User {
@@ -10,6 +17,7 @@ export interface User {
   username: string;
   role: "admin" | "staff";
   is_active: boolean;
+  password?: string;
 }
 
 interface UserTableProps {
@@ -21,6 +29,39 @@ export function UserTable({ users }: UserTableProps) {
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isUpdateModal, setIsUpdateModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [userFormValue, setUserFormValue] = useState({
+    id: "",
+    full_name: "",
+    username: "",
+    password: "",
+    is_active: false,
+  });
+
+  const updateUserMutation = useUpdateUser();
+
+  const onHandleUpadateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setUserFormValue((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleUpdateUser = () => {
+    updateUserMutation.mutate(
+      { data: userFormValue },
+      {
+        onSuccess: () => {
+          setIsUpdateModal(false);
+          setSelectedUserId(null);
+          toast.success("User updated successfully");
+        },
+        onError: () => {
+          toast.error("Failed to update user");
+        },
+      },
+    );
+  };
 
   const handleDeleteUser = () => {
     console.log(selectedUserId);
@@ -140,7 +181,17 @@ export function UserTable({ users }: UserTableProps) {
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
                     <button
-                      onClick={() => setIsUpdateModal(true)}
+                      onClick={() => {
+                        setIsUpdateModal(true);
+                        setSelectedUserId(user.id);
+                        setUserFormValue({
+                          id: user.id,
+                          full_name: user.full_name,
+                          username: user.username,
+                          is_active: user.is_active,
+                          password: "",
+                        });
+                      }}
                       className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
                     >
                       <Pencil className="h-4 w-4" />
@@ -229,6 +280,8 @@ export function UserTable({ users }: UserTableProps) {
               <input
                 id="username"
                 name="username"
+                value={userFormValue.username}
+                onChange={onHandleUpadateChange}
                 type="text"
                 placeholder="Enter username"
                 className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
@@ -244,6 +297,8 @@ export function UserTable({ users }: UserTableProps) {
               <input
                 id="full_name"
                 name="full_name"
+                value={userFormValue.full_name}
+                onChange={onHandleUpadateChange}
                 type="text"
                 placeholder="Enter full name"
                 className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
@@ -262,6 +317,8 @@ export function UserTable({ users }: UserTableProps) {
                   id="password"
                   name="password"
                   type="password"
+                  value={userFormValue.password}
+                  onChange={onHandleUpadateChange}
                   placeholder="Enter password"
                   className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
                 />
@@ -292,6 +349,26 @@ export function UserTable({ users }: UserTableProps) {
               >
                 Active User
               </label>
+            </div>
+
+            <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-[#2F2F2F]">
+              <button
+                onClick={() => setIsUpdateModal(false)}
+                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#2F2F2F] dark:text-gray-300 dark:hover:bg-[#2F2F2F]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateUser}
+                disabled={updateUserMutation.isPending}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {updateUserMutation.isPending ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  "Update User"
+                )}
+              </button>
             </div>
           </div>
         </Modal>

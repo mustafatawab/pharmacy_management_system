@@ -8,22 +8,19 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const getUsers = async () => {
-  try {
-    const res = await fetch(`${API_URL}/user`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) {
-      throw new Error("Failed to fetch users");
-    }
-    const result = await res.json();
-    return result;
-  } catch (error) {
-    throw error instanceof Error ? error : new Error(String(error));
+  const res = await fetch(`${API_URL}/user`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result?.detail || "Failed to fetch users");
   }
+
+  return result;
 };
 
 const addUser = async (data: {
@@ -32,42 +29,59 @@ const addUser = async (data: {
   password: string;
   is_active: boolean;
 }) => {
-  try {
-    const res = await fetch(`${API_URL}/user`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      throw new Error("Failed to add user");
-    }
-    const response = await res.json();
-    return response;
-  } catch (error) {
-    throw error instanceof Error ? error : new Error(String(error));
+  const res = await fetch(`${API_URL}/user`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const response = await res.json();
+  console.log("\n\nReponse inside the add User function is ", response);
+  if (!res.ok) {
+    throw new Error(response?.detail || "Failed to add user");
   }
+  return response;
 };
 
 const deleteUser = async (id: string) => {
-  try {
-    const res = await fetch(`${API_URL}/user/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) {
-      throw new Error("Failed to delete user");
-    }
-    const response = await res.json();
-    return response;
-  } catch (error) {
-    throw error instanceof Error ? error : new Error(String(error));
+  const res = await fetch(`${API_URL}/user/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const response = await res.json();
+  if (!res.ok) {
+    throw new Error(response?.detail || "Failed to delete user");
   }
+
+  return response;
+};
+
+const updateUser = async (data: {
+  id: string;
+  full_name: string;
+  username: string;
+  password: string;
+  is_active: boolean;
+}) => {
+  const res = await fetch(`${API_URL}/user/${data.id}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const response = await res.json();
+  if (!res.ok) {
+    throw new Error(response?.detail || "Failed to update user");
+  }
+
+  return response;
 };
 
 export function useUsers() {
@@ -100,6 +114,27 @@ export function useDeleteUser() {
 
   return useMutation({
     mutationFn: (id: string) => deleteUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+}
+
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      data,
+    }: {
+      data: {
+        id: string;
+        full_name: string;
+        username: string;
+        password: string;
+        is_active: boolean;
+      };
+    }) => updateUser(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
