@@ -61,7 +61,7 @@ async def get_single_user(id: UUID, current_user: User = Depends(get_current_use
     return user
 
 
-@router.put("/{id}" , response_model=UserRead)
+@router.put("/{id}" , response_model=UserRead )
 async def update_user(id: str , update_user: UserUpdate , session : Session = Depends(get_session) , current_user: User = Depends(get_current_user)):
     if  current_user.role != "admin":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can see...")    
@@ -70,11 +70,10 @@ async def update_user(id: str , update_user: UserUpdate , session : Session = De
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
-    user.full_name = update_user.full_name or user.full_name
-    user.username = update_user.username or user.username
-    user.password = update_user.password or user.password
-    user.role = update_user.role or user.role
-    user.is_active = update_user.is_active or user.is_active
+    user.full_name = update_user.full_name if update_user.full_name else user.full_name
+    user.username = update_user.username if update_user.username else user.username
+    user.hashed_password = hash_password(update_user.password) if update_user.password else user.hashed_password 
+    user.is_active = update_user.is_active 
     
     session.add(user)
     session.commit()

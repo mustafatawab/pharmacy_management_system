@@ -5,6 +5,7 @@ import { Plus, Search, Eye, Loader2Icon, LoaderCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { User, UserTable } from "@/components/users/user-table";
 import { useUsers, useAddUser } from "@/hooks/useUser";
+import useLoadingDots from "@/hooks/useLoadingDots";
 
 export default function UserManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,6 +16,8 @@ export default function UserManagementPage() {
     password: "",
     is_active: true,
   });
+
+  const dots = useLoadingDots();
 
   const { data: users = [], isLoading } = useUsers();
   const addUserMutation = useAddUser();
@@ -267,8 +270,8 @@ export default function UserManagementPage() {
 
       {/* User Table */}
       {isLoading ? (
-        <div className="flex items-center justify-center gap-1 ">
-          <Loader2Icon /> Loading
+        <div className="flex items-center justify-center gap-1 text-xl">
+          <Loader2Icon className="animate-spin" /> Loading Users {dots}
         </div>
       ) : (
         <UserTable users={filteredUsers} />

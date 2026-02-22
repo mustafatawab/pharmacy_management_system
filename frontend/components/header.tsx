@@ -46,11 +46,15 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         },
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Failed to fetch user");
 
       const userData = await res.json();
+      if (!res.ok) {
+        toast.error(userData.detail);
+        router.push("/login");
+        return;
+      }
       localStorage.setItem("user", JSON.stringify(userData));
-      console.log(userData);
+      setCurrentUser(userData);
     };
     getCurrentUser();
   }, []);
