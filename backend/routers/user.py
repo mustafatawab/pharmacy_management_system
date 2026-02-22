@@ -92,6 +92,9 @@ async def delete_user(id: UUID , current_user: User = Depends(get_current_user),
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     
+    if user.role == "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin can not be deleted")
+    
     session.delete(user)
     session.commit()
     return {"message" : "user deleted successfully"}

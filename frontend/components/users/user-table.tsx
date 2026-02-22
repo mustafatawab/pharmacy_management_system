@@ -1,8 +1,9 @@
 "use client";
-import { Shield, ShieldAlert, Pencil, Trash2 } from "lucide-react";
+import { Shield, ShieldAlert, Pencil, Trash2, Eye } from "lucide-react";
 import { Modal } from "../modal";
 import { useDeleteUser } from "@/hooks/useUser";
 import { useState } from "react";
+import toast from "react-hot-toast";
 export interface User {
   id: string;
   full_name: string;
@@ -17,15 +18,27 @@ interface UserTableProps {
 
 export function UserTable({ users }: UserTableProps) {
   const deleteUser = useDeleteUser();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModal, setIsDeleteModal] = useState(false);
+  const [isUpdateModal, setIsUpdateModal] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const handleDeleteUser = () => {
     console.log(selectedUserId);
     if (selectedUserId) {
-      deleteUser.mutate(selectedUserId);
-      setIsModalOpen(false);
-      setSelectedUserId(null);
+      // deleteUser.mutate(selectedUserId);
+      // setIsModalOpen(false);
+      // setSelectedUserId(null);
+      // toast.success("User deleted successfully");
+      deleteUser.mutate(selectedUserId, {
+        onSuccess: () => {
+          setIsDeleteModal(false);
+          setSelectedUserId(null);
+          toast.success("User deleted successfully");
+        },
+        onError: () => {
+          toast.error("Failed to delete user");
+        },
+      });
     }
   };
 
@@ -126,13 +139,21 @@ export function UserTable({ users }: UserTableProps) {
                 </td> */}
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
-                    <button className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20">
+                    <button
+                      onClick={() => setIsUpdateModal(true)}
+                      className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                    >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
+                      disabled={user.role === "admin"}
                       onClick={() => {
+                        if (user.role === "admin") {
+                          toast.error("Admin cannot be deleted");
+                          return;
+                        }
                         setSelectedUserId(user.id);
-                        setIsModalOpen(true);
+                        setIsDeleteModal(true);
                       }}
                       className="rounded-full p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
                     >
@@ -146,9 +167,10 @@ export function UserTable({ users }: UserTableProps) {
         </table>
 
         <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isDeleteModal}
+          onClose={() => setIsDeleteModal(false)}
           title="Delete User"
+          icon={<Trash2 className="h-4 w-4 text-red-600" />}
         >
           <div className="flex flex-col items-center gap-6 p-6">
             <p className="text-lg font-medium text-gray-800 dark:text-gray-200">
@@ -157,7 +179,7 @@ export function UserTable({ users }: UserTableProps) {
             <div className="flex gap-4">
               {/* Cancel */}
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => setIsDeleteModal(false)}
                 className="
                   flex items-center justify-center
                   rounded-md border border-gray-300
@@ -175,16 +197,101 @@ export function UserTable({ users }: UserTableProps) {
               <button
                 onClick={handleDeleteUser}
                 className="
-                  flex items-center justify-center
+                  flex items-center justify-center border border-blue-700
                   rounded-md bg-primary-600 hover:bg-primary-700
                   px-5 py-2 text-sm font-medium
-                  text-white
+                  text-blue-700
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
                   focus-visible:ring-primary-500
                 "
               >
                 Yes, delete
               </button>
+            </div>
+          </div>
+        </Modal>
+
+        <Modal
+          isOpen={isUpdateModal}
+          onClose={() => setIsUpdateModal(false)}
+          title="Update User"
+          icon={<Pencil className="h-4 w-4 text-blue-600" />}
+        >
+          {/* {error && <p className="text-red-600 mb-2 text-sm">{error}</p>} */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="username"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Username *
+              </label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="Enter username"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="full_name"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Full Name *
+              </label>
+              <input
+                id="full_name"
+                name="full_name"
+                type="text"
+                placeholder="Enter full name"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Password *
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter password"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                />
+                <Eye className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 cursor-pointer" />
+              </div>
+            </div>
+
+            {/* <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Role *
+              </label>
+              <select className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white">
+                <option value="Staff">Staff</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div> */}
+
+            <div className="flex items-center gap-2 pt-8">
+              <input
+                type="checkbox"
+                id="activeUser"
+                name="is_active"
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label
+                htmlFor="activeUser"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300 select-none cursor-pointer"
+              >
+                Active User
+              </label>
             </div>
           </div>
         </Modal>
