@@ -35,6 +35,10 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
   useEffect(() => {
     setMounted(true);
+    const user = localStorage.getItem("user");
+    if (user) {
+      setCurrentUser(JSON.parse(user));
+    }
   }, []);
 
   useEffect(() => {
@@ -54,7 +58,6 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         return;
       }
       localStorage.setItem("user", JSON.stringify(userData));
-      setCurrentUser(userData);
     };
     getCurrentUser();
   }, []);
