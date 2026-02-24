@@ -2,8 +2,7 @@
 # 👉 Purchase Order creates ProductBatch
 
 from sqlalchemy.sql import func
-from sqlmodel import SQLModel, Field, Column, DateTime, Relationship
-from typing import Optional, List
+from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
 from decimal import Decimal
 
@@ -14,7 +13,7 @@ class Product(SQLModel, table=True):
     name: str = Field(index=True)
     description: str | None = Field(default=None)
     
-    category_id: int = Field(index=True, foreign_key="category.id")
+    # category_id: int = Field(index=True, foreign_key="category.id")
     
     sku: str | None = Field(default=None, unique=True)
     barcode: str | None = Field(default=None, unique=True)
@@ -29,7 +28,7 @@ class Product(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
     # Relationships
-    category: "Category" | None = Relationship(back_populates="products")
-    batches: list["ProductBatch"] | None = Relationship(back_populates="product")
+    # category: "Category" | None = Relationship(back_populates="products")
+    # batches: list["ProductBatch"] | None = Relationship(back_populates="product")
     
 

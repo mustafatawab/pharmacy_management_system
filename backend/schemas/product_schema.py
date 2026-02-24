@@ -15,13 +15,22 @@ class ProductBase(BaseModel):
     unit: str = Field(..., max_length=50)  # tablet, bottle, strip, box
     
     selling_price: Decimal
-    cost_price: Decimal
+    purchase_price: Decimal
     
     is_active: bool = True
 
 
 class ProductCreate(ProductBase):
-    pass
+    name: str
+    generic_name: str
+    description: str
+    # category_id: int
+    sku: str | None = None
+    barcode: str | None = None
+    unit: str = Field(default="tablet", max_length=50 )
+    selling_price: Decimal
+    purchase_price: Decimal
+    is_active: bool
 
 
 class ProductUpdate(BaseModel):
@@ -32,7 +41,7 @@ class ProductUpdate(BaseModel):
     barcode: Optional[str] = None
     unit: Optional[str] = None
     selling_price: Optional[Decimal] = None
-    cost_price: Optional[Decimal] = None
+    purchase_price: Optional[Decimal] = None
     is_active: Optional[bool] = None
 
 from datetime import datetime

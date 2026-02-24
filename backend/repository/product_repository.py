@@ -1,13 +1,16 @@
 # product_repository.py
+from fastapi import Depends
+from database import get_session
 from sqlmodel import Session, select
 from typing import Optional, List
 from uuid import UUID
 
 from models.product import Product
+from schemas.product_schema import ProductCreate, ProductRead
 
 class ProductRepository:
 
-    def create(self, db: Session , product: Product) -> Product:
+    def create(self,product: Product, db: Session = Depends(get_session) ) -> Product:
         db.add(product)
         db.commit()
         db.refresh(product)
