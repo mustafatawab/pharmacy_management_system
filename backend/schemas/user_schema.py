@@ -6,7 +6,7 @@ class UserRegister(BaseModel):
     full_name: str
     username: str
     password : str
-    role : UserRole = UserRole.STAFF
+    # role : UserRole = UserRole.STAFF
 
 
 class UserCreate(BaseModel):

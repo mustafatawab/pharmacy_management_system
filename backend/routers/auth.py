@@ -5,37 +5,41 @@ from database import get_session
 from sqlmodel import Session, select
 from auth.security import hash_password, verify_password, create_access_token, decode_token
 from datetime import timedelta  
+from service.auth_service import AuthService
 
 router = APIRouter(prefix="/auth" , tags=['auth'])
 
+auth_service = AuthService()
+
 @router.post("/register", response_model=UserRead , response_model_exclude={"hashed_password"})
 async def register_user(user: UserRegister, session: Session = Depends(get_session)):
-    existing_user = session.exec(select(User).where(User.username == user.username)).first()
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username or email already exists"
-        )
+    # existing_user = session.exec(select(User).where(User.username == user.username)).first()
+    # if existing_user:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="Username or email already exists"
+    #     )
     
 
-    add_user = User(full_name=user.full_name, role="admin", username=user.username, hashed_password=hash_password(user.password))
-    session.add(add_user)
-    session.commit()
-    session.refresh(add_user)
+    # add_user = User(full_name=user.full_name, role="admin", username=user.username, hashed_password=hash_password(user.password))
+    # session.add(add_user)
+    # session.commit()
+    # session.refresh(add_user)
+    add_user = auth_service.register_user(user=user, session=session)
     return add_user
 
 
 @router.post("/login")
 async def login(user:UserLogin,response: Response, session : Session = Depends(get_session)):
-    existing_user = session.exec(select(User).where(User.username == user.username)).first()
-    print("\n Existing user is ",existing_user)
-    if not existing_user or not verify_password(user.password, existing_user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid Credentials"
-        )
-    token = create_access_token({"username": existing_user.username} , expire_time=timedelta(days=7))
-
+    # existing_user = session.exec(select(User).where(User.username == user.username)).first()
+    # print("\n Existing user is ",existing_user)
+    # if not existing_user or not verify_password(user.password, existing_user.hashed_password):
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="Invalid Credentials"
+    #     )
+    # token = create_access_token({"username": existing_user.username} , expire_time=timedelta(days=7))
+    token = auth_service.login_user(user=user, session=session)
     response.set_cookie(
         key="access_token",
         value=token,
