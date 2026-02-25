@@ -5,6 +5,7 @@ from database import get_session
 from schemas.product_schema import ProductCreate, ProductUpdate, ProductRead
 from models.product import Product as ProductModel
 from repository.product_repository import ProductRepository
+from sqlmodel import select
 
 class ProductService:
     def __init__(self):
@@ -31,75 +32,36 @@ class ProductService:
 
 
 
-    def get_product(self, product_id: int, db: Session = Depends(get_session)) -> ProductRead:
-        product = self.repo.get_by_id(db, product_id)
+    def get_all_products(self, db: Session = Depends(get_session)):
+        
+        all_products = db.exec(select(ProductModel)).all()
+        return all_products
+
+
+    def get_product_by_id(self, product_id: int , db: Session = Depends(get_session)):
+        product = db.exec(select(ProductModel).where(ProductModel.id == product_id)).first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         return product
 
-
-
-
-    def list_products(self, db: Session, search: str = None, category_id: int = None, is_active: bool = True, offset: int = 0, limit: int = 10) -> tuple[list[ProductRead], int]:
-        return self.repo.list(db, search, category_id, is_active, offset, limit)
-
-
-
-
-    def update_product(self, db: Session, product_id: int, data: ProductUpdate) -> ProductRead:
-        product = self.get_product(db, product_id)
-
-        update_data = data.model_dump(exclude_unset=True)
-
-        for key, value in update_data.item():
-            setattr(product, key, value)
-
-
-        if product.selling_price < product.purchase_price:
-            raise HTTPException(
-                status_code=400,
-                detail="Selling price cannot be lower than purchase price",
-            )
-
-        return self.repo.update(db, product)
-
-
-
-
-    def soft_delete_product(self, db: Session, product_id: int) -> ProductRead:
-        product = self.get_product(db, product_id)
-        return self.repo.soft_delete(db, product)
-
-
-
-
-    def delete_product(self, db: Session, product_id: int) -> ProductRead:
-        product = self.get_product(db, product_id)
-        return self.repo.delete(db, product)
     
 
+    def update_product(self, product_id: int,update_product: ProductUpdate, db: Session = Depends(get_session)):
+        product = self.get_product_by_id(product_id, db)
+        
+        db.add(update_product)
+        db.commit()
+        db.refresh(update_product)
+        return update_product
+    
+    def delete_product(self, product_id : int , db : Session = Depends(get_session)):
+        product = self.get_product_by_id(product_id, db)
+        db.delete(product)
+        db.commit()
+        return {"message": "Product deleted successfully"}
+    
 
-    def list_products(
-        self,
-        db: Session,
-        search: str | None,
-        category_id: int | None,
-        page: int,
-        page_size: int,
-    ):
-        offset = (page - 1) * page_size
+    
+        
 
-        items, total = self.repo.list(
-            db=db,
-            search=search,
-            category_id=category_id,
-            offset=offset,
-            limit=page_size,
-        )
-
-        return {
-            "items": items,
-            "total": total,
-            "page": page,
-            "page_size": page_size,
-        }
+    
