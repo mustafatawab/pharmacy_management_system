@@ -12,12 +12,9 @@ class Product(SQLModel, table=True):
     generic_name: str
     name: str = Field(index=True)
     description: str | None = Field(default=None)
-    
-    # category_id: int = Field(index=True, foreign_key="category.id")
-    
-    sku: str | None = Field(default=None, unique=True)
-    barcode: str | None = Field(default=None, unique=True)
-    
+
+    unit: str = Field(..., max_length=50)  # tablet, bottle, strip, box
+    quantity: int = Field(..., ge=0)
     purchase_price: Decimal 
     selling_price: Decimal 
     tax_percentage: Decimal = Field(default=0)
@@ -27,8 +24,13 @@ class Product(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
+    category_id: int = Field(index=True, foreign_key="category.id")
+    
+    # sku: str | None = Field(default=None, unique=True)
+    # barcode: str | None = Field(default=None, unique=True)
+
     # Relationships
-    # category: "Category" | None = Relationship(back_populates="products")
+    category: "Category" = Relationship(back_populates="products")
     # batches: list["ProductBatch"] | None = Relationship(back_populates="product")
     
 
