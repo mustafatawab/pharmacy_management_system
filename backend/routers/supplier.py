@@ -11,9 +11,7 @@ supplier_service = SupplierService()
 
 @router.get("/" , response_model=list[SupplierRead])
 def get_suppliers(session: Session = Depends(get_session)):
-
     suppliers = supplier_service.get_all_suppliers(session=session)
-
     return suppliers
 
 

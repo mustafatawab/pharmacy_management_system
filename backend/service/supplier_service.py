@@ -12,8 +12,8 @@ class SupplierService:
 
 
 
-    @classmethod
-    def check_supplier_by_email( email: str , session: Session = Depends(get_session)):
+    
+    def check_supplier_by_email(self,  email: str , session: Session = Depends(get_session)):
         supplier = session.exec(select(SupplierModel).where(SupplierModel.email == email)).first()
 
         if supplier:
@@ -22,8 +22,8 @@ class SupplierService:
         return supplier
 
 
-    @classmethod
-    def check_supplier_by_phone(phone: str , session: Session = Depends(get_session)):
+    
+    def check_supplier_by_phone(self, phone: str , session: Session = Depends(get_session)):
         supplier = session.exec(select(SupplierModel).where(SupplierModel.phone == phone)).first()
         
         if supplier:
@@ -31,8 +31,8 @@ class SupplierService:
 
         return supplier
 
-    @classmethod
-    def check_supplier_by_id(id: UUID, session: Session = Depends(get_session)):
+    
+    def check_supplier_by_id(self, id: UUID, session: Session = Depends(get_session)):
 
         supplier = session.exec(select(SupplierModel).where(SupplierModel.id == id)).first()
 
@@ -42,7 +42,7 @@ class SupplierService:
         return supplier
     
 
-    def get_all_suppliers(session : Session = Depends(get_session)):
+    def get_all_suppliers(self, session : Session = Depends(get_session)):
 
         suppliers = session.exec(select(SupplierModel)).all()
 
@@ -51,8 +51,8 @@ class SupplierService:
 
     def create_supplier(self, supplier: SupplierCreate, session: Session = Depends(get_session)):
 
-        SupplierService.check_supplier_by_email(supplier.email)
-        SupplierService.check_supplier_by_phone(supplier.phone)
+        self.check_supplier_by_email(supplier.email)
+        self.check_supplier_by_phone(supplier.phone)
 
         new_supplier = SupplierModel(**supplier.model_dump())
 
@@ -64,7 +64,7 @@ class SupplierService:
 
     def update_supplier(self, id: UUID, supplier : SuppplierUpdate, session: Session = Depends(get_session)):
 
-        exisiting_supplier = SupplierService.check_supplier_by_id(id=id, session=session)
+        exisiting_supplier = self.check_supplier_by_id(id=id, session=session)
 
         exisiting_supplier.email = supplier.email or exisiting_supplier.email
         exisiting_supplier.phone = supplier.phone or exisiting_supplier.phone
@@ -82,7 +82,7 @@ class SupplierService:
 
     def delete_supplier(self, id: UUID, session : Session = Depends(get_session)):
 
-        existing_supplier = SupplierService.check_supplier_by_id(id=id, session=session)
+        existing_supplier = self.check_supplier_by_id(id=id, session=session)
 
         session.delete(existing_supplier)
         session.commit()
