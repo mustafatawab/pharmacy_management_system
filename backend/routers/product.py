@@ -1,4 +1,3 @@
-from unicodedata import name
 from database import get_session
 from fastapi import FastAPI, APIRouter, Depends, HTTPException
 from schemas.product_schema import ProductCreate, ProductRead, ProductFilter, ProductUpdate
