@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from decimal import Decimal
+from datetime import datetime
 
 
 class ProductBase(BaseModel):
@@ -47,7 +48,6 @@ class ProductUpdate(BaseModel):
     # sku: Optional[str] = None
     # barcode: Optional[str] = None
 
-from datetime import datetime
 
 
 class ProductRead(ProductBase):
