@@ -42,7 +42,7 @@ class SupplierService:
         return supplier
     
 
-    def get_all_suppliers(self, session : Session = Depends(get_session)):
+    def get_all_suppliers(self, session : Session = Depends(get_session)) -> list[SupplierRead]:
 
         suppliers = session.exec(select(SupplierModel)).all()
 
@@ -51,8 +51,8 @@ class SupplierService:
 
     def create_supplier(self, supplier: SupplierCreate, session: Session = Depends(get_session)):
 
-        self.check_supplier_by_email(supplier.email)
-        self.check_supplier_by_phone(supplier.phone)
+        self.check_supplier_by_email(supplier.email, session=session)
+        self.check_supplier_by_phone(supplier.phone, session=session)
 
         new_supplier = SupplierModel(**supplier.model_dump())
 
