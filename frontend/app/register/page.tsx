@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pill, Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,32 +33,37 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     // Simulate login delay
-    return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-      body: JSON.stringify(formValue),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        console.log(data);
-        router.push("/login")
-        setFormValue({
-          full_name : "",
-          username : "",
-          email:  "",
-          password : "",
-          
-        })
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
+          body: JSON.stringify(formValue),
+        },
+      );
+      const response = await res.json();
+
+      if (!res.ok) {
+        toast.error(response.detail);
+        return;
+      }
+      toast.success("Registered Successfully");
+      router.push("/login");
+      setFormValue({
+        full_name: "",
+        username: "",
+        email: "",
+        password: "",
       });
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -112,7 +118,7 @@ export default function LoginPage() {
               className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 text-gray-900"
             />
           </div>
-         
+
           <div className="space-y-2">
             <label
               htmlFor="password"

@@ -46,7 +46,11 @@ export default function LoginPage() {
         credentials: "include",
       });
       const response = await res.json();
-      console.log(response);
+
+      if (!res.ok) {
+        toast.error(response.detail);
+        return;
+      }
       router.push("/dashboard");
       toast.success("Logged In Successfully");
     } catch (error) {
