@@ -14,12 +14,12 @@ class UserService:
     def __init__(self):
         self.auth_service = AuthService()
 
-    def get_all_user(self, session: Session = Depends(get_session)) -> list[UserRead]:
-        users = session.exec(select(User)).all()
+    async def get_all_user(self, session: Session = Depends(get_session)) -> list[UserRead]:
+        users = await session.exec(select(User)).all()
         return users
 
-    def create_user(self, user: UserCreate, session: Session = Depends(get_session)) -> UserRead:
-        existing_user = self.auth_service.existing_user(user.username, session)
+    async def create_user(self, user: UserCreate, session: Session = Depends(get_session)) -> UserRead:
+        existing_user = await self.auth_service.existing_user(user.username, session)
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already exists")
         
@@ -30,16 +30,16 @@ class UserService:
         return add_user
 
 
-    def get_user_by_id(self, id: UUID, session: Session = Depends(get_session)) -> UserRead:
-        user = session.exec(select(User).where(User.id == id)).first()
+    async def get_user_by_id(self, id: UUID, session: Session = Depends(get_session)) -> UserRead:
+        user = await session.exec(select(User).where(User.id == id)).first()
         
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user
     
 
-    def update_user(self, id: UUID, update_user: UserUpdate, session: Session = Depends(get_session)) -> UserRead:
-        user = self.get_user_by_id(id=id, session=session)
+    async def update_user(self, id: UUID, update_user: UserUpdate, session: Session = Depends(get_session)) -> UserRead:
+        user = await self.get_user_by_id(id=id, session=session)
 
         user.full_name = update_user.full_name or user.full_name
         user.username = update_user.username or user.username
@@ -53,8 +53,8 @@ class UserService:
         
     
 
-    def delete_user(self, id: UUID, session: Session = Depends(get_session)) -> UserRead:
-        user = self.get_user_by_id(id=id, session=session)
+    async def delete_user(self, id: UUID, session: Session = Depends(get_session)) -> UserRead:
+        user = await self.get_user_by_id(id=id, session=session)
 
         if user.role == "admin":
             raise HTTPException(status_code=400, detail="Admin cannot be deleted")

@@ -7,7 +7,11 @@ from routers.supplier import router as supplier_router
 from database import create_tables
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-
+from models.tenant import Tenant
+from models.users import User
+from models.product import Product
+from models.category import Category
+from models.supplier import Supplier
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -25,6 +25,7 @@ class Product(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
     category_id: int = Field(index=True, foreign_key="category.id")
+    tenant_id: int = Field(index=True, foreign_key="tenant.id")
     
     # sku: str | None = Field(default=None, unique=True)
     # barcode: str | None = Field(default=None, unique=True)

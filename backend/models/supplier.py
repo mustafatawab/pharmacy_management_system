@@ -12,3 +12,5 @@ class Supplier(SQLModel, table=True):
     address: str
     created_at : str = Field(default=str(datetime.utcnow()))
     updated_at : str = Field(default=str(datetime.utcnow()))
+
+    tenant_id: int = Field(index=True, foreign_key="tenant.id")

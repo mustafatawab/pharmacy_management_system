@@ -4,7 +4,6 @@ from sqlmodel import Session
 from database import get_session
 from schemas.product_schema import ProductCreate, ProductUpdate, ProductRead
 from models.product import Product as ProductModel
-from repository.product_repository import ProductRepository
 from sqlmodel import select
 
 class ProductService:

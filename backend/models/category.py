@@ -11,5 +11,8 @@ class Category(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     products: list["Product"] = Relationship(back_populates="category")
-    
+
+    tenant_id: int = Field(index=True, foreign_key="tenant.id")
+
+    # tenant: "Tenant" = Relationship(back_populates="categories")
     

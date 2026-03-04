@@ -22,7 +22,10 @@ class AuthService:
         session.add(add_user)
         session.commit()
         session.refresh(add_user)
-        return add_user
+
+        token = create_access_token({"username": add_user.username} , expire_time=timedelta(days=7))
+
+        return {"token" : token, "message" : "User registered successfully" , "user" : add_user}
     
     def login_user(self, user: UserLogin , session: Depends =  Depends(get_session)):
         existing_user = self.existing_user(user.username, session)
@@ -43,7 +46,7 @@ class AuthService:
         #     samesite="lax"
         # )
 
-        return token
+        return {"token" : token, "message" : "Login successfully"}
 
 
     

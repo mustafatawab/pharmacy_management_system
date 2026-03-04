@@ -12,7 +12,7 @@ router = APIRouter(prefix="/auth" , tags=['auth'])
 auth_service = AuthService()
 
 @router.post("/register", response_model=UserRead , response_model_exclude={"hashed_password"})
-async def register_user(user: UserRegister, session: Session = Depends(get_session)):
+async def register_user(user: UserRegister,response: Response, session: Session = Depends(get_session)):
     # existing_user = session.exec(select(User).where(User.username == user.username)).first()
     # if existing_user:
     #     raise HTTPException(
@@ -25,8 +25,15 @@ async def register_user(user: UserRegister, session: Session = Depends(get_sessi
     # session.add(add_user)
     # session.commit()
     # session.refresh(add_user)
-    add_user = auth_service.register_user(user=user, session=session)
-    return add_user
+    result = auth_service.register_user(user=user, session=session)
+    response.set_cookie(
+        key="access_token",
+        value=result["token"],
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
+    return result["user"]
 
 
 @router.post("/login")
@@ -39,16 +46,16 @@ async def login(user:UserLogin,response: Response, session : Session = Depends(g
     #         detail="Invalid Credentials"
     #     )
     # token = create_access_token({"username": existing_user.username} , expire_time=timedelta(days=7))
-    token = auth_service.login_user(user=user, session=session)
+    result = auth_service.login_user(user=user, session=session)
     response.set_cookie(
         key="access_token",
-        value=token,
+        value=result["token"],
         httponly=True,
         secure=True,
         samesite="lax"
     )
 
-    return {"message" : "logged in successfully"}
+    return {"message" : result["message"]}
 
 
 @router.post("/logout" , response_model=dict)

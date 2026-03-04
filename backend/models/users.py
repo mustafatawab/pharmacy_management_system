@@ -18,6 +18,7 @@ class User(SQLModel, table=True):
     role: UserRole = Field(default=UserRole.STAFF)
     is_active: bool = Field(default=True)
 
+    tenant_id : int = Field(foreign_key="tenant.id")
 
 
 
