@@ -9,7 +9,7 @@ from sqlmodel import select
 
 class ProductService:
     def __init__(self):
-        self.repo = ProductRepository()
+        pass
 
 
 
