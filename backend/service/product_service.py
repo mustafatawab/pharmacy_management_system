@@ -13,7 +13,7 @@ class ProductService:
 
 
 
-    def create_product(self, data: ProductCreate, db: Session=Depends(get_session)) -> ProductRead:
+    async def create_product(self, data: ProductCreate, db: Session=Depends(get_session)) -> ProductRead:
         
         if data.selling_price < data.purchase_price:
             raise HTTPException(
@@ -24,38 +24,38 @@ class ProductService:
         
         new_product = ProductModel(**data.model_dump())
 
-        db.add(new_product)
-        db.commit()
-        db.refresh(new_product)
+        await db.add(new_product)
+        await db.commit()
+        await db.refresh(new_product)
 
         return new_product
 
 
 
-    def get_all_products(self, db: Session = Depends(get_session)):
+    async def get_all_products(self, db: Session = Depends(get_session)):
         
-        all_products = db.exec(select(ProductModel)).all()
+        all_products = await db.exec(select(ProductModel)).all()
         return all_products
 
 
-    def get_product_by_id(self, product_id: int , db: Session = Depends(get_session)):
-        product = db.exec(select(ProductModel).where(ProductModel.id == product_id)).first()
+    async def get_product_by_id(self, product_id: int , db: Session = Depends(get_session)):
+        product = await db.exec(select(ProductModel).where(ProductModel.id == product_id)).first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         return product
 
     
 
-    def update_product(self, product_id: int,update_product: ProductUpdate, db: Session = Depends(get_session)):
-        product = self.get_product_by_id(product_id, db)
+    async def update_product(self, product_id: int,update_product: ProductUpdate, db: Session = Depends(get_session)):
+        await self.get_product_by_id(product_id, db)
         
-        db.add(update_product)
-        db.commit()
-        db.refresh(update_product)
+        await db.add(update_product)
+        await db.commit()
+        await db.refresh(update_product)
         return update_product
     
-    def delete_product(self, product_id : int , db : Session = Depends(get_session)):
-        product = self.get_product_by_id(product_id, db)
+    async def delete_product(self, product_id : int , db : Session = Depends(get_session)):
+        product = await self.get_product_by_id(product_id, db)
         db.delete(product)
         db.commit()
         return {"message": "Product deleted successfully"}
