@@ -7,6 +7,7 @@ from models.users import User
 from schemas.user_schema import UserCreate, UserUpdate, UserRead, UserRegister, UserLogin
 from auth.security import hash_password, verify_password, create_access_token
 from service.auth_service import AuthService
+from auth.dependency import get_current_user
 
 
 class UserService:
@@ -14,24 +15,29 @@ class UserService:
     def __init__(self):
         self.auth_service = AuthService()
 
-    async def get_all_user(self, session: Session = Depends(get_session)) -> list[UserRead]:
-        users = await session.exec(select(User)).all()
+    def get_all_user(self, session: Session , current_user: User) -> list[UserRead]:
+
+        users =  session.exec(select(User).where(User.tenant_id == current_user.tenant_id)).all()
         return users
 
-    async def create_user(self, user: UserCreate, session: Session = Depends(get_session)) -> UserRead:
-        existing_user = await self.auth_service.existing_user(user.username, session)
+    def create_user(self, user: UserCreate, session: Session , current_user: User) -> UserRead:
+
+        if not current_user.tenant_id:
+            raise HTTPException(status_code=400, detail="You must create a pharmacy first.")
+        
+        existing_user =  self.auth_service.existing_user(user.username, session)
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already exists")
         
-        add_user = User(full_name=user.full_name, username=user.username, hashed_password=hash_password(user.password))
+        add_user = User(full_name=user.full_name, username=user.username, hashed_password=hash_password(user.password), tenant_id=current_user.tenant_id)
         session.add(add_user)
         session.commit()
         session.refresh(add_user)
         return add_user
 
 
-    async def get_user_by_id(self, id: UUID, session: Session = Depends(get_session)) -> UserRead:
-        user = await session.exec(select(User).where(User.id == id)).first()
+    async def get_user_by_id(self, id: UUID, session: Session, current_user: User) -> UserRead:
+        user = await session.exec(select(User).where(User.id == id, User.tenant_id == current_user.tenant_id)).first()
         
         if not user:
             raise HTTPException(status_code=404, detail="User not found")

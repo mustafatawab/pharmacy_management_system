@@ -6,15 +6,16 @@ class UserRegister(BaseModel):
     full_name: str
     username: str
     password : str
-    # role : UserRole = UserRole.STAFF
+    # role : UserRole = UserRole.ADMIN
 
 
 class UserCreate(BaseModel):
     full_name: str
     username: str
     password : str
-    role : UserRole = UserRole.STAFF
+    # role : UserRole = UserRole.STAFF
     is_active : bool
+
 
 class UserLogin(BaseModel):
     username: str

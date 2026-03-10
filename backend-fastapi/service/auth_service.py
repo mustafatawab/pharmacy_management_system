@@ -9,11 +9,11 @@ from datetime import timedelta
 
 class AuthService:
 
-    def existing_user(self, username: str, session: Session = Depends(get_session)):
+    def existing_user(self, username: str, session: Session):
         existing_user = session.exec(select(User).where(User.username == username)).first()
         return existing_user
 
-    def register_user(self, user: UserRegister, session: Session = Depends(get_session)):
+    def register_user(self, user: UserRegister, session: Session):
         existing_user = self.existing_user(user.username, session)
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already exists")
