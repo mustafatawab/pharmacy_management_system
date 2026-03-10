@@ -51,8 +51,17 @@ export default function LoginPage() {
         toast.error(response.detail);
         return;
       }
-      router.push("/dashboard");
+      // Check if onboarding is complete
+      const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        credentials: "include",
+      });
+      const me = await meRes.json();
       toast.success("Logged In Successfully");
+      if (!me.tenant_id) {
+        router.push("/onboarding");
+      } else {
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.log(error);
       toast.error("Invalid Credentials");

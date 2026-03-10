@@ -10,7 +10,7 @@ class Supplier(SQLModel, table=True):
     email: str = Field(index=True, unique=True)
     phone: str = Field(index=True, unique=True)
     address: str
-    created_at : str = Field(default=str(datetime.utcnow()))
-    updated_at : str = Field(default=str(datetime.utcnow()))
+    created_at : datetime = Field(default=datetime.utcnow())
+    updated_at : datetime = Field(default=datetime.utcnow())
 
     tenant_id: int = Field(index=True, foreign_key="tenant.id")

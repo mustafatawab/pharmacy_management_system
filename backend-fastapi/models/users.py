@@ -13,12 +13,12 @@ class User(SQLModel, table=True):
     full_name: str = Field(min_length=6)
     username: str = Field(min_length=6 , unique=True)
     hashed_password: str = Field(min_length=6)
-    created_at : str = Field(default=str(datetime.utcnow()))
-    updated_at : str = Field(default=str(datetime.utcnow()))
+    created_at : datetime = Field(default=datetime.utcnow())
+    updated_at : datetime = Field(default=datetime.utcnow())
     role: UserRole = Field(default=UserRole.STAFF)
     is_active: bool = Field(default=True)
 
-    tenant_id : int = Field(foreign_key="tenant.id")
+    tenant_id : int | None = Field(default=None, foreign_key="tenant.id")
 
 
 

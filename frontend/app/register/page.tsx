@@ -52,7 +52,7 @@ export default function LoginPage() {
         return;
       }
       toast.success("Registered Successfully");
-      router.push("/login");
+      router.push("/onboarding");
       setFormValue({
         full_name: "",
         username: "",

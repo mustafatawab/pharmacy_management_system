@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Response
+from fastapi import APIRouter, Depends, status, HTTPException, Response, Cookie
 from models.users import User
 from schemas.user_schema import UserCreate, UserLogin, UserRead, UserRegister
 from database import get_session
@@ -13,18 +13,6 @@ auth_service = AuthService()
 
 @router.post("/register", response_model=UserRead , response_model_exclude={"hashed_password"})
 async def register_user(user: UserRegister,response: Response, session: Session = Depends(get_session)):
-    # existing_user = session.exec(select(User).where(User.username == user.username)).first()
-    # if existing_user:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         detail="Username or email already exists"
-    #     )
-    
-
-    # add_user = User(full_name=user.full_name, role="admin", username=user.username, hashed_password=hash_password(user.password))
-    # session.add(add_user)
-    # session.commit()
-    # session.refresh(add_user)
     result = auth_service.register_user(user=user, session=session)
     response.set_cookie(
         key="access_token",
@@ -38,14 +26,6 @@ async def register_user(user: UserRegister,response: Response, session: Session 
 
 @router.post("/login")
 async def login(user:UserLogin,response: Response, session : Session = Depends(get_session)):
-    # existing_user = session.exec(select(User).where(User.username == user.username)).first()
-    # print("\n Existing user is ",existing_user)
-    # if not existing_user or not verify_password(user.password, existing_user.hashed_password):
-    #     raise HTTPException(
-    #         status_code=status.HTTP_400_BAD_REQUEST,
-    #         detail="Invalid Credentials"
-    #     )
-    # token = create_access_token({"username": existing_user.username} , expire_time=timedelta(days=7))
     result = auth_service.login_user(user=user, session=session)
     response.set_cookie(
         key="access_token",
@@ -64,7 +44,22 @@ def logout(response: Response):
     return {"message" : "Logout Successfully !! "}
 
 
-
-    
-
-
+@router.get("/me")
+def get_me(access_token: str = Cookie(default=None), session: Session = Depends(get_session)):
+    if not access_token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    payload = decode_token(access_token)
+    if not payload:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    username = payload.get("username")
+    user = session.exec(select(User).where(User.username == username)).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    return {
+        "id": str(user.id),
+        "username": user.username,
+        "full_name": user.full_name,
+        "role": user.role,
+        "is_active": user.is_active,
+        "tenant_id": user.tenant_id,
+    }
