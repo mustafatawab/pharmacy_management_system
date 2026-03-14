@@ -15,10 +15,8 @@ user_service = UserService()
 
 @router.get("" , response_model=list[UserRead])
 async def get_all_users(current_user: User = Depends(get_current_user) , session : Session = Depends(get_session)):
-    if  current_user.role != "admin":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can see...")    
-    users = session.exec(select(User)).all()
-    return users
+        
+    return user_service.get_all_user(session=session, current_user=current_user)
     
 
 
@@ -26,11 +24,8 @@ async def get_all_users(current_user: User = Depends(get_current_user) , session
 
 @router.post("", response_model=User , response_model_exclude={"hashed_password"})
 async def create_user(user: UserCreate,current_user: User = Depends(get_current_user),  session: Session = Depends(get_session)):
-    if  current_user.role != "admin":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can create users...")    
     
-
-    add_user = user_service.create_user(user=user, session=session)
+    add_user = user_service.create_user(user=user, session=session, current_user=current_user)
     return add_user
 
 

@@ -17,19 +17,29 @@ class UserService:
 
     def get_all_user(self, session: Session , current_user: User) -> list[UserRead]:
 
+        if  current_user.role != "admin":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can see...")  
+
+        if current_user.tenant_id is None:
+            raise HTTPException(status_code=400, detail="You must create a pharmacy first.")  
+
         users =  session.exec(select(User).where(User.tenant_id == current_user.tenant_id)).all()
         return users
 
     def create_user(self, user: UserCreate, session: Session , current_user: User) -> UserRead:
 
-        if not current_user.tenant_id:
+        if  current_user.role != "admin":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can create users...")    
+    
+
+        if current_user.tenant_id is None:
             raise HTTPException(status_code=400, detail="You must create a pharmacy first.")
         
         existing_user =  self.auth_service.existing_user(user.username, session)
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already exists")
         
-        add_user = User(full_name=user.full_name, username=user.username, hashed_password=hash_password(user.password), tenant_id=current_user.tenant_id)
+        add_user = User(full_name=user.full_name, username=user.username, hashed_password=hash_password(user.password), tenant_id=current_user.tenant_id , role="staff")
         session.add(add_user)
         session.commit()
         session.refresh(add_user)
@@ -44,8 +54,12 @@ class UserService:
         return user
     
 
-    async def update_user(self, id: UUID, update_user: UserUpdate, session: Session = Depends(get_session)) -> UserRead:
-        user = await self.get_user_by_id(id=id, session=session)
+    async def update_user(self, id: UUID, update_user: UserUpdate, session: Session , current_user: User) -> UserRead:
+        
+        if current_user.role != "admin":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can update users...")    
+       
+        user = await self.get_user_by_id(id=id, session=session, current_user=current_user)
 
         user.full_name = update_user.full_name or user.full_name
         user.username = update_user.username or user.username
@@ -59,8 +73,12 @@ class UserService:
         
     
 
-    async def delete_user(self, id: UUID, session: Session = Depends(get_session)) -> UserRead:
-        user = await self.get_user_by_id(id=id, session=session)
+    async def delete_user(self, id: UUID, session: Session, current_user: User) -> UserRead:
+
+        if  current_user.role != "admin":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Only Admin can delete users...")    
+        
+        user = await self.get_user_by_id(id=id, session=session, current_user=current_user)
 
         if user.role == "admin":
             raise HTTPException(status_code=400, detail="Admin cannot be deleted")
