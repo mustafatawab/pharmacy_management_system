@@ -70,7 +70,7 @@ async def setup_tenant(
     # session.commit()
     # session.refresh(current_user)
 
-    added_tenant = await tenant_service.create_tenant(tenant_data, session, current_user)
+    added_tenant =  tenant_service.create_tenant(tenant_data, session, current_user)
 
     return added_tenant
 

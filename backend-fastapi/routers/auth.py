@@ -1,3 +1,4 @@
+from auth.dependency import get_current_user
 from fastapi import APIRouter, Depends, status, HTTPException, Response, Cookie
 from models.users import User
 from schemas.user_schema import UserCreate, UserLogin, UserRead, UserRegister
@@ -44,22 +45,24 @@ def logout(response: Response):
     return {"message" : "Logout Successfully !! "}
 
 
-@router.get("/me")
-def get_me(access_token: str = Cookie(default=None), session: Session = Depends(get_session)):
-    if not access_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    payload = decode_token(access_token)
-    if not payload:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    username = payload.get("username")
-    user = session.exec(select(User).where(User.username == username)).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    return {
-        "id": str(user.id),
-        "username": user.username,
-        "full_name": user.full_name,
-        "role": user.role,
-        "is_active": user.is_active,
-        "tenant_id": user.tenant_id,
-    }
+@router.get("/me" , response_model=UserRead)
+def get_me(current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+    # if not access_token:
+    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+    # payload = decode_token(access_token)
+    # if not payload:
+    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+    # username = payload.get("username")
+    # user = session.exec(select(User).where(User.username == username)).first()
+    # if not user:
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    # return {
+    #     "id": str(user.id),
+    #     "username": user.username,
+    #     "full_name": user.full_name,
+    #     "role": user.role,
+    #     "is_active": user.is_active,
+    #     "tenant_id": user.tenant_id,
+    # }
+
+    return current_user
