@@ -39,3 +39,20 @@ async def get_current_user(request: Request, session: Session = Depends(get_sess
 
 
 
+
+
+async def require_admin_with_tenant(current_user: User = Depends(get_current_user)) -> User:
+    
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to perform this action"
+        )
+    
+    if current_user.tenant_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No pharmacy setup found. Please create a tenant first"
+        )
+    
+    return current_user

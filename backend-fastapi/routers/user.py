@@ -19,15 +19,11 @@ async def get_all_users(current_user: User = Depends(get_current_user) , session
     return user_service.get_all_user(session=session, current_user=current_user)
     
 
-
-
-
 @router.post("", response_model=User , response_model_exclude={"hashed_password"})
 async def create_user(user: UserCreate,current_user: User = Depends(get_current_user),  session: Session = Depends(get_session)):
     
     add_user = user_service.create_user(user=user, session=session, current_user=current_user)
     return add_user
-
 
 
 @router.get("/me" , response_model_exclude={"hashed_password"} , response_model=UserRead)
