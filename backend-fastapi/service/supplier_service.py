@@ -6,88 +6,77 @@ from models.supplier import Supplier as SupplierModel
 from uuid import UUID, uuid4
 
 class SupplierService:
-
     def __init__(self):
         pass
 
-
-
-    
-    def check_supplier_by_email(self,  email: str , session: Session = Depends(get_session)):
-        supplier = session.exec(select(SupplierModel).where(SupplierModel.email == email)).first()
+    def check_supplier_by_email(self, email: str, session: Session, tenant_id: int):
+        supplier = session.exec(select(SupplierModel).where(
+            SupplierModel.email == email,
+            SupplierModel.tenant_id == tenant_id
+        )).first()
 
         if supplier:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exist for supplier")
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already exist for supplier in this pharmacy")
         
         return supplier
 
-
-    
-    def check_supplier_by_phone(self, phone: str , session: Session = Depends(get_session)):
-        supplier = session.exec(select(SupplierModel).where(SupplierModel.phone == phone)).first()
+    def check_supplier_by_phone(self, phone: str, session: Session, tenant_id: int):
+        supplier = session.exec(select(SupplierModel).where(
+            SupplierModel.phone == phone,
+            SupplierModel.tenant_id == tenant_id
+        )).first()
         
         if supplier:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Phone already exist for supplier")
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Phone already exist for supplier in this pharmacy")
 
         return supplier
 
-    
-    def check_supplier_by_id(self, id: UUID, session: Session = Depends(get_session)):
+    def get_supplier_by_id(self, id: UUID, session: Session, tenant_id: int):
+        supplier = session.exec(select(SupplierModel).where(
+            SupplierModel.id == id,
+            SupplierModel.tenant_id == tenant_id
+        )).first()
 
-        supplier = session.exec(select(SupplierModel).where(SupplierModel.id == id)).first()
-
-        if supplier:
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT , detail="Supplier not found")
+        if not supplier:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Supplier not found")
 
         return supplier
-    
 
-    def get_all_suppliers(self, session : Session = Depends(get_session)) -> list[SupplierRead]:
-
-        suppliers = session.exec(select(SupplierModel)).all()
-
+    def get_all_suppliers(self, session: Session, tenant_id: int) -> list[SupplierModel]:
+        suppliers = session.exec(select(SupplierModel).where(SupplierModel.tenant_id == tenant_id)).all()
         return suppliers
 
+    def create_supplier(self, supplier: SupplierCreate, session: Session, tenant_id: int):
+        self.check_supplier_by_email(supplier.email, session=session, tenant_id=tenant_id)
+        self.check_supplier_by_phone(supplier.phone, session=session, tenant_id=tenant_id)
 
-    def create_supplier(self, supplier: SupplierCreate, session: Session = Depends(get_session)):
-
-        self.check_supplier_by_email(supplier.email, session=session)
-        self.check_supplier_by_phone(supplier.phone, session=session)
-
-        new_supplier = SupplierModel(**supplier.model_dump())
+        new_supplier = SupplierModel(**supplier.model_dump(), tenant_id=tenant_id)
 
         session.add(new_supplier)
         session.commit()
         session.refresh(new_supplier)
         return new_supplier
-    
 
-    def update_supplier(self, id: UUID, supplier : SuppplierUpdate, session: Session = Depends(get_session)):
+    def update_supplier(self, id: UUID, supplier_data: SuppplierUpdate, session: Session, tenant_id: int):
+        existing_supplier = self.get_supplier_by_id(id=id, session=session, tenant_id=tenant_id)
 
-        exisiting_supplier = self.check_supplier_by_id(id=id, session=session)
+        update_data = supplier_data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(existing_supplier, key, value)
 
-        exisiting_supplier.email = supplier.email or exisiting_supplier.email
-        exisiting_supplier.phone = supplier.phone or exisiting_supplier.phone
-        exisiting_supplier.address = supplier.address or exisiting_supplier.address
-        exisiting_supplier.company_name = supplier.company_name or exisiting_supplier.company_name
-        exisiting_supplier.contact_person = supplier.contact_person or exisiting_supplier.contact_person
-
-        session.add(exisiting_supplier)
+        session.add(existing_supplier)
         session.commit()
-        session.refresh(exisiting_supplier)
+        session.refresh(existing_supplier)
 
-        return exisiting_supplier
+        return existing_supplier
 
-    
-
-    def delete_supplier(self, id: UUID, session : Session = Depends(get_session)):
-
-        existing_supplier = self.check_supplier_by_id(id=id, session=session)
+    def delete_supplier(self, id: UUID, session: Session, tenant_id: int):
+        existing_supplier = self.get_supplier_by_id(id=id, session=session, tenant_id=tenant_id)
 
         session.delete(existing_supplier)
         session.commit()
 
-        return {"message" : f"{existing_supplier.company_name} has been deleted successfully"}
+        return {"message": f"{existing_supplier.company_name} has been deleted successfully"}
 
 
         
