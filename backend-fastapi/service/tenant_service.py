@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 from database import get_session
 from fastapi import HTTPException, Depends
 from auth.dependency import get_current_user
+from datetime import datetime
 
 class TenantService:
 

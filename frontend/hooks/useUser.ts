@@ -65,16 +65,18 @@ const updateUser = async (data: {
   id: string;
   full_name: string;
   username: string;
-  password: string;
+  password?: string;
   is_active: boolean;
 }) => {
-  const res = await fetch(`${API_URL}/user/${data.id}`, {
+  // Remove id from body, it goes in the URL
+  const { id, ...updateData } = data;
+  const res = await fetch(`${API_URL}/user/${id}`, {
     method: "PUT",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(updateData),
   });
   const response = await res.json();
   if (!res.ok) {
@@ -124,16 +126,12 @@ export function useUpdateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      data,
-    }: {
-      data: {
-        id: string;
-        full_name: string;
-        username: string;
-        password: string;
-        is_active: boolean;
-      };
+    mutationFn: (data: {
+      id: string;
+      full_name: string;
+      username: string;
+      password?: string;
+      is_active: boolean;
     }) => updateUser(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

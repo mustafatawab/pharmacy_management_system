@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr
 from models.users import UserRole
 from uuid import UUID
 from datetime import datetime
+from typing import Optional
 
 class UserRegister(BaseModel):
     full_name: str
@@ -35,8 +36,8 @@ class UserRead(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    full_name: str = None
-    username: str = None
-    password : str = None
-    role : UserRole = None
-    is_active : bool = None
+    full_name: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[UserRole] = None
+    is_active: Optional[bool] = None

@@ -5,6 +5,7 @@ import {
   Pencil,
   Trash2,
   Eye,
+  EyeOff,
   LoaderCircle,
 } from "lucide-react";
 import { Modal } from "../modal";
@@ -34,30 +35,42 @@ export function UserTable({ users }: UserTableProps) {
     full_name: "",
     username: "",
     password: "",
-    is_active: false,
   });
+  const [isActive, setIsActive] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const updateUserMutation = useUpdateUser();
 
   const onHandleUpadateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setUserFormValue((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const { name, value, type } = e.target;
+
+    if (name === "is_active") {
+      setIsActive(e.target.checked);
+    } else {
+      setUserFormValue((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? e.target.checked : value,
+      }));
+    }
   };
 
   const handleUpdateUser = () => {
     updateUserMutation.mutate(
-      { data: userFormValue },
+      {
+        id: userFormValue.id,
+        full_name: userFormValue.full_name,
+        username: userFormValue.username,
+        password: userFormValue.password || undefined,
+        is_active: isActive,
+      },
       {
         onSuccess: () => {
           setIsUpdateModal(false);
           setSelectedUserId(null);
           toast.success("User updated successfully");
         },
-        onError: () => {
-          toast.error("Failed to update user");
+        onError: (error: any) => {
+          toast.error(error?.response?.data?.detail || "Failed to update user");
         },
       },
     );
@@ -188,9 +201,9 @@ export function UserTable({ users }: UserTableProps) {
                           id: user.id,
                           full_name: user.full_name,
                           username: user.username,
-                          is_active: user.is_active,
                           password: "",
                         });
+                        setIsActive(user.is_active);
                       }}
                       className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
                     >
@@ -206,9 +219,13 @@ export function UserTable({ users }: UserTableProps) {
                         setSelectedUserId(user.id);
                         setIsDeleteModal(true);
                       }}
-                      className="rounded-full p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                      className="rounded-full p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      {deleteUser.isPending ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </td>
@@ -247,16 +264,21 @@ export function UserTable({ users }: UserTableProps) {
               {/* Confirm */}
               <button
                 onClick={handleDeleteUser}
+                disabled={deleteUser.isPending}
                 className="
                   flex items-center justify-center border border-blue-700
                   rounded-md bg-primary-600 hover:bg-primary-700
                   px-5 py-2 text-sm font-medium
                   text-blue-700
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-                  focus-visible:ring-primary-500
+                  focus-visible:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed
                 "
               >
-                Yes, delete
+                {deleteUser.isPending ? (
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Yes, delete"
+                )}
               </button>
             </div>
           </div>
@@ -316,13 +338,23 @@ export function UserTable({ users }: UserTableProps) {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={userFormValue.password}
                   onChange={onHandleUpadateChange}
                   placeholder="Leave Empty to Keep Same"
                   className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
                 />
-                <Eye className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 cursor-pointer" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
             </div>
 
@@ -340,8 +372,8 @@ export function UserTable({ users }: UserTableProps) {
               <input
                 type="checkbox"
                 id="activeUser"
-                checked={userFormValue.is_active}
-                onChange={onHandleUpadateChange}
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
                 name="is_active"
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
@@ -366,7 +398,7 @@ export function UserTable({ users }: UserTableProps) {
                 className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {updateUserMutation.isPending ? (
-                  <LoaderCircle className="animate-spin" />
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
                 ) : (
                   "Update User"
                 )}

@@ -45,14 +45,14 @@ class UserService:
     def update_user(self, id: UUID, update_user_data: UserUpdate, session: Session, current_user: User) -> User:
         user = self.get_user_by_id(id=id, session=session, current_user=current_user)
 
-        if update_user_data.full_name:
+        if update_user_data.full_name is not None:
             user.full_name = update_user_data.full_name
-        if update_user_data.username:
+        if update_user_data.username is not None:
             user.username = update_user_data.username
-        if update_user_data.password:
+        if update_user_data.password is not None:
             user.hashed_password = hash_password(update_user_data.password)
-
-        user.is_active = update_user_data.is_active 
+        if update_user_data.is_active is not None:
+            user.is_active = update_user_data.is_active
 
         session.add(user)
         session.commit()
