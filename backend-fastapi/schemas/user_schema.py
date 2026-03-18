@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from models.users import UserRole
 from uuid import UUID
+from datetime import datetime
 
 class UserRegister(BaseModel):
     full_name: str
@@ -28,8 +29,9 @@ class UserRead(BaseModel):
     full_name: str
     role: UserRole
     is_active: bool
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
+    tenant_id: int | None = None
 
 
 class UserUpdate(BaseModel):

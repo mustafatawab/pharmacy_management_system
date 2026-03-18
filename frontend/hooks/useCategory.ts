@@ -1,26 +1,25 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-
-const getCategories = async () => {
-    const res = await fetch(`${API_URL}/category`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
+export const useCategories = () => {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await api.get("/category");
+      return data;
     },
   });
+};
 
-  const result = await res.json();
-  if (!res.ok) {
-    throw new Error(result?.detail || "Failed to fetch users");
-  }
-
-  return result;
-}
+export const useCreateCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (newCategory: any) => {
+      const { data } = await api.post("/category", newCategory);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+};

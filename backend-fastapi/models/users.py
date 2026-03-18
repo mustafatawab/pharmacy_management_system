@@ -1,8 +1,12 @@
-from sqlmodel import SQLModel, Field
+from typing import Optional, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
 from pydantic import BaseModel, EmailStr
 from datetime import date, datetime
 from enum import Enum
 from uuid import UUID, uuid4
+
+if TYPE_CHECKING:
+    from models.tenant import Tenant
 
 class UserRole(str , Enum):
     ADMIN = "admin"
@@ -19,6 +23,9 @@ class User(SQLModel, table=True):
     is_active: bool = Field(default=True)
 
     tenant_id : int | None = Field(default=None, foreign_key="tenant.id")
+
+    # Relationship
+    tenant: Optional["Tenant"] = Relationship(back_populates="users")
 
 
 

@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 from database import get_session
 from models.tenant import Tenant
 from models.users import User
-from schemas.tenant_schema import TenantCreate, TenantRead
+from schemas.tenant_schema import TenantCreate, TenantRead, TenantUpdate
 from auth.security import decode_token
 from auth.dependency import get_current_user
 from fastapi import Cookie
@@ -82,3 +82,14 @@ async def get_my_tenant(
 ):
     tenant = tenant_service.get_tenant_by_id(session, current_user)
     return tenant
+
+
+@router.put("/{id}", response_model=TenantRead)
+async def update_tenant(
+    id: int,
+    tenant_data: TenantUpdate,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    updated_tenant = tenant_service.update_tenant(id, tenant_data, session, current_user)
+    return updated_tenant

@@ -10,9 +10,10 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from models.tenant import Tenant
 from models.users import User
-from models.medicine import Product
+from models.medicine import Medicine
 from models.category import Category
 from models.supplier import Supplier
+from models.product_batch import ProductBatch
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -62,7 +62,11 @@ class MedicineListResponse(BaseModel):
 class MedicineFilter(BaseModel):
     search: Optional[str] = None
     category: Optional[str] = None
-    is_active: Optional[bool] = True
+    is_active: Optional[bool] = None
     min_price: Optional[Decimal] = None
     max_price: Optional[Decimal] = None
+    sort_by: Optional[str] = "name" # name, price, quantity, created_at
+    sort_order: Optional[str] = "asc" # asc, desc
+    page: int = 1
+    page_size: int = 10
 

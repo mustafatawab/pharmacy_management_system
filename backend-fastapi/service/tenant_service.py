@@ -97,8 +97,36 @@ class TenantService:
         result = session.exec(select(Tenant)).all()
         return result
 
-    def update_tenant(self, tenant_id: int, tenant: TenantUpdate, session: Session) -> Tenant | None:
-        pass
+    def update_tenant(self, tenant_id: int, tenant_data: TenantUpdate, session: Session, current_user: User) -> Tenant:
+        if current_user.tenant_id != tenant_id:
+            raise HTTPException(status_code=403, detail="You are not authorized to update this pharmacy")
+        
+        db_tenant = self.check_tenant_by_id(tenant_id, session)
+        
+        update_data = tenant_data.model_dump(exclude_unset=True)
+        
+        # If phone is being updated, check if it already exists for another tenant
+        if "phone" in update_data and update_data["phone"] != db_tenant.phone:
+            existing_phone = session.exec(select(Tenant).where(Tenant.phone == update_data["phone"], Tenant.id != tenant_id)).first()
+            if existing_phone:
+                raise HTTPException(status_code=400, detail="Tenant with this phone number already exists")
+        
+        # If email is being updated, check if it already exists for another tenant
+        if "email" in update_data and update_data["email"] != db_tenant.email:
+            existing_email = session.exec(select(Tenant).where(Tenant.email == update_data["email"], Tenant.id != tenant_id)).first()
+            if existing_email:
+                raise HTTPException(status_code=400, detail="Tenant with this email already exists")
+
+        for key, value in update_data.items():
+            setattr(db_tenant, key, value)
+        
+        db_tenant.updated_at = datetime.now()
+        
+        session.add(db_tenant)
+        session.commit()
+        session.refresh(db_tenant)
+        
+        return db_tenant
 
     def delete_tenant(self, tenant_id: int , session: Session) -> dict:
         

@@ -1,30 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Pill, Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { useState } from "react";
+import { Pill, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function LoginPage() {
-  const router = useRouter();
-
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const [formValue, setFormValue] = useState({
     username: "",
-
     password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-
     const { name, value } = e.target;
-
     setFormValue((prev) => ({
       ...prev,
       [name]: value,
@@ -34,37 +26,10 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate login delay
-
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: "POST",
-        body: JSON.stringify(formValue),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-      const response = await res.json();
-
-      if (!res.ok) {
-        toast.error(response.detail);
-        return;
-      }
-      // Check if onboarding is complete
-      const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-        credentials: "include",
-      });
-      const me = await meRes.json();
-      toast.success("Logged In Successfully");
-      if (!me.tenant_id) {
-        router.push("/onboarding");
-      } else {
-        router.push("/dashboard");
-      }
+      await login(formValue);
     } catch (error) {
-      console.log(error);
-      toast.error("Invalid Credentials");
+      // Error handled in login function
     } finally {
       setLoading(false);
     }
@@ -142,26 +107,17 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-blue-500/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
           >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                {" "}
-                <Loader2Icon /> Signing in...
-              </span>
-            ) : (
-              "Sign in"
-            )}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
         <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-          <div className="text-xs text-gray-600 space-y-1   rounded-lg inline-block text-left">
-            <p>
-              <span className="font-bold text-gray-800">
-                Don&apos;t Have an Account ?{" "}
-              </span>
-              <Link href={"/register"}>Register Here</Link>
-            </p>
-          </div>
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link href="/register" className="text-blue-600 font-semibold hover:underline">
+              Register Here
+            </Link>
+          </p>
         </div>
       </div>
     </div>

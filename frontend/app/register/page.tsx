@@ -1,28 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Pill, Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { Pill, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import toast from "react-hot-toast";
+import { useAuth } from "@/providers/AuthProvider";
 
-export default function LoginPage() {
-  const router = useRouter();
+export default function RegisterPage() {
+  const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [formValue, setFormValue] = useState({
     full_name: "",
     username: "",
-    email: "",
     password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-
     const { name, value } = e.target;
-
     setFormValue((prev) => ({
       ...prev,
       [name]: value,
@@ -32,35 +27,10 @@ export default function LoginPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate login delay
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify(formValue),
-        },
-      );
-      const response = await res.json();
-
-      if (!res.ok) {
-        toast.error(response.detail);
-        return;
-      }
-      toast.success("Registered Successfully");
-      router.push("/onboarding");
-      setFormValue({
-        full_name: "",
-        username: "",
-        email: "",
-        password: "",
-      });
+      await register(formValue);
     } catch (error) {
-      toast.error("Something went wrong");
+      // Error is handled in register function via toast
     } finally {
       setLoading(false);
     }
@@ -84,7 +54,7 @@ export default function LoginPage() {
         <form onSubmit={handleRegister} className="space-y-6">
           <div className="space-y-2">
             <label
-              htmlFor="username"
+              htmlFor="full_name"
               className="text-sm font-semibold text-gray-700 block"
             >
               Full Name
@@ -161,14 +131,12 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 pt-6 border-t border-gray-100 text-center">
-          <div className="text-xs text-gray-600 space-y-1   rounded-lg inline-block text-left">
-            <p>
-              <span className="font-bold text-gray-800">
-                Already Have an Account ?{" "}
-              </span>
-              <Link href={"/login"}>Login Here</Link>
-            </p>
-          </div>
+          <p className="text-sm text-gray-600">
+            Already Have an Account?{" "}
+            <Link href="/login" className="text-blue-600 font-semibold hover:underline">
+              Login Here
+            </Link>
+          </p>
         </div>
       </div>
     </div>

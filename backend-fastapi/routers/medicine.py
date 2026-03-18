@@ -1,6 +1,6 @@
 from database import get_session
 from fastapi import FastAPI, APIRouter, Depends, HTTPException
-from schemas.medicine_schema import MedicineCreate, MedicineRead, MedicineFilter, MedicineUpdate
+from schemas.medicine_schema import MedicineCreate, MedicineRead, MedicineFilter, MedicineUpdate, MedicineListResponse
 from models.medicine import Medicine
 from models.users import User
 from service.medicine_service import MedicineService
@@ -20,12 +20,13 @@ async def create_medicine(
 ):
     return medicine_service.create_medicine(data=medicine, session=session, current_user=current_user)
 
-@router.get("/", response_model=list[MedicineRead])
+@router.get("/", response_model=MedicineListResponse)
 async def get_all_medicines(
+    filters: MedicineFilter = Depends(),
     session: Session = Depends(get_session),
     current_user: User = Depends(require_admin_with_tenant)
 ):
-    return medicine_service.get_all_medicines(session=session, current_user=current_user)
+    return medicine_service.get_all_medicines(session=session, current_user=current_user, filters=filters)
 
 
 @router.get("/{id}", response_model=MedicineRead)

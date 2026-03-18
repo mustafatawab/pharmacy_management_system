@@ -1,5 +1,12 @@
-from sqlmodel import SQLModel, Field
+from typing import List, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from models.users import User
+    from models.medicine import Medicine
+    from models.category import Category
+    from models.supplier import Supplier
 
 class Tenant(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -16,6 +23,12 @@ class Tenant(SQLModel, table=True):
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
+
+    # Relationships
+    users: List["User"] = Relationship(back_populates="tenant")
+    medicines: List["Medicine"] = Relationship(back_populates="tenant")
+    categories: List["Category"] = Relationship(back_populates="tenant")
+    suppliers: List["Supplier"] = Relationship(back_populates="tenant")
     
 
     

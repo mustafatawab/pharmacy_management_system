@@ -5,9 +5,35 @@ import { InventoryTable } from "@/components/inventory-table";
 import { AddProductModal } from "@/components/add-product-modal";
 import { AlertTriangle, Calendar, Package, Plus } from "lucide-react";
 import { useState } from "react";
+import { useMedicines, MedicineFilter } from "@/hooks/useMedicine";
 
 export default function InventoryPage() {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+  const [filters, setFilters] = useState<MedicineFilter>({
+    page: 1,
+    page_size: 10,
+    search: "",
+    sort_by: "name",
+    sort_order: "asc",
+  });
+
+  const { data, isLoading } = useMedicines(filters);
+
+  const handleSearch = (search: string) => {
+    setFilters((prev) => ({ ...prev, search, page: 1 }));
+  };
+
+  const handlePageChange = (page: number) => {
+    setFilters((prev) => ({ ...prev, page }));
+  };
+
+  const handleSort = (sort_by: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      sort_by,
+      sort_order: prev.sort_by === sort_by && prev.sort_order === "asc" ? "desc" : "asc",
+    }));
+  };
 
   return (
     <div className="space-y-6">
@@ -32,21 +58,21 @@ export default function InventoryPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <InventorySummaryCard
           title="Total Products"
-          value="4"
+          value={data?.total?.toString() || "0"}
           icon={<Package className="h-6 w-6" />}
           iconBgColor="bg-blue-50"
           iconColor="text-blue-600"
         />
         <InventorySummaryCard
           title="Low Stock"
-          value="1"
+          value="-"
           icon={<AlertTriangle className="h-6 w-6" />}
           iconBgColor="bg-red-50"
           iconColor="text-red-600"
         />
         <InventorySummaryCard
           title="Expiring Soon"
-          value="4"
+          value="-"
           icon={<Calendar className="h-6 w-6" />}
           iconBgColor="bg-amber-50"
           iconColor="text-amber-600"
@@ -54,52 +80,16 @@ export default function InventoryPage() {
       </div>
 
       <InventoryTable
-        products={[
-          {
-            id: "1",
-            name: "Paracetamol 500mg",
-            batch: "PAR001",
-            category: "Pain Relief",
-            price: "USD $5.99",
-            stock: 150,
-            minStock: 20,
-            expiry: "31/12/2025",
-            status: "Expiring Soon",
-          },
-          {
-            id: "2",
-            name: "Amoxicillin 250mg",
-            batch: "AMO002",
-            category: "Antibiotics",
-            price: "USD $12.50",
-            stock: 8,
-            minStock: 15,
-            expiry: "30/06/2024",
-            status: "Low Stock",
-          },
-          {
-            id: "3",
-            name: "Vitamin C 1000mg",
-            batch: "VTC003",
-            category: "Vitamins",
-            price: "USD $8.75",
-            stock: 75,
-            minStock: 25,
-            expiry: "15/03/2026",
-            status: "Expiring Soon",
-          },
-          {
-            id: "4",
-            name: "Insulin Pen",
-            batch: "INS004",
-            category: "Diabetes Care",
-            price: "USD $35.00",
-            stock: 12,
-            minStock: 10,
-            expiry: "20/08/2024",
-            status: "Expiring Soon",
-          },
-        ]}
+        medicines={data?.items || []}
+        isLoading={isLoading}
+        total={data?.total || 0}
+        page={filters.page || 1}
+        pageSize={filters.page_size || 10}
+        onPageChange={handlePageChange}
+        onSearch={handleSearch}
+        onSort={handleSort}
+        currentSort={filters.sort_by}
+        sortOrder={filters.sort_order}
       />
     </div>
   );

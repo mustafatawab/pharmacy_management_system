@@ -4,7 +4,7 @@ from sqlmodel import SQLModel, Session, select
 from database import get_session
 from models.users import User
 from schemas.user_schema import UserCreate, UserUpdate, UserRead, UserRegister, UserLogin
-from auth.security import hash_password, verify_password, create_access_token
+from auth.security import hash_password, verify_password, create_access_token, create_refresh_token
 from datetime import timedelta
 
 class AuthService:
@@ -23,30 +23,32 @@ class AuthService:
         session.commit()
         session.refresh(add_user)
 
-        token = create_access_token({"username": add_user.username} , expire_time=timedelta(days=7))
+        access_token = create_access_token({"username": add_user.username})
+        refresh_token = create_refresh_token({"username": add_user.username})
 
-        return {"token" : token, "message" : "User registered successfully" , "user" : add_user}
+        return {
+            "access_token": access_token, 
+            "refresh_token": refresh_token,
+            "message": "User registered successfully", 
+            "user": add_user
+        }
     
-    def login_user(self, user: UserLogin , session: Depends =  Depends(get_session)):
+    def login_user(self, user: UserLogin, session: Session):
         existing_user = self.existing_user(user.username, session)
         if not existing_user:
             raise HTTPException(status_code=404, detail="User not found")
         
-
-        if not verify_password(user.password , existing_user.hashed_password):
+        if not verify_password(user.password, existing_user.hashed_password):
             raise HTTPException(status_code=400, detail="Invalid credentials")
         
-        token = create_access_token({"username": existing_user.username} , expire_time=timedelta(days=7))
+        access_token = create_access_token({"username": existing_user.username})
+        refresh_token = create_refresh_token({"username": existing_user.username})
 
-        # response.set_cookie(
-        #     key="access_token",
-        #     value=token,
-        #     httponly=True,
-        #     secure=True,
-        #     samesite="lax"
-        # )
-
-        return {"token" : token, "message" : "Login successfully"}
+        return {
+            "access_token": access_token, 
+            "refresh_token": refresh_token,
+            "message": "Login successfully"
+        }
 
 
     

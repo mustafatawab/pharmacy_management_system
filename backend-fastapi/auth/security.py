@@ -32,8 +32,26 @@ def create_access_token(data: dict , expire_time: timedelta | None = None) -> st
     return jwt.encode(to_encode , settings.jwt_secret , settings.jwt_algorithm)
 
 
+def create_refresh_token(data: dict, expire_time: timedelta | None = None) -> str:
+    """ Create JWT Refresh Token for the login """
+    to_encode = data.copy()
+
+    expire = datetime.utcnow() + (expire_time or timedelta(days=settings.refresh_token_expire_days))
+
+    to_encode.update({"exp": expire})
+
+    return jwt.encode(to_encode, settings.jwt_refresh_secret, settings.jwt_algorithm)
+
+
 def decode_token(token) -> dict | None:
     try:
         return jwt.decode(token, settings.jwt_secret , settings.jwt_algorithm)
+    except JWTError:
+        return None
+
+
+def decode_refresh_token(token: str) -> dict | None:
+    try:
+        return jwt.decode(token, settings.jwt_refresh_secret, settings.jwt_algorithm)
     except JWTError:
         return None

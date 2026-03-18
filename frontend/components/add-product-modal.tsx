@@ -1,7 +1,11 @@
 "use client";
 
 import { Modal } from "@/components/modal";
-import { Package } from "lucide-react";
+import { Package, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useCreateMedicine } from "@/hooks/useMedicine";
+import { useCategories } from "@/hooks/useCategory";
+import { toast } from "react-hot-toast";
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -9,22 +13,77 @@ interface AddProductModalProps {
 }
 
 export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
+  const { data: categories, isLoading: isLoadingCategories } = useCategories();
+  const createMedicine = useCreateMedicine();
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    category: "",
+    unit: "tablet",
+    quantity: 0,
+    selling_price: 0,
+    purchase_price: 0,
+    is_active: true,
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? parseFloat(value) : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.category) {
+      toast.error("Please select a category");
+      return;
+    }
+    setLoading(true);
+    try {
+      await createMedicine.mutateAsync(formData);
+      toast.success("Medicine added successfully");
+      onClose();
+      setFormData({
+        name: "",
+        description: "",
+        category: "",
+        unit: "tablet",
+        quantity: 0,
+        selling_price: 0,
+        purchase_price: 0,
+        is_active: true,
+      });
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Failed to add medicine");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add New Product"
+      title="Add New Medicine"
       icon={<Package className="h-6 w-6" />}
     >
-      <form className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Product Name <span className="text-red-500">*</span>
+              Medicine Name <span className="text-red-500">*</span>
             </label>
             <input
+              name="name"
               type="text"
-              placeholder="Enter product name"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter medicine name"
               className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
@@ -32,43 +91,47 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
               Category <span className="text-red-500">*</span>
             </label>
-            <select className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-transparent">
+            <select 
+              name="category"
+              required
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
+            >
               <option value="">Select category</option>
-              <option value="pain-relief">Pain Relief</option>
-              <option value="antibiotics">Antibiotics</option>
-              {/* Add more categories */}
+              {categories?.map((cat: any) => (
+                <option key={cat.id} value={cat.name}>{cat.name}</option>
+              ))}
             </select>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Selling Price (USD) <span className="text-red-500">*</span>
+              Selling Price (PKR) <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-100">
-                $
-              </span>
-              <input
-                type="number"
-                placeholder="0.00"
-                className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-              />
-            </div>
+            <input
+              name="selling_price"
+              type="number"
+              required
+              value={formData.selling_price}
+              onChange={handleChange}
+              placeholder="0.00"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Cost Price (USD) <span className="text-red-500">*</span>
+              Purchase Price (PKR) <span className="text-red-500">*</span>
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-100">
-                $
-              </span>
-              <input
-                type="number"
-                placeholder="0.00"
-                className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-              />
-            </div>
+            <input
+              name="purchase_price"
+              type="number"
+              required
+              value={formData.purchase_price}
+              onChange={handleChange}
+              placeholder="0.00"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            />
           </div>
 
           <div className="space-y-2">
@@ -76,59 +139,31 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               Stock Quantity <span className="text-red-500">*</span>
             </label>
             <input
+              name="quantity"
               type="number"
+              required
+              value={formData.quantity}
+              onChange={handleChange}
               placeholder="0"
               className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Minimum Stock Level <span className="text-red-500">*</span>
+              Unit <span className="text-red-500">*</span>
             </label>
-            <input
-              type="number"
-              placeholder="0"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Barcode
-            </label>
-            <input
-              type="text"
-              placeholder="Enter barcode"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Expiry Date <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="date"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Batch Number <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Enter batch number"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-100">
-              Supplier
-            </label>
-            <select className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-transparent">
-              <option value="">Select supplier</option>
-              <option value="supplier-a">Supplier A</option>
+            <select
+              name="unit"
+              required
+              value={formData.unit}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
+            >
+              <option value="tablet">Tablet</option>
+              <option value="bottle">Bottle</option>
+              <option value="strip">Strip</option>
+              <option value="box">Box</option>
+              <option value="injection">Injection</option>
             </select>
           </div>
         </div>
@@ -138,25 +173,30 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             Description
           </label>
           <textarea
-            rows={4}
-            placeholder="Enter product description"
+            name="description"
+            rows={3}
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Enter medicine description"
             className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-[#2F2F2F]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border rounded-lg text-sm font-medium text-gray-700 dark:text-gray-100 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 border rounded-lg text-sm font-medium text-gray-700 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-[#212121] transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20"
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20 flex items-center gap-2"
           >
-            Add Product
+            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+            Add Medicine
           </button>
         </div>
       </form>
