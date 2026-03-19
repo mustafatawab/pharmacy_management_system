@@ -70,27 +70,22 @@ export function UserTable({ users }: UserTableProps) {
           toast.success("User updated successfully");
         },
         onError: (error: any) => {
-          toast.error(error?.response?.data?.detail || "Failed to update user");
+          toast.error(error.message || "Failed to update user");
         },
       },
     );
   };
 
   const handleDeleteUser = () => {
-    console.log(selectedUserId);
     if (selectedUserId) {
-      // deleteUser.mutate(selectedUserId);
-      // setIsModalOpen(false);
-      // setSelectedUserId(null);
-      // toast.success("User deleted successfully");
       deleteUser.mutate(selectedUserId, {
         onSuccess: () => {
           setIsDeleteModal(false);
           setSelectedUserId(null);
           toast.success("User deleted successfully");
         },
-        onError: () => {
-          toast.error("Failed to delete user");
+        onError: (error: any) => {
+          toast.error(error.message || "Failed to delete user");
         },
       });
     }
@@ -384,26 +379,26 @@ export function UserTable({ users }: UserTableProps) {
                 Active User
               </label>
             </div>
+          </div>
 
-            <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-[#2F2F2F]">
-              <button
-                onClick={() => setIsUpdateModal(false)}
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#2F2F2F] dark:text-gray-300 dark:hover:bg-[#2F2F2F]"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdateUser}
-                disabled={updateUserMutation.isPending}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {updateUserMutation.isPending ? (
-                  <LoaderCircle className="h-4 w-4 animate-spin" />
-                ) : (
-                  "Update User"
-                )}
-              </button>
-            </div>
+          <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-gray-100 dark:border-[#2F2F2F]">
+            <button
+              onClick={() => setIsUpdateModal(false)}
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#2F2F2F] dark:text-gray-300 dark:hover:bg-[#2F2F2F]"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleUpdateUser}
+              disabled={updateUserMutation.isPending}
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {updateUserMutation.isPending ? (
+                <LoaderCircle className="h-4 w-4 animate-spin" />
+              ) : (
+                "Update User"
+              )}
+            </button>
           </div>
         </Modal>
       </div>
