@@ -15,7 +15,7 @@ services:
     backend:
         container_name: "pharmacy_mangement_system_backend"
         build:
-            context: ./backend
+            context: ./backend-fastapi
             dockerfile: Dockerfile
         ports:
             - "8000:8000"
