@@ -15,7 +15,7 @@ def get_all_category(
     session: Session = Depends(get_session),
     current_user: User = Depends(require_admin_with_tenant)
 ):
-    return category_service.get_all_category(session, current_user.tenant_id)
+    return category_service.get_all_category(session, current_user)
 
 @router.post("/", response_model=CategoryRead)
 def create_category(
@@ -23,7 +23,9 @@ def create_category(
     session: Session = Depends(get_session),
     current_user: User = Depends(require_admin_with_tenant)
 ):
-    return category_service.create_category(category, session, current_user.tenant_id)
+    return category_service.create_category(category, session, current_user)
+
+
 
 @router.get("/{id}", response_model=CategoryRead)
 def get_category_by_id(
@@ -31,7 +33,9 @@ def get_category_by_id(
     session: Session = Depends(get_session),
     current_user: User = Depends(require_admin_with_tenant)
 ):
-    return category_service.get_category_by_id(id, session, current_user.tenant_id)
+    return category_service.get_category_by_id(id, session, current_user)
+
+
 
 @router.put("/{id}", response_model=CategoryRead)
 def update_category(
@@ -40,7 +44,7 @@ def update_category(
     session: Session = Depends(get_session),
     current_user: User = Depends(require_admin_with_tenant)
 ):
-    return category_service.update_category(id, update_category_data, session, current_user.tenant_id)
+    return category_service.update_category(id, update_category_data, session, current_user)
 
 @router.delete("/{id}", response_model=CategoryRead)
 def delete_category(
@@ -48,4 +52,4 @@ def delete_category(
     session: Session = Depends(get_session),
     current_user: User = Depends(require_admin_with_tenant)
 ):
-    return category_service.delete_category(id, session, current_user.tenant_id)
+    return category_service.delete_category(id, session, current_user)

@@ -7,10 +7,10 @@ from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
 from decimal import Decimal
 
-if TYPE_CHECKING:
-    from models.tenant import Tenant
-    from models.category import Category
-    from models.product_batch import ProductBatch
+# if TYPE_CHECKING:
+#     from models.tenant import Tenant
+#     from models.category import Category
+#     from models.product_batch import ProductBatch
 
 class Medicine(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)

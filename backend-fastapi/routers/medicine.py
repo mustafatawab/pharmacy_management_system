@@ -12,7 +12,7 @@ router = APIRouter(prefix="/medicine", tags=["Medicine"])
 
 medicine_service = MedicineService()
 
-@router.post("/", response_model=MedicineRead)
+@router.post("/")
 async def create_medicine(
     medicine: MedicineCreate, 
     session: Session = Depends(get_session),
@@ -20,13 +20,12 @@ async def create_medicine(
 ):
     return medicine_service.create_medicine(data=medicine, session=session, current_user=current_user)
 
-@router.get("/", response_model=MedicineListResponse)
+@router.get("/", response_model=list[MedicineRead])
 async def get_all_medicines(
-    filters: MedicineFilter = Depends(),
     session: Session = Depends(get_session),
     current_user: User = Depends(require_admin_with_tenant)
 ):
-    return medicine_service.get_all_medicines(session=session, current_user=current_user, filters=filters)
+    return medicine_service.get_all_medicines(session=session, current_user=current_user)
 
 
 @router.get("/{id}", response_model=MedicineRead)

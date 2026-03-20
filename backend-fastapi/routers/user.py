@@ -18,7 +18,7 @@ def get_all_users(current_user: User = Depends(require_admin_with_tenant) , sess
     return user_service.get_all_user(session=session, current_user=current_user)
 
 
-@router.post("", response_model=User , response_model_exclude={"hashed_password"})
+@router.post("", response_model=UserRead , response_model_exclude={"hashed_password"})
 def create_user(user: UserCreate,current_user: User = Depends(require_admin_with_tenant),  session: Session = Depends(get_session)):
     add_user = user_service.create_user(user_data=user, session=session, current_user=current_user)
     return add_user

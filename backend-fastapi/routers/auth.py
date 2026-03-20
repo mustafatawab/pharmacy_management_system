@@ -34,7 +34,7 @@ async def register_user(user: UserRegister,response: Response, session: Session 
 
 
 @router.post("/login")
-async def login(user:UserLogin,response: Response, session : Session = Depends(get_session)):
+async def login(user: UserLogin, response: Response, session : Session = Depends(get_session)):
     result = auth_service.login_user(user=user, session=session)
     response.set_cookie(
         key="access_token",

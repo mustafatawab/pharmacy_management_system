@@ -4,42 +4,49 @@ from schemas.category_schema import CategoryCreate, CategoryUpdate, CategoryRead
 from fastapi import Depends, HTTPException
 from sqlmodel import Session
 from database import get_session
+from models.users import User
 
 class CategoryService:
     def __init__(self):
         pass
 
-    def get_all_category(self, session: Session, tenant_id: int) -> list[Category]:
-        categories = session.exec(select(Category).where(Category.tenant_id == tenant_id)).all()
+    def get_all_category(self, session: Session, current_user: User) -> list[Category]:
+        categories = session.exec(select(Category).where(Category.tenant_id == current_user.tenant_id)).all()
         return categories
 
-    def create_category(self, category_data: CategoryCreate, session: Session, tenant_id: int) -> Category:
+    def create_category(self, category_data: CategoryCreate, session: Session, current_user: User) -> Category:
         existing_category = session.exec(select(Category).where(
             Category.name == category_data.name,
-            Category.tenant_id == tenant_id
+            Category.tenant_id == current_user.tenant_id
         )).first()
         
         if existing_category:
             raise HTTPException(status_code=400, detail="Category already exists in this pharmacy")
         
-        add_category = Category(**category_data.model_dump(), tenant_id=tenant_id)
+        add_category = Category(name=category_data.name, description=category_data.description, tenant_id=current_user.tenant_id)
         session.add(add_category)
         session.commit()
         session.refresh(add_category)
         return add_category
+    
 
-    def get_category_by_id(self, id: int, session: Session, tenant_id: int) -> Category:
+
+
+    def get_category_by_id(self, id: int, session: Session, current_user: User) -> Category:
         category = session.exec(select(Category).where(
             Category.id == id,
-            Category.tenant_id == tenant_id
+            Category.tenant_id == current_user.tenant_id
         )).first()
         
         if not category:
             raise HTTPException(status_code=404, detail="Category not found")
         return category
 
-    def update_category(self, id: int, update_category_data: CategoryUpdate, session: Session, tenant_id: int) -> Category:
-        category = self.get_category_by_id(id=id, session=session, tenant_id=tenant_id)
+
+
+
+    def update_category(self, id: int, update_category_data: CategoryUpdate, session: Session, current_user: User) -> Category:
+        category = self.get_category_by_id(id=id, session=session, current_user=current_user)
 
         update_dict = update_category_data.model_dump(exclude_unset=True)
         for key, value in update_dict.items():
@@ -50,8 +57,8 @@ class CategoryService:
         session.refresh(category)
         return category
 
-    def delete_category(self, id: int, session: Session, tenant_id: int) -> Category:
-        category = self.get_category_by_id(id=id, session=session, tenant_id=tenant_id)
+    def delete_category(self, id: int, session: Session, current_user: User) -> Category:
+        category = self.get_category_by_id(id=id, session=session, current_user=current_user)
 
         session.delete(category)
         session.commit()
