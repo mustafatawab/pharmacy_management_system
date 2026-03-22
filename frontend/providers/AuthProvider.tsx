@@ -6,19 +6,33 @@ import { User } from "@/lib/types";
 import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 
+interface LoginCredentials {
+  username: string;
+  password: string;
+}
+
+interface RegisterData {
+  full_name: string
+  username: string;
+  password: string;
+}
+
 interface AuthContextType {
   user: User | null;
+  tenant: any | null;
   loading: boolean;
-  login: (credentials: any) => Promise<void>;
-  register: (data: any) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  refreshTenant: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [tenant, setTenant] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -33,14 +47,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshTenant = async () => {
+    try {
+      const response = await api.get("/tenant/me");
+      setTenant(response.data);
+    } catch (error) {
+      console.error(error)
+      toast.error(error as string || "Failed to fetch tenant information");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   useEffect(() => {
     refreshUser();
+    refreshTenant();
   }, []);
 
-  const login = async (credentials: any) => {
+  const login = async (credentials: LoginCredentials) => {
     try {
       await api.post("/auth/login", credentials);
       await refreshUser();
+      await refreshTenant();
       toast.success("Login Successful");
       // Flow logic: If no tenant, go to onboarding, else dashboard
     } catch (error: any) {
@@ -49,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (data: any) => {
+  const register = async (data: RegisterData) => {
     try {
       await api.post("/auth/register", data);
       await refreshUser();
@@ -86,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, loading, router]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, refreshTenant, tenant }}>
       {children}
     </AuthContext.Provider>
   );

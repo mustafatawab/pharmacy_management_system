@@ -6,6 +6,7 @@ import { AddProductModal } from "@/components/add-product-modal";
 import { AlertTriangle, Calendar, Package, Plus } from "lucide-react";
 import { useState } from "react";
 import { useMedicines, MedicineFilter } from "@/hooks/useMedicine";
+import { useCategories } from "@/hooks/useCategory";
 
 export default function InventoryPage() {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -17,8 +18,8 @@ export default function InventoryPage() {
     sort_order: "asc",
   });
 
-  const { data, isLoading } = useMedicines(filters);
-
+  // const { data, isLoading } = useMedicines(filters);
+  const { data , isLoading} = useCategories()
   const handleSearch = (search: string) => {
     setFilters((prev) => ({ ...prev, search, page: 1 }));
   };

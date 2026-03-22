@@ -7,9 +7,9 @@ import { useAuth } from "@/providers/AuthProvider";
 import { motion } from "framer-motion";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  
 
   const [formValue, setFormValue] = useState({
     username: "",
@@ -26,14 +26,8 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await login(formValue);
-    } catch (error) {
-      // Error handled in login function
-    } finally {
-      setLoading(false);
-    }
+    await login(formValue);
+    
   };
 
   return (

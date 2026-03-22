@@ -7,10 +7,9 @@ import { useAuth } from "@/providers/AuthProvider";
 import { motion } from "framer-motion";
 
 export default function RegisterPage() {
-  const { register } = useAuth();
+  const { register, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [formValue, setFormValue] = useState({
     full_name: "",
     username: "",
@@ -27,20 +26,13 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await register(formValue);
-    } catch (error) {
-      // Error is handled in register function via toast
-    } finally {
-      setLoading(false);
-    }
+    await register(formValue);
   };
 
   return (
     <div className="flex min-h-screen overflow-hidden">
       {/* Form Container - Left Side (Opposite of Login) */}
-      <motion.div 
+      <motion.div
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -129,6 +121,38 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <label
+                htmlFor="password"
+                className="text-sm font-semibold text-gray-700 block"
+              >
+                Confirm Password
+              </label>
+              <div className="relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm your password"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 text-gray-900 pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -141,7 +165,10 @@ export default function RegisterPage() {
           <div className="mt-8 pt-6 border-t border-gray-100 text-center">
             <p className="text-sm text-gray-600">
               Already Have an Account?{" "}
-              <Link href="/login" className="text-blue-600 font-semibold hover:underline">
+              <Link
+                href="/login"
+                className="text-blue-600 font-semibold hover:underline"
+              >
                 Login Here
               </Link>
             </p>
@@ -150,7 +177,7 @@ export default function RegisterPage() {
       </motion.div>
 
       {/* Brand Panel - Right Side (Opposite of Login) */}
-      <motion.div 
+      <motion.div
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -170,7 +197,9 @@ export default function RegisterPage() {
           </div>
 
           {/* Brand name */}
-          <h1 className="text-4xl font-bold text-white mb-4">Pharmacy Management System</h1>
+          <h1 className="text-4xl font-bold text-white mb-4">
+            Pharmacy Management System
+          </h1>
 
           {/* Tagline */}
           <p className="text-white/80 text-lg max-w-sm">

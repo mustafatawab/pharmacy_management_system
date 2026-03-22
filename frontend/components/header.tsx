@@ -16,6 +16,7 @@ import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { User as UserType } from "./users/user-table";
+import { useAuth } from "@/providers/AuthProvider";
 
 interface HeaderProps {
   title: string;
@@ -28,39 +29,39 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   // Ensure we are mounted before showing theme based content to avoid hydration mismatch
   const [mounted, setMounted] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
+  const { tenant, user, logout, loading } = useAuth();
 
-  useEffect(() => {
-    setMounted(true);
-    const user = localStorage.getItem("user");
-    if (user) {
-      setCurrentUser(JSON.parse(user));
-    }
-  }, []);
+  // useEffect(() => {
+  //   setMounted(true);
+  //   const user = localStorage.getItem("user");
+  //   if (user) {
+  //     setCurrentUser(JSON.parse(user));
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+  // useEffect(() => {
+  //   const getCurrentUser = async () => {
+  //     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/me`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //     });
 
-      const userData = await res.json();
-      if (!res.ok) {
-        toast.error(userData.detail);
-        router.push("/login");
-        return;
-      }
-      localStorage.setItem("user", JSON.stringify(userData));
-    };
-    getCurrentUser();
-  }, []);
+  //     const userData = await res.json();
+  //     if (!res.ok) {
+  //       toast.error(userData.detail);
+  //       router.push("/login");
+  //       return;
+  //     }
+  //     localStorage.setItem("user", JSON.stringify(userData));
+  //   };
+  //   getCurrentUser();
+  // }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -92,23 +93,24 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   };
 
   const handleLogout = async () => {
-    console.log(process.env.NEXT_PUBLIC_API_URL);
-    setLoading(true);
+    await logout();
+    // console.log(process.env.NEXT_PUBLIC_API_URL);
+    // setLoading(true);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "appplication/json",
-      },
-    });
-    if (res.ok) {
-      const response = await res.json();
-      router.push("/login");
-      toast.success("logout successfully");
-    }
+    // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+    //   method: "POST",
+    //   credentials: "include",
+    //   headers: {
+    //     "Content-Type": "appplication/json",
+    //   },
+    // });
+    // if (res.ok) {
+    //   const response = await res.json();
+    //   router.push("/login");
+    //   toast.success("logout successfully");
+    // }
 
-    setLoading(false);
+    // setLoading(false);
   };
 
   return (
@@ -120,7 +122,16 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         >
           <Menu className="h-5 w-5" />
         </button>
-        <h1 className="text-xl font-bold text-foreground">{title}</h1>
+
+        {loading ? (
+          <span className="flex items-center gap-1">
+            <LoaderCircle className="animate-spin" />
+          </span>
+        ) : (
+          <h1 className="text-xl font-bold text-foreground">
+            {tenant && tenant.name}
+          </h1>
+        )}
       </div>
       <div className="flex items-center gap-2 md:gap-6">
         <button className="relative p-2 text-gray-400 hover:text-gray-500">
@@ -140,10 +151,10 @@ export function Header({ title, onMenuClick }: HeaderProps) {
             </div>
             <div className="hidden flex-col text-left md:flex">
               <span className="text-sm font-medium text-foreground leading-none">
-                {currentUser ? currentUser.full_name : "Admin"}
+                {user ? user.full_name : "Admin"}
               </span>
               <span className="text-xs text-gray-500 mt-0.5">
-                {currentUser ? currentUser.role : "Admin"}
+                {user ? user.role : "Admin"}
               </span>
             </div>
           </button>
@@ -204,12 +215,12 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                className="cursor-pointer w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
               >
                 <LogOut className="h-4 w-4" />
                 {loading ? (
-                  <span>
-                    <LoaderCircle /> Signing Out{" "}
+                  <span className="flex items-center gap-1">
+                    <LoaderCircle className="animate-spin" /> Signing Out{" "}
                   </span>
                 ) : (
                   "Sign out"
