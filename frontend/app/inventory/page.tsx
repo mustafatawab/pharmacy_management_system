@@ -24,7 +24,7 @@ export default function InventoryPage() {
   
   const [filters, setFilters] = useState<MedicineFilter>({
     page: 1,
-    page_size: 10,
+    page_size: 5,
     search: "",
     sort_by: "name",
     sort_order: "asc",
