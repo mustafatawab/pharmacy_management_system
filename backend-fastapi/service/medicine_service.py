@@ -66,47 +66,52 @@ class MedicineService:
 
         return result
 
-    def get_all_medicines(self, session: Session, current_user: User) -> MedicineListResponse:
+    def get_all_medicines(self, session: Session, current_user: User, filters: MedicineFilter) -> MedicineListResponse:
         query = select(MedicineModel).where(MedicineModel.tenant_id == current_user.tenant_id)
 
         # Filtering
-        # if filters.search:
-        #     search_pattern = f"%{filters.search}%"
-        #     query = query.where(or_(
-        #         col(MedicineModel.name).ilike(search_pattern),
-        #         col(MedicineModel.description).ilike(search_pattern)
-        #     ))
+        if filters.search:
+            search_pattern = f"%{filters.search}%"
+            query = query.where(or_(
+                col(MedicineModel.name).ilike(search_pattern),
+                col(MedicineModel.description).ilike(search_pattern)
+            ))
         
-        # if filters.category_id:
-        #     query = query.where(MedicineModel.category_id == filters.category_id)
+        if filters.category_id:
+            query = query.where(MedicineModel.category_id == filters.category_id)
         
-        # if filters.is_active is not None:
-        #     query = query.where(MedicineModel.is_active == filters.is_active)
+        if filters.is_active is not None:
+            query = query.where(MedicineModel.is_active == filters.is_active)
         
-        # if filters.min_price:
-        #     query = query.where(MedicineModel.selling_price >= filters.min_price)
+        if filters.min_price:
+            query = query.where(MedicineModel.selling_price >= filters.min_price)
         
-        # if filters.max_price:
-        #     query = query.where(MedicineModel.selling_price <= filters.max_price)
+        if filters.max_price:
+            query = query.where(MedicineModel.selling_price <= filters.max_price)
 
-        # # Total count before pagination
-        # total_query = select(func.count()).select_from(query.alias())
-        # total = session.exec(total_query).one()
+        # Total count before pagination
+        total_query = select(func.count()).select_from(query.subquery())
+        total = session.exec(total_query).one()
 
-        # # Sorting
-        # sort_column = getattr(MedicineModel, filters.sort_by, MedicineModel.name)
-        # if filters.sort_order == "desc":
-        #     query = query.order_by(col(sort_column).desc())
-        # else:
-        #     query = query.order_by(col(sort_column).asc())
+        # Sorting
+        sort_column = getattr(MedicineModel, filters.sort_by, MedicineModel.name)
+        if filters.sort_order == "desc":
+            query = query.order_by(col(sort_column).desc())
+        else:
+            query = query.order_by(col(sort_column).asc())
 
-        # # Pagination
-        # offset = (filters.page - 1) * filters.page_size
-        # query = query.offset(offset).limit(filters.page_size)
+        # Pagination
+        offset = (filters.page - 1) * filters.page_size
+        query = query.offset(offset).limit(filters.page_size)
 
         all_medicines = session.exec(query).all()
 
-        return all_medicines
+        return {
+            "items": all_medicines,
+            "total": total,
+            "page": filters.page,
+            "page_size": filters.page_size
+        }
 
     def get_medicine_by_id(self, medicine_id: int, session: Session, current_user: User):
         medicine = session.exec(select(MedicineModel).where(

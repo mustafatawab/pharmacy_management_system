@@ -13,7 +13,7 @@ export interface MedicineFilter {
   page_size?: number;
 }
 
-export const useMedicines = (filters: MedicineFilter) => {
+export const useMedicines = (filters?: MedicineFilter) => {
   return useQuery({
     queryKey: ["medicines", filters],
     queryFn: async () => {

@@ -2,19 +2,20 @@
 
 import { Modal } from "@/components/modal";
 import { Package, Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useCreateMedicine } from "@/hooks/useMedicine";
+import { useState, useEffect } from "react";
+import { useUpdateMedicine } from "@/hooks/useMedicine";
 import { useCategories } from "@/hooks/useCategory";
 import { toast } from "react-hot-toast";
 
-interface AddProductModalProps {
+interface EditProductModalProps {
   isOpen: boolean;
   onClose: () => void;
+  medicine: any;
 }
 
-export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
-  const { data: categories, isLoading: isLoadingCategories } = useCategories();
-  const createMedicine = useCreateMedicine();
+export function EditProductModal({ isOpen, onClose, medicine }: EditProductModalProps) {
+  const { data: categories } = useCategories();
+  const updateMedicine = useUpdateMedicine();
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -28,11 +29,26 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
     is_active: true,
   });
 
+  useEffect(() => {
+    if (medicine) {
+      setFormData({
+        name: medicine.name || "",
+        description: medicine.description || "",
+        category_id: medicine.category_id?.toString() || "",
+        unit: medicine.unit || "tablet",
+        quantity: medicine.quantity || 0,
+        selling_price: medicine.selling_price || 0,
+        purchase_price: medicine.purchase_price || 0,
+        is_active: medicine.is_active ?? true,
+      });
+    }
+  }, [medicine]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "number" || name === "category_id" ? (value === "" ? "" : parseFloat(value)) : value,
+      [name]: type === "number" ? (value === "" ? "" : parseFloat(value)) : value,
     }));
   };
 
@@ -44,21 +60,15 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
     }
     setLoading(true);
     try {
-      await createMedicine.mutateAsync(formData);
-      toast.success("Medicine added successfully");
+      const payload = {
+        ...formData,
+        category_id: parseInt(formData.category_id)
+      };
+      await updateMedicine.mutateAsync({ id: medicine.id, data: payload });
+      toast.success("Medicine updated successfully");
       onClose();
-      setFormData({
-        name: "",
-        description: "",
-        category_id: "",
-        unit: "tablet",
-        quantity: 0,
-        selling_price: 0,
-        purchase_price: 0,
-        is_active: true,
-      });
     } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Failed to add medicine");
+      toast.error(error.response?.data?.detail || "Failed to update medicine");
     } finally {
       setLoading(false);
     }
@@ -68,7 +78,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add New Medicine"
+      title="Edit Medicine"
       icon={<Package className="h-6 w-6" />}
     >
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -83,8 +93,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               required
               value={formData.name}
               onChange={handleChange}
-              placeholder="Enter medicine name"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
             />
           </div>
           <div className="space-y-2">
@@ -115,8 +124,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               required
               value={formData.selling_price}
               onChange={handleChange}
-              placeholder="0.00"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
             />
           </div>
           <div className="space-y-2">
@@ -129,8 +137,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               required
               value={formData.purchase_price}
               onChange={handleChange}
-              placeholder="0.00"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
             />
           </div>
 
@@ -144,8 +151,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               required
               value={formData.quantity}
               onChange={handleChange}
-              placeholder="0"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
             />
           </div>
           <div className="space-y-2">
@@ -177,8 +183,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             rows={3}
             value={formData.description}
             onChange={handleChange}
-            placeholder="Enter medicine description"
-            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none bg-white dark:bg-[#212121]"
           />
         </div>
 
@@ -196,7 +201,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20 flex items-center gap-2"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            Add Medicine
+            Update Medicine
           </button>
         </div>
       </form>

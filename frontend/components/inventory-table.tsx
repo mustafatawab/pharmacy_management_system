@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, Filter, Pencil, Trash2, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface Medicine {
   id: number;
@@ -26,6 +27,8 @@ interface InventoryTableProps {
   onSort: (column: string) => void;
   currentSort?: string;
   sortOrder?: "asc" | "desc";
+  onEdit?: (medicine: any) => void;
+  onDelete?: (medicine: any) => void;
 }
 
 export function InventoryTable({
@@ -39,8 +42,19 @@ export function InventoryTable({
   onSort,
   currentSort,
   sortOrder,
+  onEdit,
+  onDelete,
 }: InventoryTableProps) {
+  const [searchTerm, setSearchTerm] = useState("");
   const totalPages = Math.ceil(total / pageSize);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      onSearch(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
 
   const SortHeader = ({ label, column }: { label: string; column: string }) => (
     <th 
@@ -63,7 +77,8 @@ export function InventoryTable({
           <input
             type="text"
             placeholder="Search medicines..."
-            onChange={(e) => onSearch(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-[#2F2F2F] rounded-lg text-sm text-gray-900 dark:text-gray-100 bg-white dark:bg-[#212121] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
           />
         </div>
@@ -123,7 +138,7 @@ export function InventoryTable({
                   </td>
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900 dark:text-gray-100">
-                      {medicine.quantity} units
+                      {medicine.quantity} {medicine.unit}{medicine.quantity !== 1 ? 's' : ''}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -133,10 +148,16 @@ export function InventoryTable({
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors">
+                      <button 
+                        onClick={() => onEdit?.(medicine)}
+                        className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                      >
                         <Pencil className="h-4 w-4" />
                       </button>
-                      <button className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors">
+                      <button 
+                        onClick={() => onDelete?.(medicine)}
+                        className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>

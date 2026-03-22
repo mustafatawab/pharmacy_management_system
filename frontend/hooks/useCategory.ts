@@ -7,10 +7,6 @@ export const useCategories = () => {
     queryKey: ["categories"],
     queryFn: async () => {
       const { data } = await api.get("/category");
-     if (!data.ok) {
-      toast.error(data.detail || "Failed to fetch categories");
-        throw new Error("Failed to fetch categories");
-      }
       return data;
     },
   });
