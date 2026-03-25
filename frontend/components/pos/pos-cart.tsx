@@ -1,19 +1,14 @@
 import { Trash2, ShoppingCart, Plus, Minus } from "lucide-react";
+import { Medicine } from "@/lib/types";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-}
-
-interface CartItem extends Product {
-  quantity: number;
+interface CartItem extends Medicine {
+  cartQuantity: number;
 }
 
 interface POSCartProps {
   cartItems: CartItem[];
-  onRemoveFromCart: (id: string) => void;
-  onUpdateQuantity: (id: string, delta: number) => void;
+  onRemoveFromCart: (id: number) => void;
+  onUpdateQuantity: (id: number, delta: number) => void;
   onClearCart: () => void;
 }
 
@@ -24,7 +19,7 @@ export function POSCart({
   onClearCart,
 }: POSCartProps) {
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + parseFloat(item.selling_price) * item.cartQuantity,
     0
   );
   const tax = subtotal * 0.1; // Assuming 10% tax for demo
@@ -78,18 +73,18 @@ export function POSCart({
               </div>
               <div className="flex justify-between items-center mt-1">
                 <span className="text-sm font-semibold text-blue-600">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  ${(parseFloat(item.selling_price) * item.cartQuantity).toFixed(2)}
                 </span>
                 <div className="flex items-center gap-2 bg-gray-50 dark:bg-[#212121] rounded-lg p-1">
                   <button
                     onClick={() => onUpdateQuantity(item.id, -1)}
                     className="p-1 hover:bg-white dark:hover:bg-[#2F2F2F] rounded shadow-sm text-gray-600 dark:text-gray-300 disabled:opacity-50"
-                    disabled={item.quantity <= 1}
+                    disabled={item.cartQuantity <= 1}
                   >
                     <Minus className="h-3 w-3" />
                   </button>
                   <span className="text-xs font-bold w-6 text-center text-gray-900 dark:text-gray-100">
-                    {item.quantity}
+                    {item.cartQuantity}
                   </span>
                   <button
                     onClick={() => onUpdateQuantity(item.id, 1)}

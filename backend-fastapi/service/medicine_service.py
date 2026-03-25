@@ -6,6 +6,7 @@ from schemas.medicine_schema import MedicineCreate, MedicineUpdate, MedicineRead
 from models.medicine import Medicine as MedicineModel
 from models.users import User
 from sqlmodel import select, col, func, or_
+from sqlalchemy.orm import selectinload
 from auth.dependency import get_current_user
 from models.category import Category
 
@@ -67,7 +68,7 @@ class MedicineService:
         return result
 
     def get_all_medicines(self, session: Session, current_user: User, filters: MedicineFilter) -> MedicineListResponse:
-        query = select(MedicineModel).where(MedicineModel.tenant_id == current_user.tenant_id)
+        query = select(MedicineModel).where(MedicineModel.tenant_id == current_user.tenant_id).options(selectinload(MedicineModel.category))
 
         # Filtering
         if filters.search:
@@ -117,7 +118,7 @@ class MedicineService:
         medicine = session.exec(select(MedicineModel).where(
             MedicineModel.id == medicine_id, 
             MedicineModel.tenant_id == current_user.tenant_id
-        )).first()
+        ).options(selectinload(MedicineModel.category))).first()
         if not medicine:
             raise HTTPException(status_code=404, detail="Medicine not found")
         return medicine

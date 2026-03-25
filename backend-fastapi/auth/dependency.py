@@ -56,3 +56,14 @@ async def require_admin_with_tenant(current_user: User = Depends(get_current_use
         )
     
     return current_user
+
+
+async def require_user_with_tenant(current_user: User = Depends(get_current_user)) -> User:
+    
+    if current_user.tenant_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No pharmacy setup found. Please create a tenant first"
+        )
+    
+    return current_user

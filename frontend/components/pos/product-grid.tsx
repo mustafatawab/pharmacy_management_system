@@ -1,17 +1,9 @@
 import { ProductCard } from "./product-card";
-
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  sku: string;
-  stock: number;
-}
+import { Medicine } from "@/lib/types";
 
 interface ProductGridProps {
-  products: Product[];
-  onAddToCart: (product: Product) => void;
+  products: Medicine[];
+  onAddToCart: (product: Medicine) => void;
 }
 
 export function ProductGrid({ products, onAddToCart }: ProductGridProps) {

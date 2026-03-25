@@ -1,22 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { Search } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Search, Loader2 } from "lucide-react";
 import { ProductGrid } from "@/components/pos/product-grid";
 import { POSCart } from "@/components/pos/pos-cart";
-import { mockProducts } from "@/data/pos-products";
+import { useMedicines } from "@/hooks/useMedicine";
+import { useCategories } from "@/hooks/useCategory";
+import { Medicine, Category } from "@/lib/types";
 
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  sku: string;
-  stock: number;
-}
-
-interface CartItem extends Product {
-  quantity: number;
+export interface CartItem extends Medicine {
+  cartQuantity: number;
 }
 
 export default function POSPage() {
@@ -24,29 +17,36 @@ export default function POSPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
 
-  const handleAddToCart = (product: Product) => {
+  const { data: medicinesData, isLoading: medicinesLoading } = useMedicines({
+    search: searchQuery,
+    page_size: 100, // Fetch more for POS
+  });
+
+  const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
+
+  const handleAddToCart = (product: Medicine) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
       if (existingItem) {
         return prevItems.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, cartQuantity: item.cartQuantity + 1 }
             : item
         );
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      return [...prevItems, { ...product, cartQuantity: 1 }];
     });
   };
 
-  const handleRemoveFromCart = (id: string) => {
+  const handleRemoveFromCart = (id: number) => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
-  const handleUpdateQuantity = (id: string, delta: number) => {
+  const handleUpdateQuantity = (id: number, delta: number) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+          ? { ...item, cartQuantity: Math.max(1, item.cartQuantity + delta) }
           : item
       )
     );
@@ -56,16 +56,27 @@ export default function POSPage() {
     setCartItems([]);
   };
 
-  const filteredProducts = mockProducts.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.sku.includes(searchQuery);
-    const matchesCategory =
-      categoryFilter === "All" || product.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredProducts = useMemo(() => {
+    if (!medicinesData?.items) return [];
+    
+    return medicinesData.items.filter((product: Medicine) => {
+      const matchesCategory =
+        categoryFilter === "All" || 
+        product.category?.name === categoryFilter ||
+        String(product.category_id) === categoryFilter;
+      return matchesCategory;
+    });
+  }, [medicinesData, categoryFilter]);
 
-  const categories = ["All", ...new Set(mockProducts.map((p) => p.category))];
+  const categories = useMemo(() => {
+    const baseCategories = ["All"];
+    if (categoriesData) {
+      return [...baseCategories, ...categoriesData.map((c: Category) => c.name)];
+    }
+    return baseCategories;
+  }, [categoriesData]);
+
+  const isLoading = medicinesLoading || categoriesLoading;
 
   return (
     <div className="flex gap-6 h-[calc(100vh-8rem)]">
@@ -107,10 +118,16 @@ export default function POSPage() {
         </div>
 
         {/* Products Grid */}
-        <ProductGrid
-          products={filteredProducts}
-          onAddToCart={handleAddToCart}
-        />
+        {isLoading ? (
+          <div className="flex-1 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+          </div>
+        ) : (
+          <ProductGrid
+            products={filteredProducts}
+            onAddToCart={handleAddToCart}
+          />
+        )}
       </div>
 
       {/* Right Column: Cart (Fixed width) */}

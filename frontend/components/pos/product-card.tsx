@@ -1,15 +1,8 @@
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  sku: string;
-  stock: number;
-}
+import { Medicine } from "@/lib/types";
 
 interface ProductCardProps {
-  product: Product;
-  onAddToCart: (product: Product) => void;
+  product: Medicine;
+  onAddToCart: (product: Medicine) => void;
 }
 
 export function ProductCard({ product, onAddToCart }: ProductCardProps) {
@@ -23,22 +16,24 @@ export function ProductCard({ product, onAddToCart }: ProductCardProps) {
           >
             {product.name}
           </h4>
-          <p className="text-xs text-gray-500">{product.category}</p>
+          <p className="text-xs text-gray-500">{product.category?.name || "No Category"}</p>
         </div>
         <span className="text-green-600 font-bold whitespace-nowrap">
-          ${product.price.toFixed(2)}
+          ${parseFloat(product.selling_price).toFixed(2)}
         </span>
       </div>
-      <p className="text-xs text-gray-400 mb-4">SKU: {product.sku}</p>
+      <p className="text-xs text-gray-400 mb-4">Unit: {product.unit}</p>
       <div className="flex justify-between items-center mt-auto">
-        <span className="text-xs text-gray-500">Stock: {product.stock}</span>
+        <span className="text-xs text-gray-500">Stock: {product.quantity}</span>
         <button
           onClick={() => onAddToCart(product)}
-          className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md font-medium transition-colors"
+          disabled={product.quantity <= 0}
+          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white text-xs px-3 py-1.5 rounded-md font-medium transition-colors"
         >
-          Add to Cart
+          {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
         </button>
       </div>
     </div>
   );
 }
+

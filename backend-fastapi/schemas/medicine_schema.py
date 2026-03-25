@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from decimal import Decimal
 from datetime import datetime
+from schemas.category_schema import CategoryRead
 
 
 class MedicineCreate(BaseModel):
@@ -46,6 +47,7 @@ class MedicineRead(BaseModel):
     purchase_price: Decimal
     is_active: bool = False
     category_id: Optional[int] = None
+    category: Optional[CategoryRead] = None
     tenant_id: int
     created_at: datetime
     updated_at: datetime

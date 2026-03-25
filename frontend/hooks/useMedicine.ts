@@ -3,7 +3,7 @@ import api from "@/lib/api";
 
 export interface MedicineFilter {
   search?: string;
-  category?: string;
+  category_id?: number;
   is_active?: boolean;
   min_price?: number;
   max_price?: number;
