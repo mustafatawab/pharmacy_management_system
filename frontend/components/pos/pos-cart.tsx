@@ -10,6 +10,8 @@ interface POSCartProps {
   onRemoveFromCart: (id: number) => void;
   onUpdateQuantity: (id: number, delta: number) => void;
   onClearCart: () => void;
+  onCheckout: () => void;
+  isProcessing?: boolean;
 }
 
 export function POSCart({
@@ -17,6 +19,8 @@ export function POSCart({
   onRemoveFromCart,
   onUpdateQuantity,
   onClearCart,
+  onCheckout,
+  isProcessing = false,
 }: POSCartProps) {
   const subtotal = cartItems.reduce(
     (sum, item) => sum + parseFloat(item.selling_price) * item.cartQuantity,
@@ -116,8 +120,19 @@ export function POSCart({
               <span>${total.toFixed(2)}</span>
             </div>
           </div>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98]">
-            Pay Now
+          <button 
+            onClick={onCheckout}
+            disabled={isProcessing}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+          >
+            {isProcessing ? (
+              <>
+                <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Processing...
+              </>
+            ) : (
+              "Pay Now"
+            )}
           </button>
         </div>
       )}

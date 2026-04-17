@@ -27,30 +27,34 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
+          index={0}
           title="Today's Sales"
           value="USD 0.00"
           subtext="0 transactions"
           icon={<DollarSign className="h-6 w-6" />}
-          iconBgColor="bg-green-50"
-          iconColor="text-green-600"
+          iconBgColor="bg-success/10"
+          iconColor="text-success"
         />
         <StatCard
+          index={1}
           title="Total Products"
           value="4"
           subtext="1 low stock"
           icon={<Package className="h-6 w-6" />}
-          iconBgColor="bg-blue-50"
-          iconColor="text-blue-600"
+          iconBgColor="bg-primary/10"
+          iconColor="text-primary"
         />
         <StatCard
+          index={2}
           title="Total Revenue"
           value="USD 0.00"
           subtext="All time"
           icon={<TrendingUp className="h-6 w-6" />}
-          iconBgColor="bg-purple-50"
-          iconColor="text-purple-600"
+          iconBgColor="bg-warning/10"
+          iconColor="text-warning"
         />
         <StatCard
+          index={3}
           title="Active Users"
           value="2"
           subtext="System users"

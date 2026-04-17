@@ -1,39 +1,79 @@
 import { Medicine } from "@/lib/types";
+import { motion } from "framer-motion";
+import { Plus, Package, ShoppingCart } from "lucide-react";
 
 interface ProductCardProps {
   product: Medicine;
   onAddToCart: (product: Medicine) => void;
+  index?: number;
 }
 
-export function ProductCard({ product, onAddToCart }: ProductCardProps) {
+export function ProductCard({ product, onAddToCart, index = 0 }: ProductCardProps) {
+  const isOutOfStock = product.quantity <= 0;
+
   return (
-    <div className="border border-gray-200 dark:border-[#212121] rounded-lg p-4 bg-white dark:bg-[#212121] flex flex-col h-full hover:border-blue-400 dark:hover:border-blue-500 transition-colors">
-      <div className="flex justify-between items-start mb-2">
-        <div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.03, duration: 0.3 }}
+      whileHover={{ y: -4 }}
+      className="group relative border border-border rounded-2xl p-4 bg-card hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-premium flex flex-col h-full"
+    >
+      <div className="flex justify-between items-start mb-3">
+        <div className="space-y-1">
           <h4
-            className="font-bold text-gray-900 dark:text-gray-100 line-clamp-1"
+            className="font-extrabold text-foreground leading-tight group-hover:text-primary transition-colors"
             title={product.name}
           >
             {product.name}
           </h4>
-          <p className="text-xs text-gray-500">{product.category?.name || "No Category"}</p>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+              {product.category?.name || "Uncategorized"}
+            </span>
+          </div>
         </div>
-        <span className="text-green-600 font-bold whitespace-nowrap">
-          ${parseFloat(product.selling_price).toFixed(2)}
-        </span>
+        <div className="bg-primary/5 px-2 py-1 rounded-lg">
+          <span className="text-primary font-extrabold text-sm">
+            ${parseFloat(product.selling_price).toFixed(2)}
+          </span>
+        </div>
       </div>
-      <p className="text-xs text-gray-400 mb-4">Unit: {product.unit}</p>
-      <div className="flex justify-between items-center mt-auto">
-        <span className="text-xs text-gray-500">Stock: {product.quantity}</span>
+
+      <div className="flex items-center gap-2 mb-4">
+        <div className="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-zinc-800 text-[10px] font-bold text-gray-500 uppercase tracking-tighter">
+          {product.unit}
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center mt-auto pt-3 border-t border-border/50">
+        <div className="flex items-center gap-1.5 text-gray-400">
+          <Package className="h-3.5 w-3.5" />
+          <span className={`text-xs font-bold ${isOutOfStock ? "text-danger" : "text-gray-500"}`}>
+            {isOutOfStock ? "Sold Out" : `${product.quantity} left`}
+          </span>
+        </div>
+        
         <button
           onClick={() => onAddToCart(product)}
-          disabled={product.quantity <= 0}
-          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white text-xs px-3 py-1.5 rounded-md font-medium transition-colors"
+          disabled={isOutOfStock}
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
+            isOutOfStock
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-primary text-white hover:bg-primary-hover shadow-primary/20 hover:shadow-lg active:scale-95"
+          }`}
         >
-          {product.quantity > 0 ? "Add to Cart" : "Out of Stock"}
+          {isOutOfStock ? (
+            "Wait"
+          ) : (
+            <>
+              <Plus className="h-3.5 w-3.5" />
+              Add
+            </>
+          )}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

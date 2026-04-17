@@ -14,6 +14,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { User as UserType } from "./users/user-table";
 import { useAuth } from "@/providers/AuthProvider";
@@ -114,120 +115,93 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-background dark:bg-[#212121] px-4 md:px-8 border-gray-200 dark:border-[#2F2F2F]">
+    <header className="flex h-16 items-center justify-between border-b bg-card px-4 md:px-8 border-border">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-[#2F2F2F] md:hidden"
+          className="rounded-xl p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-800 md:hidden transition-colors"
         >
           <Menu className="h-5 w-5" />
         </button>
 
         {loading ? (
-          <span className="flex items-center gap-1">
-            <LoaderCircle className="animate-spin" />
-          </span>
+          <div className="h-6 w-32 bg-gray-200 dark:bg-zinc-800 animate-pulse rounded-lg" />
         ) : (
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-xl font-extrabold text-foreground tracking-tight">
             {tenant && tenant.name}
           </h1>
         )}
       </div>
-      <div className="flex items-center gap-2 md:gap-6">
-        <button className="relative p-2 text-gray-400 hover:text-gray-500">
+      <div className="flex items-center gap-2 md:gap-4">
+        <button className="relative p-2.5 text-gray-400 hover:text-primary transition-colors rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800">
           <span className="sr-only">View notifications</span>
-          <Bell className="h-6 w-6" />
-          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+          <Bell className="h-5 w-5" />
+          <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-danger ring-2 ring-white dark:ring-zinc-900" />
         </button>
 
         {/* Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsProfileOpen(!isProfileOpen)}
-            className="flex items-center gap-3 border-l pl-4 md:pl-6 border-gray-200 dark:border-[#2F2F2F] outline-none"
+            className="flex items-center gap-3 pl-4 md:pl-4 py-1.5 pr-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all outline-none"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-              <User className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs ring-2 ring-primary/20">
+              {user ? user.full_name.charAt(0) : "A"}
             </div>
             <div className="hidden flex-col text-left md:flex">
-              <span className="text-sm font-medium text-foreground leading-none">
-                {user ? user.full_name : "Admin"}
+              <span className="text-sm font-bold text-foreground leading-none">
+                {user ? user.full_name : "Admin User"}
               </span>
-              <span className="text-xs text-gray-500 mt-0.5">
-                {user ? user.role : "Admin"}
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mt-1">
+                {user ? user.role : "Administrator"}
               </span>
             </div>
           </button>
 
-          {isProfileOpen && (
-            <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-gray-100 dark:border-[#2F2F2F] bg-background dark:bg-[#2F2F2F] shadow-lg py-1 z-50">
-              <button
-                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-50 hover:dark:text-gray-700 hover:bg-gray-50 flex items-center justify-between group"
-                onClick={() => setIsThemeSubmenuOpen(!isThemeSubmenuOpen)}
+          <AnimatePresence>
+            {isProfileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-border bg-card shadow-premium py-2 z-50"
               >
-                <div className="flex items-center gap-2">
-                  {getCurrentThemeIcon()}
-                  <span>{getCurrentThemeLabel()} Mode</span>
+                <div className="px-4 py-3 border-b border-border mb-1">
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Theme Settings</p>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {[
+                      { id: "light", icon: Sun },
+                      { id: "dark", icon: Moon },
+                      { id: "system", icon: Laptop },
+                    ].map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => setTheme(t.id)}
+                        className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all ${
+                          theme === t.id
+                            ? "bg-primary text-white shadow-md shadow-primary/20"
+                            : "bg-gray-50 dark:bg-zinc-800 text-gray-500 hover:text-foreground"
+                        }`}
+                      >
+                        <t.icon className="h-4 w-4" />
+                        <span className="text-[10px] font-bold capitalize">{t.id}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <ChevronRight className="h-4 w-4 text-gray-400" />
-              </button>
 
-              {/* Submenu (Opens to the left) */}
-              {isThemeSubmenuOpen && (
-                <div className="absolute right-full top-0 mr-2 w-48 rounded-xl border border-gray-100 dark:border-[#2F2F2F] bg-background dark:bg-[#2F2F2F] shadow-lg py-1">
+                <div className="px-2">
                   <button
-                    onClick={() => setTheme("light")}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
-                      theme === "light"
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700 dark:text-gray-50 dark:hover:text-gray-700"
-                    }`}
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 text-sm text-danger hover:bg-danger/5 rounded-xl flex items-center gap-3 font-bold transition-colors"
                   >
-                    <Sun className="h-4 w-4" />
-                    Light
-                  </button>
-                  <button
-                    onClick={() => setTheme("dark")}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
-                      theme === "dark"
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700 dark:text-gray-50 dark:hover:text-gray-700"
-                    }`}
-                  >
-                    <Moon className="h-4 w-4" />
-                    Dark
-                  </button>
-                  <button
-                    onClick={() => setTheme("system")}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2 ${
-                      theme === "system"
-                        ? "text-blue-600 bg-blue-50"
-                        : "text-gray-700 dark:text-gray-50 dark:hover:text-gray-700"
-                    }`}
-                  >
-                    <Laptop className="h-4 w-4" />
-                    System
+                    <LogOut className="h-4 w-4" />
+                    {loading ? "Signing Out..." : "Sign out"}
                   </button>
                 </div>
-              )}
-
-              <div className="my-1 border-t border-gray-100" />
-
-              <button
-                onClick={handleLogout}
-                className="cursor-pointer w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                {loading ? (
-                  <span className="flex items-center gap-1">
-                    <LoaderCircle className="animate-spin" /> Signing Out{" "}
-                  </span>
-                ) : (
-                  "Sign out"
-                )}
-              </button>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </header>

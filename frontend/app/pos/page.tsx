@@ -6,7 +6,9 @@ import { ProductGrid } from "@/components/pos/product-grid";
 import { POSCart } from "@/components/pos/pos-cart";
 import { useMedicines } from "@/hooks/useMedicine";
 import { useCategories } from "@/hooks/useCategory";
+import { useCreateSale, SaleCreate } from "@/hooks/useSale";
 import { Medicine, Category } from "@/lib/types";
+import { toast } from "react-hot-toast";
 
 export interface CartItem extends Medicine {
   cartQuantity: number;
@@ -23,6 +25,7 @@ export default function POSPage() {
   });
 
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
+  const createSale = useCreateSale();
 
   const handleAddToCart = (product: Medicine) => {
     setCartItems((prevItems) => {
@@ -54,6 +57,38 @@ export default function POSPage() {
 
   const handleClearCart = () => {
     setCartItems([]);
+  };
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+
+    const subtotal = cartItems.reduce(
+      (sum, item) => sum + parseFloat(item.selling_price) * item.cartQuantity,
+      0
+    );
+    const tax = subtotal * 0.1;
+    const total = subtotal + tax;
+
+    const saleData: SaleCreate = {
+      total_amount: subtotal,
+      discount: 0,
+      final_amount: total,
+      payment_method: "cash",
+      items: cartItems.map((item) => ({
+        medicine_id: item.id,
+        quantity: item.cartQuantity,
+        unit_price: parseFloat(item.selling_price),
+      })),
+    };
+
+    try {
+      await createSale.mutateAsync(saleData);
+      toast.success("Transaction completed successfully!");
+      handleClearCart();
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.detail || "Transaction failed";
+      toast.error(errorMessage);
+    }
   };
 
   const filteredProducts = useMemo(() => {
@@ -136,6 +171,8 @@ export default function POSPage() {
         onRemoveFromCart={handleRemoveFromCart}
         onUpdateQuantity={handleUpdateQuantity}
         onClearCart={handleClearCart}
+        onCheckout={handleCheckout}
+        isProcessing={createSale.isPending}
       />
     </div>
   );
