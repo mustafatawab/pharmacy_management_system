@@ -7,7 +7,7 @@ import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 
 interface LoginCredentials {
-  username: string;
+  login: string;
   password: string;
 }
 
