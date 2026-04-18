@@ -16,36 +16,36 @@ export function StatCard({
   value,
   subtext,
   icon,
-  iconBgColor = "bg-primary/10",
-  iconColor = "text-primary",
+  iconBgColor = "bg-zinc-100 dark:bg-zinc-900",
+  iconColor = "text-zinc-600 dark:text-zinc-400",
   index = 0,
 }: StatCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5, ease: "easeOut" }}
-      whileHover={{ y: -5 }}
-      className="rounded-2xl border bg-card border-border p-6 shadow-sm hover:shadow-premium transition-all duration-300 group"
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+      className="rounded-xl border bg-card border-border p-4 shadow-sm hover:border-primary/40 transition-all duration-200 group relative overflow-hidden"
     >
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+      <div className="flex items-start justify-between relative z-10">
+        <div className="space-y-0.5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-400">
             {title}
           </p>
-          <p className="text-3xl font-extrabold text-foreground tracking-tight">
+          <p className="text-2xl font-extrabold text-foreground tracking-tight group-hover:text-primary transition-colors">
             {value}
           </p>
         </div>
         <div 
-          className={`rounded-xl p-3 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${iconBgColor} ${iconColor}`}
+          className={`rounded-lg p-2.5 transition-all duration-300 group-hover:bg-primary group-hover:text-white ${iconBgColor} ${iconColor}`}
         >
-          {icon}
+          <div className="h-5 w-5 flex items-center justify-center">
+            {icon}
+          </div>
         </div>
       </div>
-      <div className="mt-4 flex items-center gap-2">
-        <div className="h-1 w-1 rounded-full bg-primary/40" />
-        <p className="text-xs font-semibold text-gray-400">{subtext}</p>
+      <div className="mt-3 flex items-center gap-2 relative z-10">
+        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">{subtext}</p>
       </div>
     </motion.div>
   );

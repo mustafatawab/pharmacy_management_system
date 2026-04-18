@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
+import { CommandPalette } from "@/components/command-palette";
 
 interface AppShellProps {
   title: string;
@@ -13,7 +14,8 @@ export function AppShell({ title, children }: AppShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-[#F6F9FC] dark:bg-[#212121]">
+    <div className="flex h-screen bg-slate-50 dark:bg-zinc-950 transition-colors">
+      <CommandPalette />
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex-1 flex flex-col overflow-hidden w-full">
         <Header title={title} onMenuClick={() => setIsSidebarOpen(true)} />

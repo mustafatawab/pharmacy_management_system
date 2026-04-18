@@ -3,45 +3,54 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  /* Modern Medical Professional Palette */
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
+  /* Industrial Refinement Palette */
+  --color-primary: #6366f1; /* Electric Indigo */
+  --color-primary-hover: #4f46e5;
   
   --color-success: #10b981;
   --color-warning: #f59e0b;
-  --color-danger: #ef4444;
+  --color-danger: #f43f5e;
 
-  /* Backgrounds */
-  --color-slate-50: #f8fafc;
-  --color-zinc-900: #18181b;
-  --color-zinc-800: #27272a;
+  /* Monochromatic Base */
+  --color-zinc-50: #fafafa;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a;
+  --color-zinc-600: #52525b;
   --color-zinc-700: #3f3f46;
+  --color-zinc-800: #27272a;
+  --color-zinc-900: #18181b;
+  --color-zinc-950: #09090b;
 
-  /* Border Radius & Shadows */
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
+  /* Floating UI Tokens */
+  --radius-xl: 0.5rem; /* Sharper edges */
+  --radius-2xl: 0.75rem;
   
-  --shadow-premium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-premium: 0 0 0 1px rgba(0,0,0,0.05), 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+  --shadow-command: 0 0 0 1px rgba(0,0,0,0.1), 0 24px 48px -12px rgba(0,0,0,0.25);
 
-  /* Fonts */
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  /* Type */
+  --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #fafafa;
+  --foreground: #09090b;
   --card: #ffffff;
-  --card-foreground: #0f172a;
-  --border: #e2e8f0;
+  --card-foreground: #09090b;
+  --border: #e4e4e7;
+  --muted: #71717a;
 }
 
 .dark {
   --background: #09090b;
   --foreground: #fafafa;
-  --card: #18181b;
+  --card: #09090b; /* Pure black cards for industrial feel */
   --card-foreground: #fafafa;
   --border: #27272a;
+  --muted: #a1a1aa;
 }
 
 body {
@@ -50,12 +59,23 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 }
 
-/* Custom Scrollbar for modern look */
+/* Snappy Transitions */
+* {
+  transition-duration: 150ms !important;
+}
+
+/* Ultra-Thin Borders */
+.border-thin {
+  border-width: 0.5px;
+}
+
+/* Custom Scrollbar - Minimalist */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -63,14 +83,20 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: var(--border);
+  border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--muted);
+}
+
+/* Command Palette Animation Helpers */
+@keyframes slide-in {
+  from { transform: translateY(-10px) opacity(0); }
+  to { transform: translateY(0) opacity(1); }
+}
+
+.animate-command {
+  animation: slide-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
