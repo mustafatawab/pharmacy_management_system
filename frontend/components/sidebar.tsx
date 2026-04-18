@@ -28,9 +28,10 @@ const navigation = [
 interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
+  isCollapsed?: boolean;
 }
 
-export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
+export function Sidebar({ isOpen = false, onClose, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -42,7 +43,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-zinc-900/60 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-40 bg-zinc-950/20 backdrop-blur-[2px] md:hidden"
             onClick={onClose}
           />
         )}
@@ -50,72 +51,85 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
 
       {/* Sidebar Container */}
       <motion.div
-        className={`fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col border-r bg-card border-border transition-transform duration-300 md:relative md:translate-x-0 ${
+        animate={{ width: isCollapsed ? 80 : 256 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed inset-y-0 left-0 z-50 flex h-full flex-col bg-white dark:bg-zinc-950 border-r border-zinc-100 dark:border-zinc-900 transition-colors md:relative md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-6 py-6 border-b border-border">
+        <div className="flex items-center justify-between px-6 py-6 overflow-hidden min-h-[80px]">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
               <Pill className="h-6 w-6" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-foreground tracking-tight">
-                Pharmacy
-              </span>
-              <span className="text-[10px] uppercase tracking-wider font-bold text-gray-500 opacity-80">
-                Management System
-              </span>
-            </div>
+            {!isCollapsed && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col whitespace-nowrap"
+              >
+                <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                  Pharmacy
+                </span>
+                <span className="text-[10px] uppercase tracking-wider font-bold text-zinc-400">
+                  OS Terminal
+                </span>
+              </motion.div>
+            )}
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors md:hidden"
+            className="rounded-lg p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors md:hidden"
           >
-            <X className="h-5 w-5 text-gray-500" />
+            <X className="h-5 w-5 text-zinc-500" />
           </button>
         </div>
-        <nav className="flex-1 space-y-1 px-4 py-6 overflow-y-auto">
+
+        <nav className="flex-1 space-y-1 px-3 py-6 overflow-y-auto custom-scrollbar">
           {navigation.map((item) => {
             const isActive =
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
+            
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                className={`group relative flex items-center rounded-xl transition-all duration-200 h-11 ${
+                  isCollapsed ? "justify-center" : "px-4 gap-3"
+                } ${
                   isActive
                     ? "bg-primary text-white shadow-lg shadow-primary/20"
-                    : "text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-800 hover:text-foreground"
+                    : "text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100"
                 }`}
+                title={isCollapsed ? item.name : ""}
               >
                 <item.icon
-                  className={`h-5 w-5 transition-colors ${
+                  className={`shrink-0 transition-colors ${
+                    isCollapsed ? "h-5 w-5" : "h-4 w-4"
+                  } ${
                     isActive
                       ? "text-white"
-                      : "text-gray-400 group-hover:text-primary"
+                      : "text-zinc-400 group-hover:text-primary"
                   }`}
                 />
-                {item.name}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 rounded-xl bg-primary -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
+                {!isCollapsed && (
+                  <motion.span 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-xs font-bold uppercase tracking-widest whitespace-nowrap"
+                  >
+                    {item.name}
+                  </motion.span>
                 )}
               </Link>
             );
           })}
         </nav>
-        <div className="p-6 border-t border-border bg-gray-50/50 dark:bg-zinc-900/50">
-          <div className="text-[10px] text-center font-medium text-gray-400 uppercase tracking-widest">
-            © {new Date().getFullYear()} WS Systems
-            <br />
-            v1.0.0
-          </div>
+
+        <div className="p-8 shrink-0">
+          <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse mx-auto" />
         </div>
       </motion.div>
     </>

@@ -81,32 +81,35 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Inventory Management
-        </h2>
-        <div className="flex items-center gap-3">
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-extrabold text-foreground tracking-tighter">
+            Inventory Terminal
+          </h2>
+          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-1">Catalog Management</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setIsManageCategoriesOpen(true)}
-            className="flex items-center gap-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#2F2F2F] hover:bg-gray-50 dark:hover:bg-[#212121] text-gray-700 dark:text-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <Settings2 className="h-4 w-4" />
-            Manage Categories
+            Categories
           </button>
           <button
             onClick={() => setIsAddCategoryOpen(true)}
-            className="flex items-center gap-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#2F2F2F] hover:bg-gray-50 dark:hover:bg-[#212121] text-gray-700 dark:text-gray-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
           >
             <Tag className="h-4 w-4" />
-            Add Category
+            New Group
           </button>
           <button
             onClick={() => setIsAddProductOpen(true)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm shadow-blue-500/20"
+            className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] transition-all shadow-lg shadow-primary/20 group"
           >
-            <Plus className="h-4 w-4" />
-            Add Product
+            <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform" />
+            Add Medicine
           </button>
         </div>
       </div>

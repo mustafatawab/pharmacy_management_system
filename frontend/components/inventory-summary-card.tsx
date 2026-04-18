@@ -12,17 +12,17 @@ export function InventorySummaryCard({
   title,
   value,
   icon,
-  iconBgColor = "bg-blue-50",
-  iconColor = "text-blue-600",
+  iconBgColor = "bg-primary/10",
+  iconColor = "text-primary",
 }: InventorySummaryCardProps) {
   return (
-    <div className="flex items-center p-6 bg-white dark:bg-[#2F2F2F] border-gray-200 dark:border-[#2F2F2F] rounded-xl border shadow-sm">
-      <div className={`p-4 rounded-xl ${iconBgColor} ${iconColor} mr-4`}>
+    <div className="flex items-center p-5 bg-card rounded-[2rem] shadow-sm group">
+      <div className={`p-3.5 rounded-2xl ${iconBgColor} ${iconColor} mr-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
         {icon}
       </div>
       <div>
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">{title}</p>
+        <p className="text-2xl font-extrabold text-foreground mt-0.5 tracking-tighter">
           {value}
         </p>
       </div>

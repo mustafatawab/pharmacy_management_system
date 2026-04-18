@@ -11,7 +11,7 @@ interface ModalProps {
   maxWidth?: string;
 }
 
-export function Modal({ isOpen, onClose, title, icon, children, maxWidth = "max-w-2xl" }: ModalProps) {
+export function Modal({ isOpen, onClose, title, icon, children, maxWidth = "max-w-xl" }: ModalProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -29,42 +29,43 @@ export function Modal({ isOpen, onClose, title, icon, children, maxWidth = "max-
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
+          {/* High-End Glass Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-zinc-950/20 backdrop-blur-[6px]"
             onClick={onClose}
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", bounce: 0.3, duration: 0.5 }}
-            className={`relative w-full ${maxWidth} transform rounded-2xl bg-card border border-border shadow-premium transition-all flex flex-col max-h-[90vh] z-50`}
+            exit={{ opacity: 0, scale: 0.98, y: 10 }}
+            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+            className={`relative w-full ${maxWidth} bg-white dark:bg-zinc-900 shadow-command rounded-[2rem] overflow-hidden z-50 border-none`}
           >
-            <div className="flex items-center justify-between p-6 border-b border-border">
+            <div className="flex items-center justify-between px-8 pt-8 pb-4">
               <div className="flex items-center gap-3">
                 {icon && (
                   <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
                     {icon}
                   </div>
                 )}
-                <h3 className="text-xl font-extrabold text-foreground tracking-tight">
+                <h3 className="text-xl font-extrabold text-foreground tracking-tighter">
                   {title}
                 </h3>
               </div>
               <button
                 onClick={onClose}
-                className="rounded-xl p-2 text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-all hover:text-foreground"
+                className="rounded-full p-2 text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto custom-scrollbar">
+            <div className="px-8 pb-8 overflow-y-auto max-h-[80vh] custom-scrollbar">
               {children}
             </div>
           </motion.div>

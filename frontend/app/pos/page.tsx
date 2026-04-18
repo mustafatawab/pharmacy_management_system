@@ -160,7 +160,7 @@ export default function POSPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-7rem)] gap-4">
       {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl border border-border shadow-sm">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-card p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-primary/10 rounded-xl">
             <ShoppingCart className="h-5 w-5 text-primary" />
@@ -180,13 +180,13 @@ export default function POSPage() {
               placeholder="Search ( Press '/' to focus )"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-zinc-50/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-sm font-medium"
             />
           </div>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-4 py-2.5 rounded-xl border border-border bg-zinc-50/50 focus:bg-white focus:outline-none text-sm font-bold text-zinc-600 appearance-none min-w-[140px] cursor-pointer"
+            className="px-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 focus:bg-white focus:outline-none text-sm font-bold text-zinc-600 appearance-none min-w-[140px] cursor-pointer shadow-sm"
           >
             {categories.map((cat) => (
               <option key={cat} value={cat}>{cat}</option>
@@ -200,7 +200,7 @@ export default function POSPage() {
         {/* Products Section */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           {isLoading ? (
-            <div className="flex-1 flex items-center justify-center bg-card rounded-2xl border border-border">
+            <div className="flex-1 flex items-center justify-center bg-card rounded-2xl">
               <Loader2 className="h-10 w-10 animate-spin text-primary/30" />
             </div>
           ) : (

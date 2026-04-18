@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  /* Industrial Refinement Palette */
+  /* Industrial Refinement Palette - Softened */
   --color-primary: #6366f1; /* Electric Indigo */
   --color-primary-hover: #4f46e5;
   
@@ -11,7 +11,7 @@
   --color-warning: #f59e0b;
   --color-danger: #f43f5e;
 
-  /* Monochromatic Base */
+  /* Softened Monochromatic Base */
   --color-zinc-50: #fafafa;
   --color-zinc-100: #f4f4f5;
   --color-zinc-200: #e4e4e7;
@@ -25,31 +25,32 @@
   --color-zinc-950: #09090b;
 
   /* Floating UI Tokens */
-  --radius-xl: 0.5rem; /* Sharper edges */
-  --radius-2xl: 0.75rem;
+  --radius-xl: 0.75rem; 
+  --radius-2xl: 1rem;
   
-  --shadow-premium: 0 0 0 1px rgba(0,0,0,0.05), 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
-  --shadow-command: 0 0 0 1px rgba(0,0,0,0.1), 0 24px 48px -12px rgba(0,0,0,0.25);
+  /* Softer shadows */
+  --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-command: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 
   /* Type */
   --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --background: #fafafa;
-  --foreground: #09090b;
+  --background: #f8fafc; /* Softer light background */
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #09090b;
-  --border: #e4e4e7;
-  --muted: #71717a;
+  --card-foreground: #0f172a;
+  --border: #f1f5f9; /* Extremely subtle borders */
+  --muted: #64748b;
 }
 
 .dark {
   --background: #09090b;
   --foreground: #fafafa;
-  --card: #09090b; /* Pure black cards for industrial feel */
+  --card: #18181b; /* Zinc-900 for cards, not pure black */
   --card-foreground: #fafafa;
-  --border: #27272a;
+  --border: #27272a; /* Slightly lighter border for dark mode */
   --muted: #a1a1aa;
 }
 
@@ -84,19 +85,8 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
-}
-
-/* Command Palette Animation Helpers */
-@keyframes slide-in {
-  from { transform: translateY(-10px) opacity(0); }
-  to { transform: translateY(0) opacity(1); }
-}
-
-.animate-command {
-  animation: slide-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
