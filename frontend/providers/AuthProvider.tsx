@@ -51,10 +51,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await api.get("/tenant/me");
       setTenant(response.data);
-    } catch (error) {
-      console.error(error)
-      toast.error(error as string || "Failed to fetch tenant information");
-      setUser(null);
+    } catch (error: any) {
+      // Don't show toast if it's just a 401 (not logged in)
+      if (error.response?.status !== 401) {
+        toast.error("Failed to fetch pharmacy settings");
+      }
+      setTenant(null);
     } finally {
       setLoading(false);
     }
