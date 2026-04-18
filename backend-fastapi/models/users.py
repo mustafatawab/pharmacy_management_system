@@ -15,12 +15,14 @@ class UserRole(str , Enum):
 class User(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     full_name: str = Field(min_length=6)
+    email: EmailStr = Field(unique=True, index=True)
     username: str = Field(min_length=6 , unique=True)
     hashed_password: str = Field(min_length=6)
     created_at : datetime = Field(default=datetime.utcnow())
     updated_at : datetime = Field(default=datetime.utcnow())
     role: UserRole = Field(default=UserRole.STAFF)
     is_active: bool = Field(default=True)
+    token_version: int = Field(default=1) # Increment this to logout all devices
 
     tenant_id : int | None = Field(default=None, foreign_key="tenant.id")
 

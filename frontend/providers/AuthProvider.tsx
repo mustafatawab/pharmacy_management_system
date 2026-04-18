@@ -12,7 +12,8 @@ interface LoginCredentials {
 }
 
 interface RegisterData {
-  full_name: string
+  full_name: string;
+  email: string;
   username: string;
   password: string;
 }
@@ -24,6 +25,8 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
   refreshUser: () => Promise<void>;
   refreshTenant: () => Promise<void>;
 }
@@ -104,6 +107,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const forgotPassword = async (email: string) => {
+    try {
+      const response = await api.post("/auth/forgot-password", { email });
+      toast.success(response.data.message);
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Request failed");
+      throw error;
+    }
+  };
+
+  const resetPassword = async (token: string, newPassword: string) => {
+    try {
+      const response = await api.post("/auth/reset-password", { token, new_password: newPassword });
+      toast.success(response.data.message);
+      router.push("/login");
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || "Reset failed");
+      throw error;
+    }
+  };
+
   // Automatic routing based on user state
   useEffect(() => {
     if (!loading) {
@@ -118,7 +142,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, loading, router]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshUser, refreshTenant, tenant }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      register, 
+      logout, 
+      forgotPassword,
+      resetPassword,
+      refreshUser, 
+      refreshTenant, 
+      tenant 
+    }}>
       {children}
     </AuthContext.Provider>
   );

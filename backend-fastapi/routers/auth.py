@@ -1,116 +1,105 @@
 from auth.dependency import get_current_user
-from fastapi import APIRouter, Depends, status, HTTPException, Response, Cookie, Request
+from fastapi import APIRouter, Depends, status, HTTPException, Response, Request
 from models.users import User
-from schemas.user_schema import UserCreate, UserLogin, UserRead, UserRegister
+from schemas.user_schema import UserLogin, UserRead, UserRegister, ForgotPasswordRequest, ResetPasswordConfirm
 from database import get_session
-from sqlmodel import Session, select
-from auth.security import hash_password, verify_password, create_access_token, decode_token, decode_refresh_token
-from datetime import timedelta  
+from sqlmodel import Session
+from auth.security import decode_refresh_token, create_access_token
 from service.auth_service import AuthService
+from uuid import UUID
 
 router = APIRouter(prefix="/auth" , tags=['auth'])
-
 auth_service = AuthService()
 
-@router.post("/register", response_model=UserRead , response_model_exclude={"hashed_password"})
-async def register_user(user: UserRegister,response: Response, session: Session = Depends(get_session)):
+@router.post("/register", response_model=UserRead, response_model_exclude={"hashed_password"})
+async def register_user(user: UserRegister, response: Response, session: Session = Depends(get_session)):
     result = auth_service.register_user(user=user, session=session)
+    
     response.set_cookie(
         key="access_token",
         value=result["access_token"],
         httponly=True,
         secure=True,
-        samesite="lax"
+        samesite="strict"
     )
     response.set_cookie(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
         secure=True,
-        samesite="lax",
-        path="/auth/refresh" # Only send refresh token to this endpoint for security
+        samesite="strict",
+        path="/auth/refresh"
     )
     return result["user"]
 
-
 @router.post("/login")
-async def login(user: UserLogin, response: Response, session : Session = Depends(get_session)):
-    result = auth_service.login_user(user=user, session=session)
+async def login(login_data: UserLogin, response: Response, session: Session = Depends(get_session)):
+    result = auth_service.login_user(login_data=login_data, session=session)
+    
     response.set_cookie(
         key="access_token",
         value=result["access_token"],
         httponly=True,
         secure=True,
-        samesite="lax"
+        samesite="strict"
     )
     response.set_cookie(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="strict",
         path="/auth/refresh"
     )
 
     return {"message" : result["message"]}
 
-
 @router.post("/refresh")
 async def refresh_token(request: Request, response: Response, session: Session = Depends(get_session)):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token missing")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Session expired")
     
     payload = decode_refresh_token(refresh_token)
     if not payload:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid session")
     
-    username = payload.get("username")
-    if not username:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
+    user_id = payload.get("sub")
+    token_version = payload.get("version")
+
+    user = auth_service.get_user_by_id(UUID(user_id), session)
+    if not user or user.token_version != token_version:
+        # If version mismatch, the session was revoked!
+        response.delete_cookie("refresh_token", path="/auth/refresh")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Session revoked")
     
-    user = session.exec(select(User).where(User.username == username)).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-    
-    new_access_token = create_access_token({"username": user.username})
+    # Issue fresh access token with current version
+    new_access_token = create_access_token(user.id, user.token_version)
     
     response.set_cookie(
         key="access_token",
         value=new_access_token,
         httponly=True,
         secure=True,
-        samesite="lax"
+        samesite="strict"
     )
     
-    return {"message": "Token refreshed successfully"}
+    return {"message": "Session renewed"}
 
+@router.post("/forgot-password")
+async def forgot_password(data: ForgotPasswordRequest, session: Session = Depends(get_session)):
+    return auth_service.forgot_password(data.email, session)
 
-@router.post("/logout" , response_model=dict)
+@router.post("/reset-password")
+async def reset_password(data: ResetPasswordConfirm, session: Session = Depends(get_session)):
+    return auth_service.reset_password(data.token, data.new_password, session)
+
+@router.post("/logout")
 def logout(response: Response):
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token", path="/auth/refresh")
-    return {"message" : "Logout Successfully !! "}
-
+    return {"message" : "Logout successful"}
 
 @router.get("/me" , response_model=UserRead)
-def get_me(current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
-    # if not access_token:
-    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
-    # payload = decode_token(access_token)
-    # if not payload:
-    #     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    # username = payload.get("username")
-    # user = session.exec(select(User).where(User.username == username)).first()
-    # if not user:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-    # return {
-    #     "id": str(user.id),
-    #     "username": user.username,
-    #     "full_name": user.full_name,
-    #     "role": user.role,
-    #     "is_active": user.is_active,
-    #     "tenant_id": user.tenant_id,
-    # }
-
+def get_me(current_user: User = Depends(get_current_user)):
     return current_user

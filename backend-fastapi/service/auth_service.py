@@ -1,54 +1,96 @@
-from sqlmodel import select
+from sqlmodel import select, or_
 from fastapi import Depends, HTTPException
-from sqlmodel import SQLModel, Session, select
-from database import get_session
+from sqlmodel import Session
 from models.users import User
-from schemas.user_schema import UserCreate, UserUpdate, UserRead, UserRegister, UserLogin
-from auth.security import hash_password, verify_password, create_access_token, create_refresh_token
-from datetime import timedelta
+from schemas.user_schema import UserRegister, UserLogin
+from auth.security import (
+    hash_password, 
+    verify_password, 
+    create_access_token, 
+    create_refresh_token, 
+    create_reset_token, 
+    decode_reset_token
+)
+from service.email_service import EmailService
+from uuid import UUID
+from datetime import datetime
 
 class AuthService:
 
-    def existing_user(self, username: str, session: Session):
-        existing_user = session.exec(select(User).where(User.username == username)).first()
-        return existing_user
+    def get_user_by_id(self, user_id: UUID, session: Session):
+        return session.exec(select(User).where(User.id == user_id)).first()
+
+    def get_user_by_email(self, email: str, session: Session):
+        return session.exec(select(User).where(User.email == email)).first()
+
+    def get_user_by_username(self, username: str, session: Session):
+        return session.exec(select(User).where(User.username == username)).first()
 
     def register_user(self, user: UserRegister, session: Session):
-        existing_user = self.existing_user(user.username, session)
-        if existing_user:
+        if self.get_user_by_username(user.username, session):
             raise HTTPException(status_code=400, detail="Username already exists")
         
-        add_user = User(full_name=user.full_name, role="admin", username=user.username, hashed_password=hash_password(user.password))
-        session.add(add_user)
+        if self.get_user_by_email(user.email, session):
+            raise HTTPException(status_code=400, detail="Email already exists")
+        
+        new_user = User(
+            full_name=user.full_name, 
+            email=user.email,
+            username=user.username, 
+            hashed_password=hash_password(user.password),
+            role="admin", # Default for first registration
+            token_version=1
+        )
+        session.add(new_user)
         session.commit()
-        session.refresh(add_user)
-
-        access_token = create_access_token({"username": add_user.username})
-        refresh_token = create_refresh_token({"username": add_user.username})
+        session.refresh(new_user)
 
         return {
-            "access_token": access_token, 
-            "refresh_token": refresh_token,
-            "message": "User registered successfully", 
-            "user": add_user
+            "access_token": create_access_token(new_user.id, new_user.token_version), 
+            "refresh_token": create_refresh_token(new_user.id, new_user.token_version),
+            "user": new_user
         }
     
-    def login_user(self, user: UserLogin, session: Session):
-        existing_user = self.existing_user(user.username, session)
-        if not existing_user:
+    def login_user(self, login_data: UserLogin, session: Session):
+        user = session.exec(
+            select(User).where(or_(User.username == login_data.login, User.email == login_data.login))
+        ).first()
+        
+        if not user or not verify_password(login_data.password, user.hashed_password):
+            raise HTTPException(status_code=401, detail="Invalid username/email or password")
+        
+        if not user.is_active:
+            raise HTTPException(status_code=403, detail="Account is deactivated")
+
+        return {
+            "access_token": create_access_token(user.id, user.token_version), 
+            "refresh_token": create_refresh_token(user.id, user.token_version),
+            "message": "Login successful"
+        }
+
+    def forgot_password(self, email: str, session: Session):
+        user = self.get_user_by_email(email, session)
+        if user:
+            token = create_reset_token(user.id)
+            EmailService.send_password_reset_email(user.email, token)
+        
+        # Always return success to prevent email enumeration
+        return {"message": "If an account exists with this email, a reset link has been sent."}
+
+    def reset_password(self, token: str, new_password: str, session: Session):
+        user_id_str = decode_reset_token(token)
+        if not user_id_str:
+            raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+        
+        user = self.get_user_by_id(UUID(user_id_str), session)
+        if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        if not verify_password(user.password, existing_user.hashed_password):
-            raise HTTPException(status_code=400, detail="Invalid credentials")
+        user.hashed_password = hash_password(new_password)
+        user.token_version += 1 # Invalidate all current sessions on password reset!
+        user.updated_at = datetime.utcnow()
         
-        access_token = create_access_token({"username": existing_user.username})
-        refresh_token = create_refresh_token({"username": existing_user.username})
-
-        return {
-            "access_token": access_token, 
-            "refresh_token": refresh_token,
-            "message": "Login successfully"
-        }
-
-
-    
+        session.add(user)
+        session.commit()
+        
+        return {"message": "Password updated. Please log in again."}
