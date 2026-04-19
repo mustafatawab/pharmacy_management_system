@@ -1,9 +1,9 @@
 import { AppShell } from "@/components/app-shell";
 
-export default function DashboardLayout({
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell title="Dashboard">{children}</AppShell>;
+  return <AppShell>{children}</AppShell>;
 }

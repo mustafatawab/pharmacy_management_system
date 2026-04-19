@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -33,6 +34,10 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen = false, onClose, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname();
+  const [isHovered, setIsHovered] = useState(false);
+
+  // The sidebar is effectively expanded if either it's not collapsed OR it's being hovered
+  const isExpanded = !isCollapsed || isHovered;
 
   return (
     <>
@@ -51,21 +56,26 @@ export function Sidebar({ isOpen = false, onClose, isCollapsed = false }: Sideba
 
       {/* Sidebar Container */}
       <motion.div
-        animate={{ width: isCollapsed ? 80 : 256 }}
-        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        onMouseEnter={() => isCollapsed && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        animate={{ 
+          width: isExpanded ? 256 : 80,
+          boxShadow: isHovered && isCollapsed ? "20px 0 50px -12px rgba(0, 0, 0, 0.15)" : "none"
+        }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed inset-y-0 left-0 z-50 flex h-full flex-col bg-white dark:bg-zinc-950 border-r border-zinc-100 dark:border-zinc-900 transition-colors md:relative md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } ${isHovered && isCollapsed ? "ring-1 ring-primary/5" : ""}`}
       >
         <div className="flex items-center justify-between px-6 py-6 overflow-hidden min-h-[80px]">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm">
               <Pill className="h-6 w-6" />
             </div>
-            {!isCollapsed && (
+            {isExpanded && (
               <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
                 className="flex flex-col whitespace-nowrap"
               >
                 <span className="text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
@@ -76,6 +86,7 @@ export function Sidebar({ isOpen = false, onClose, isCollapsed = false }: Sideba
                 </span>
               </motion.div>
             )}
+
           </div>
           <button
             onClick={onClose}
@@ -96,29 +107,36 @@ export function Sidebar({ isOpen = false, onClose, isCollapsed = false }: Sideba
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`group relative flex items-center rounded-xl transition-all duration-200 h-11 ${
-                  isCollapsed ? "justify-center" : "px-4 gap-3"
+                className={`group relative flex items-center rounded-xl transition-all duration-300 h-11 ${
+                  !isExpanded ? "justify-center" : "px-4 gap-3"
                 } ${
                   isActive
-                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                    ? "text-white"
                     : "text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-100"
                 }`}
-                title={isCollapsed ? item.name : ""}
+                title={!isExpanded ? item.name : ""}
               >
+                {isActive && (
+                  <motion.div
+                    layoutId="active-pill"
+                    className="absolute inset-0 bg-primary rounded-xl shadow-lg shadow-primary/20"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
                 <item.icon
-                  className={`shrink-0 transition-colors ${
-                    isCollapsed ? "h-5 w-5" : "h-4 w-4"
+                  className={`shrink-0 transition-colors relative z-10 ${
+                    !isExpanded ? "h-5 w-5" : "h-4 w-4"
                   } ${
                     isActive
                       ? "text-white"
                       : "text-zinc-400 group-hover:text-primary"
                   }`}
                 />
-                {!isCollapsed && (
+                {isExpanded && (
                   <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-xs font-bold uppercase tracking-widest whitespace-nowrap"
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="text-xs font-bold uppercase tracking-widest whitespace-nowrap relative z-10"
                   >
                     {item.name}
                   </motion.span>
