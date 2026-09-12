@@ -1,17 +1,33 @@
 "use client";
-import { useEffect, useState } from "react";
 import { StatCard } from "@/components/stat-card";
 import { AlertCard } from "@/components/alert-card";
 import { RecentActivity } from "@/components/recent-activity";
 import { DollarSign, Package, TrendingUp, Users } from "lucide-react";
+import {
+  useDashboardStats,
+  useLowStockMedicines,
+  useRecentSales,
+} from "@/hooks/useDashboard";
 
 export default function DashboardPage() {
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
+  const { data: lowStockItems = [] } = useLowStockMedicines();
+  const { data: recentSales = [] } = useRecentSales();
+
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+
+  if (statsLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-gray-500">Loading dashboard...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -29,8 +45,8 @@ export default function DashboardPage() {
         <StatCard
           index={0}
           title="Today's Sales"
-          value="USD 0.00"
-          subtext="0 transactions"
+          value={`PKR ${(stats?.todaySales || 0).toFixed(2)}`}
+          subtext={`${stats?.todayTransactions || 0} transactions`}
           icon={<DollarSign className="h-6 w-6" />}
           iconBgColor="bg-success/10"
           iconColor="text-success"
@@ -38,8 +54,8 @@ export default function DashboardPage() {
         <StatCard
           index={1}
           title="Total Products"
-          value="4"
-          subtext="1 low stock"
+          value={(stats?.totalProducts || 0).toString()}
+          subtext={`${stats?.lowStockCount || 0} low stock`}
           icon={<Package className="h-6 w-6" />}
           iconBgColor="bg-primary/10"
           iconColor="text-primary"
@@ -47,7 +63,7 @@ export default function DashboardPage() {
         <StatCard
           index={2}
           title="Total Revenue"
-          value="USD 0.00"
+          value={`PKR ${(stats?.totalRevenue || 0).toFixed(2)}`}
           subtext="All time"
           icon={<TrendingUp className="h-6 w-6" />}
           iconBgColor="bg-warning/10"
@@ -56,7 +72,7 @@ export default function DashboardPage() {
         <StatCard
           index={3}
           title="Active Users"
-          value="2"
+          value={(stats?.activeUsers || 0).toString()}
           subtext="System users"
           icon={<Users className="h-6 w-6" />}
           iconBgColor="bg-indigo-50"
@@ -68,66 +84,20 @@ export default function DashboardPage() {
         <AlertCard
           title="Low Stock Alert"
           type="low-stock"
-          items={[
-            {
-              id: "1",
-              title: "Amoxicillin 250mg",
-              subtitle: "8 units remaining",
-              tag: "Low Stock",
-              tagColor: "bg-red-100 text-red-700",
-            },
-            // Add more empty items if needed for layout spacing or verification
-          ]}
+          items={lowStockItems}
         />
         <AlertCard
           title="Expiring Soon"
           type="expiring"
-          items={[
-            {
-              id: "1",
-              title: "Paracetamol 500mg",
-              subtitle: "Expires: 31/12/2025",
-              tag: "Expiring",
-              tagColor: "bg-amber-100 text-amber-700",
-            },
-            {
-              id: "2",
-              title: "Amoxicillin 250mg",
-              subtitle: "Expires: 30/06/2024",
-              tag: "Expiring",
-              tagColor: "bg-amber-100 text-amber-700",
-            },
-            {
-              id: "3",
-              title: "Vitamin C 1000mg",
-              subtitle: "Expires: 15/03/2026",
-              tag: "Expiring",
-              tagColor: "bg-amber-100 text-amber-700",
-            },
-          ]}
+          items={[]}
         />
         <RecentActivity
-          activities={[
+          activities={recentSales.length > 0 ? recentSales : [
             {
               id: "1",
-              title: "New Sale",
-              time: "2 minutes ago",
+              title: "No recent sales",
+              time: "Start selling to see activity",
               type: "sale",
-              amount: "+$45.60",
-            },
-            {
-              id: "2",
-              title: "Stock Updated",
-              time: "15 minutes ago",
-              type: "restock",
-              status: "Inventory",
-            },
-            {
-              id: "3",
-              title: "Purchase Order",
-              time: "1 hour ago",
-              type: "order",
-              status: "Pending",
             },
           ]}
         />

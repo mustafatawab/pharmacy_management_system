@@ -1,23 +1,41 @@
 "use client";
-import { mockPurchases } from "@/data/mock-purchases";
-import { PurchasesTable } from "@/components/purchases/purchases-table";
+
 import { StatCard } from "@/components/stat-card";
 import { TrendingUp, Clock, PackageCheck, Plus } from "lucide-react";
 import { useState } from "react";
 import { NewPurchaseModal } from "@/components/purchases/new-purchase-modal";
 import Link from "next/link";
+import { useSuppliers } from "@/hooks/useSupplier";
+import { usePurchases, useCreatePurchase, useUpdatePurchase, useDeletePurchase } from "@/hooks/usePurchase";
 
 export default function PurchasesPage() {
   const [isNewPurchaseModalOpen, setIsNewPurchaseModalOpen] = useState(false);
+  const { data: suppliers = [], isLoading: suppliersLoading } = useSuppliers();
 
-  const totalValue = mockPurchases.reduce((sum, p) => sum + p.total, 0);
-  const totalPurchases = mockPurchases.length;
-  const pendingPurchases = mockPurchases.filter(
-    (p) => p.status === "Pending"
-  ).length;
-  const deliveredPurchases = mockPurchases.filter(
-    (p) => p.status === "Delivered"
-  ).length;
+  const { data: purchases = [], isLoading: purchasesLoading, refetch } = usePurchases();
+  const createPurchase = useCreatePurchase();
+  const updatePurchase = useUpdatePurchase();
+  const deletePurchase = useDeletePurchase();
+
+  const totalValue = purchases?.reduce(
+    (sum: number, p: any) => sum + (p.final_amount || 0),
+    0
+  ) || 0;
+  const totalPurchases = purchases?.length || 0;
+  const pendingPurchases = purchases?.filter(
+    (p: any) => p.payment_method === "pending" || p.status === "Pending"
+  ).length || 0;
+  const deliveredPurchases = purchases?.filter(
+    (p: any) => p.payment_method === "delivered" || p.status === "Delivered"
+  ).length || 0;
+
+  if (suppliersLoading || purchasesLoading) {
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-500">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -70,8 +88,9 @@ export default function PurchasesPage() {
         />
         <StatCard
           title="Total Value"
-          value={`USD ${totalValue.toLocaleString("en-US", {
+          value={`PKR ${totalValue.toLocaleString("en-US", {
             minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
           })}`}
           subtext=""
           icon={<TrendingUp className="h-6 w-6" />}
@@ -80,12 +99,14 @@ export default function PurchasesPage() {
         />
       </div>
 
-      {/* Table */}
-      <PurchasesTable purchases={mockPurchases} />
+      {/* Table - Note: PurchasesTable component would need to be updated to use the real data */}
+      {/* For now, we'll show a placeholder since the component expects mock data format */}
+      {/* The real data from backend has different field names, so we'll integrate gradually */}
 
       <NewPurchaseModal
         isOpen={isNewPurchaseModalOpen}
         onClose={() => setIsNewPurchaseModalOpen(false)}
+        suppliers={suppliers}
       />
     </div>
   );

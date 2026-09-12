@@ -1,140 +1,77 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-const getUsers = async () => {
-  const res = await fetch(`${API_URL}/user`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const result = await res.json();
-  if (!res.ok) {
-    throw new Error(result?.detail || "Failed to fetch users");
-  }
-
-  return result;
-};
-
-const addUser = async (data: {
-  full_name: string;
-  username: string;
-  password: string;
-  is_active: boolean;
-}) => {
-  const res = await fetch(`${API_URL}/user`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  const response = await res.json();
-  console.log("\n\nReponse inside the add User function is ", response);
-  if (!res.ok) {
-    throw new Error(response?.detail || "Failed to add user");
-  }
-  return response;
-};
-
-const deleteUser = async (id: string) => {
-  const res = await fetch(`${API_URL}/user/${id}`, {
-    method: "DELETE",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const response = await res.json();
-  if (!res.ok) {
-    throw new Error(response?.detail || "Failed to delete user");
-  }
-
-  return response;
-};
-
-const updateUser = async (data: {
+export interface User {
   id: string;
   full_name: string;
   username: string;
-  password?: string;
+  role: "admin" | "staff";
   is_active: boolean;
-}) => {
-  // Remove id from body, it goes in the URL
-  const { id, ...updateData } = data;
-  const res = await fetch(`${API_URL}/user/${id}`, {
-    method: "PUT",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(updateData),
-  });
-  const response = await res.json();
-  if (!res.ok) {
-    throw new Error(response?.detail || "Failed to update user");
-  }
+  tenant_id: number | null;
+  created_at: string;
+  updated_at: string;
+}
 
-  return response;
-};
+export interface UserCreate {
+  full_name: string;
+  username: string;
+  password: string;
+  is_active?: boolean;
+}
 
-export function useUsers() {
+export interface UserUpdate {
+  full_name?: string;
+  username?: string;
+  password?: string;
+  is_active?: boolean;
+}
+
+export const useUsers = () => {
   return useQuery({
     queryKey: ["users"],
-    queryFn: getUsers,
-    staleTime: 1000 * 60, // 1 min cache (optional)
-    refetchOnWindowFocus: false, // prevent automatic refetch on tab focus
+    queryFn: async () => {
+      const { data } = await api.get("/user");
+      return data;
+    },
+    staleTime: 1000 * 60,
+    refetchOnWindowFocus: false,
   });
-}
+};
 
-export function useAddUser() {
+export const useAddUser = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (newUser: {
-      full_name: string;
-      username: string;
-      password: string;
-      is_active: boolean;
-    }) => addUser(newUser),
+    mutationFn: async (newUser: UserCreate) => {
+      const { data } = await api.post("/user", newUser);
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
-}
+};
 
-export function useDeleteUser() {
+export const useDeleteUser = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (id: string) => deleteUser(id),
+    mutationFn: async (id: string) => {
+      await api.delete(`/user/${id}`);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
-}
+};
 
-export function useUpdateUser() {
+export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (data: {
-      id: string;
-      full_name: string;
-      username: string;
-      password?: string;
-      is_active: boolean;
-    }) => updateUser(data),
+    mutationFn: async ({ id, data }: { id: string; data: UserUpdate }) => {
+      const response = await api.put(`/user/${id}`, data);
+      return response.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
-}
+};
