@@ -3,9 +3,10 @@
 
 from typing import Optional, TYPE_CHECKING
 from sqlalchemy.sql import func
-from sqlmodel import SQLModel, Field, Relationship
+from sqlmodel import SQLModel, Field, Relationship, UUID
 from datetime import datetime
 from decimal import Decimal
+from uuid import UUID, uuid4
 
 # if TYPE_CHECKING:
 #     from models.tenant import Tenant
@@ -30,6 +31,7 @@ class Medicine(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     
     category_id: int | None = Field(default=None, index=True, foreign_key="category.id")
+    supplier_id: UUID | None = Field(default=None, foreign_key="supplier.id")
     tenant_id: int = Field(index=True, foreign_key="tenant.id")
     
     # sku: str | None = Field(default=None, unique=True)
@@ -38,6 +40,7 @@ class Medicine(SQLModel, table=True):
     # Relationships
     tenant: Optional["Tenant"] = Relationship(back_populates="medicines")
     category: Optional["Category"] = Relationship(back_populates="medicines")
+    supplier: Optional["Supplier"] = Relationship(back_populates="medicines")
     batches: list["ProductBatch"] = Relationship(back_populates="medicine")
     
 

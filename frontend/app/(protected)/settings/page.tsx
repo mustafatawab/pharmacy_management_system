@@ -11,9 +11,8 @@ import {
   Check,
 } from "lucide-react";
 
-type Tab = "info" | "security" | "notifications" | "system" | "printing";
+type Tab = "general" | "auth";
 
-// Local Switch Component
 function Switch({
   checked,
   onCheckedChange,
@@ -27,7 +26,7 @@ function Switch({
       role="switch"
       aria-checked={checked}
       onClick={() => onCheckedChange(!checked)}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible-outline:focus-visible:ring-2 focus-visible-ring-blue-600 focus-visible:ring-offset-2 ${
         checked ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"
       }`}
     >
@@ -36,6 +35,35 @@ function Switch({
           checked ? "translate-x-5" : "translate-x-0"
         }`}
       />
+    </button>
+  );
+}
+
+function TabButton({
+  title,
+  href,
+  isActive,
+}: {
+  title: string;
+  href: string;
+  isActive: boolean;
+}) {
+  return (
+    <button
+      onClick={() => setActiveTab((prev) => (prev === "general" ? "auth" : "general"))}
+      className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap min-w-max ${
+        isActive
+          ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+          : "text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-[#3F3F3F]"
+        }`}
+      title={title}
+    >
+      {isActive ? (
+        <ShieldCheck className="h-4 w-4" />
+      ) : (
+        <Building2 className="h-4 w-4" />
+      )}
+      <span>{title}</span>
     </button>
   );
 }
@@ -70,32 +98,19 @@ function Checkbox({
 }
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>("info");
+  const [activeTab, setActiveTab] = useState<Tab>("general");
   const [pharmacyInfo, setPharmacyInfo] = useState({
     name: "",
-    license_number: "",
     address: "",
+    city: "",
     phone: "",
     email: "",
-    tax_id: "",
     currency: "USD",
   });
-  const [notifications, setNotifications] = useState({
-    lowStock: true,
-    expiringProducts: true,
-    newSales: false,
-    dailyReport: true,
-    email: true,
-    push: false,
-  });
-  const [system, setSystem] = useState({
-    autoBackup: true,
-    sessionTimeout: 120,
-    dataRetention: 365,
-  });
-  const [printing, setPrinting] = useState({
-    includeLogo: true,
-    barcodes: true,
+  const [password, setPassword] = useState({
+    current: "",
+    new: "",
+    confirm: "",
   });
 
   // Fetch pharmacy info from backend on mount
@@ -112,11 +127,10 @@ export default function SettingsPage() {
         const data = await res.json();
         setPharmacyInfo({
           name: data.name || "Pharmacy",
-          license_number: data.logo_url || "PH-2024-001",
           address: data.address || "",
+          city: data.city || "",
           phone: data.phone || "",
           email: data.email || "",
-          tax_id: data.tax_id || "TAX-123456789",
           currency: data.currency || "USD",
         });
       }
@@ -146,27 +160,35 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSavePassword = async () => {
-    // Password change logic would go here
-    toast.info("Password change feature coming soon");
+  const handleChangePassword = async () => {
+    if (password.new !== password.confirm) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    if (password.new.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    try {
+      await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          current_password: password.current,
+          new_password: password.new,
+        }),
+      });
+      toast.success("Password changed successfully");
+      setPassword({ current: "", new: "", confirm: "" });
+    } catch (error: any) {
+      toast.error(error?.response?.data?.detail || "Failed to change password");
+    }
   };
 
-  const handleSaveNotifications = () => {
-    setNotifications((prev) => prev); // State is managed locally, just trigger toast
-    toast.success("Notification preferences saved");
-  };
-
-  const handleSaveSystem = () => {
-    setSystem((prev) => prev); // State is managed locally
-    toast.success("System settings saved");
-  };
-
-  const handleSavePrinting = () => {
-    setPrinting((prev) => prev); // State is managed locally
-    toast.success("Print settings saved");
-  };
-
-  if (activeTab === "info") {
+  if (activeTab === "general") {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
@@ -176,7 +198,12 @@ export default function SettingsPage() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="flex gap-2 mb-4">
+          <TabButton title="General" href="general" isActive={activeTab === "general"} />
+          <TabButton title="Auth" href="auth" isActive={activeTab === "auth"} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Pharmacy Name *
@@ -187,7 +214,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setPharmacyInfo({ ...pharmacyInfo, name: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -196,11 +223,11 @@ export default function SettingsPage() {
             </label>
             <input
               type="text"
-              value={pharmacyInfo.license_number}
+              value={pharmacyInfo.license_number || "PH-2024-001"}
               onChange={(e) =>
                 setPharmacyInfo({ ...pharmacyInfo, license_number: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
             />
           </div>
         </div>
@@ -214,7 +241,7 @@ export default function SettingsPage() {
             onChange={(e) =>
               setPharmacyInfo({ ...pharmacyInfo, address: e.target.value })
             }
-            className="h-24 w-full resize-none rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+            className="h-24 w-full resize-none rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
           />
         </div>
 
@@ -229,7 +256,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setPharmacyInfo({ ...pharmacyInfo, phone: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -242,7 +269,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setPharmacyInfo({ ...pharmacyInfo, email: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
             />
           </div>
         </div>
@@ -254,11 +281,11 @@ export default function SettingsPage() {
             </label>
             <input
               type="text"
-              value={pharmacyInfo.tax_id}
+              value={pharmacyInfo.tax_id || "TAX-123456789"}
               onChange={(e) =>
                 setPharmacyInfo({ ...pharmacyInfo, tax_id: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -270,7 +297,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setPharmacyInfo({ ...pharmacyInfo, currency: e.target.value })
               }
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white dark:bg-[#2F2F2F]"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white dark:bg-[#2F2F2F]"
             >
               <option value="USD">USD - US Dollar</option>
               <option value="EUR">EUR - Euro</option>
@@ -288,7 +315,7 @@ export default function SettingsPage() {
             <input
               type="text"
               value={"17.00"}
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
             />
           </div>
           <div className="space-y-2">
@@ -298,7 +325,7 @@ export default function SettingsPage() {
             <input
               type="text"
               value={"09:00 AM - 09:00 PM"}
-              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:text-white"
+              className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
             />
           </div>
         </div>
@@ -316,9 +343,106 @@ export default function SettingsPage() {
     );
   }
 
-  // ... rest of tabs would follow similar pattern
-  // For brevity, showing only the Info tab which is now connected to backend
-  // Other tabs maintain local state but have save functionality
+  if (activeTab === "auth") {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="h-6 w-6 text-gray-500" />
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+            Auth Settings
+          </h2>
+        </div>
 
-  return null; // Simplified - would render other tabs
+        <div className="space-y-8">
+          <div className="space-y-6">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+              Change Password
+            </h3>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Current Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    value={password.current}
+                    onChange={(e) => setPassword((p) => ({ ...p, current: e.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  New Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    value={password.new}
+                    onChange={(e) => setPassword((p) => ({ ...p, new: e.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Confirm New Password *
+                </label>
+                <div className="relative">
+                  <input
+                    type="password"
+                    value={password.confirm}
+                    onChange={(e) => setPassword((p) => ({ ...p, confirm: e.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-gray-900 outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500 dark:border-gray-600 dark:text-white"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <button
+                onClick={handleChangePassword}
+                className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                Change Password
+              </button>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 px-1 py-6 dark:border-gray-700">
+            <h3 className="mb-6 text-lg font-medium text-gray-900 dark:text-white">
+              Security Settings
+            </h3>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    Two-Factor Authentication
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Add an extra layer of security to your account
+                  </p>
+                </div>
+                <button className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-[#3F3F3F]">
+                  Enable
+                </button>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    Login Notifications
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Get notified of new login attempts
+                  </p>
+                </div>
+                <Switch checked={true} onCheckedChange={() => {}} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }

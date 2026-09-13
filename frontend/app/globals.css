@@ -2,91 +2,249 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Google Fonts Import ───────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @theme inline {
-  /* Industrial Refinement Palette - Softened */
-  --color-primary: #6366f1; /* Electric Indigo */
-  --color-primary-hover: #4f46e5;
-  
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-danger: #f43f5e;
+  /* ── Apothecary Design Tokens ────────────────────────────── */
+  /* Color Palette: Trust, Purity, Healing */
+  --color-primary: #1e40af;        /* Deep Blue – trust, professionalism */
+  --color-primary-hover: #1e3a81; 
+  --color-primary-foreground: #ffffff;
 
-  /* Softened Monochromatic Base */
-  --color-zinc-50: #fafafa;
-  --color-zinc-100: #f4f4f5;
-  --color-zinc-200: #e4e4e7;
-  --color-zinc-300: #d4d4d8;
-  --color-zinc-400: #a1a1aa;
-  --color-zinc-500: #71717a;
-  --color-zinc-600: #52525b;
-  --color-zinc-700: #3f3f46;
-  --color-zinc-800: #27272a;
-  --color-zinc-900: #18181b;
-  --color-zinc-950: #09090b;
+  --color-secondary: #f59e0b;     /* Amber – warnings, highlights */
+  --color-secondary-foreground: #1e293b;
 
-  /* Floating UI Tokens */
-  --radius-xl: 0.75rem; 
-  --radius-2xl: 1rem;
-  
-  /* Softer shadows */
+  --color-success: #059669;       /* Green – health, success */
+  --color-success-foreground: #ffffff;
+
+  --color-warning: #dc2626;       /* Red – errors, alerts */
+  --color-warning-foreground: #ffffff;
+
+  --color-info: #3b82f6;          /* Blue – information */
+
+  /* Neutral Scale: Warm Gray (feels softer than cool gray) */
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #0f172a;
+  --color-neutral-900: #0f172a;
+
+  --color-border: #e2e8f0;
+  --color-ring: #3b82f6;
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadow Tokens */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
   --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-command: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 
-  /* Type */
-  --font-sans: "Inter", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  /* Typography */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;  /* Elegant, readable display */
+
+  --font-sans-weight-thin: 100;
+  --font-sans-weight-extralight: 200;
+  --font-sans-weight-light: 300;
+  --font-sans-weight-normal: 400;
+  --font-sans-weight-medium: 500;
+  --font-sans-weight-semibold: 600;
+  --font-sans-weight-bold: 700;
+  --font-sans-weight-extrabold: 800;
+  --font-sans-weight-black: 900;
+}
+
+@layer utilities {
+  /* Custom focus-visible utility */
+  .focus-visible-ring {
+    @apply focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  /* Selection color */
+  ::selection {
+    @apply bg-primary/20 text-primary-foreground;
+  }
 }
 
 :root {
-  --background: #f8fafc; /* Softer light background */
+  /* ── Background & Foreground ─────────────────────────────── */
+  --background: #f8fafc;
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
-  --border: #f1f5f9; /* Extremely subtle borders */
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #1e40af;
+  --primary-foreground: #ffffff;
+  --secondary: #f59e0b;
+  --secondary-foreground: #1e293b;
   --muted: #64748b;
+  --muted-foreground: #94a3b8;
+  --accent: #f59e0b;
+  --accent-foreground: #1e293b;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  /* Card & border variables */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #3b82f6;
+
+  /* Radius */
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
+  --radius-sm: 0.375rem;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
 }
 
+/* Root dark mode */
 .dark {
-  --background: #09090b;
+  --background: #0f172a;
   --foreground: #fafafa;
-  --card: #18181b; /* Zinc-900 for cards, not pure black */
+  --card: #1e293b;
   --card-foreground: #fafafa;
-  --border: #27272a; /* Slightly lighter border for dark mode */
-  --muted: #a1a1aa;
+  --primary: #60a5fa;
+  --primary-foreground: #1e293b;
+  --secondary: #fbbf24;
+  --secondary-foreground: #1e293b;
+  --muted: #a3a6af;
+  --muted-foreground: #d1d5db;
+  --border: #374151;
+}
+
+/* ── Typography Rules ──────────────────────────────────────── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  line-height: 1.6;
 }
 
-/* Snappy Transitions */
-* {
-  transition-duration: 150ms !important;
+/* Display & Heading Hierarchy using Cormorant Garamond */
+.h1, .heading-1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3rem;
+  line-height: 1.1;
 }
 
-/* Ultra-Thin Borders */
-.border-thin {
-  border-width: 0.5px;
+.h2, .heading-2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  line-height: 1.2;
 }
 
-/* Custom Scrollbar - Minimalist */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+.h3, .heading-3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.3;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.h4, .heading-4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.4;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border);
+/• Body Text using Inter */
+.p, .text-body, .label {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+/* Small text */
+.small, .text-smaller {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Caption */
+.caption, .text-caption {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* Inline & Utility */
+a, .link {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover, .link:hover {
+  color: var(--primary-hover);
+}
+
+/* Strong & Emphasis */
+.strong {
+  font-weight: 600;
+}
+
+.emphasis {
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Code & Monospace */
+.code, .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, inherit;
+  font-size: 0.875em;
+  color: var(--primary);
+}
+
+/* Placeholder color */
+::-webkit-input-placeholder {
+  color: var(--muted);
+}
+:-:-moz-placeholder { /* Firefox 18- */
+  color: var(--muted);
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: var(--muted);
+}
+:-:-ms-input-placeholder {
+  color: var(--muted);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

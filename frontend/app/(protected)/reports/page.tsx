@@ -80,6 +80,27 @@ export default function ReportsPage() {
     );
   }
 
+  // Empty state when no sales data
+  if (!allSales || allSales.length === 0) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-8 text-foreground">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-full bg-border flex items-center justify-center mx-auto mb-4">
+            <Download className="h-8 w-8 text-muted" />
+          </div>
+          <h3 className="text-xl font-medium text-foreground">No sales data yet</h3>
+          <p className="text-muted-foreground mt-2">Start making sales to see reports and analytics.</p>
+          <button
+            onClick={() => window.location.href="/product"}
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            Add First Product
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Calculate summary stats from backend data
   const totalRevenue = allSales?.reduce((sum: number, sale: any) =>
     sum + (sale.final_amount || 0), 0) || 0;
@@ -88,7 +109,7 @@ export default function ReportsPage() {
   const totalProducts = lowStockItems?.length || 0;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 min-h-screen bg-gradient-to-br from-neutral-50 to-white">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">

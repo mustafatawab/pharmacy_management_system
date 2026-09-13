@@ -2,7 +2,9 @@ from pydantic import BaseModel, Field
 from typing import Optional
 from decimal import Decimal
 from datetime import datetime
+from uuid import UUID
 from schemas.category_schema import CategoryRead
+from schemas.supplier_schema import SupplierRead
 
 
 class MedicineCreate(BaseModel):
@@ -14,6 +16,7 @@ class MedicineCreate(BaseModel):
     purchase_price: Decimal
     is_active: bool = False
     category_id: Optional[int] = None
+    supplier_id: Optional[UUID] = None
 
 
     # sku: Optional[str] = Field(None, max_length=100)
@@ -31,6 +34,7 @@ class MedicineUpdate(BaseModel):
     purchase_price: Optional[Decimal] = None
     is_active: Optional[bool] = None
     category_id: Optional[int] = None   
+    supplier_id: Optional[UUID] = None   
 
     # sku: Optional[str] = None
     # barcode: Optional[str] = None
@@ -47,7 +51,9 @@ class MedicineRead(BaseModel):
     purchase_price: Decimal
     is_active: bool = False
     category_id: Optional[int] = None
+    supplier_id: Optional[UUID] = None
     category: Optional[CategoryRead] = None
+    supplier: Optional["SupplierRead"] = None
     tenant_id: int
     created_at: datetime
     updated_at: datetime

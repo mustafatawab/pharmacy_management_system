@@ -25,7 +25,25 @@ export interface Category {
   description: string;
 }
 
+export interface Product {
+  id: number;
+  name: string;
+  description: string | null;
+  unit: string;
+  quantity: number;
+  selling_price: string;
+  purchase_price: string;
+  is_active: boolean;
+  category_id: number | null;
+  category: Category | null;
+  supplier_id: number | null;
+  tenant_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Medicine {
+  // Deprecated - kept for backward compatibility
   id: number;
   name: string;
   description: string | null;
