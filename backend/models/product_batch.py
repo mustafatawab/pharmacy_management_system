@@ -6,21 +6,26 @@ from datetime import datetime
 if TYPE_CHECKING:
     from models.medicine import Medicine
 
+
 class ProductBatch(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
     medicine_id: int = Field(index=True, foreign_key="medicine.id")
     batch_number: str = Field(index=True)
 
-
     quantity: int
     expiry_date: datetime
 
     purchase_price: Decimal
+
+    # Multi-tenant isolation
+    tenant_id: int = Field(index=True, foreign_key="tenant.id")
+
+    # Track whether this batch still has usable stock
+    is_active: bool = Field(default=True)
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
     medicine: Optional["Medicine"] = Relationship(back_populates="batches")
-    

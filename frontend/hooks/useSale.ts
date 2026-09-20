@@ -5,6 +5,7 @@ export interface SaleItem {
   medicine_id: number;
   quantity: number;
   unit_price: number;
+  dispensed_unit: string;  // e.g. "strip", "box", "tablet" — backend converts to base units
 }
 
 export interface SaleCreate {
@@ -12,6 +13,10 @@ export interface SaleCreate {
   discount: number;
   final_amount: number;
   payment_method: string;
+  refill_duration_days?: number;
+  insurance_panel_id?: number;
+  insurance_amount?: number;
+  patient_copay?: number;
   items: SaleItem[];
 }
 

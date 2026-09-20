@@ -114,3 +114,22 @@ export const useRecentSales = () => {
     },
   });
 };
+
+export interface ExpiryAlert {
+  batch_id: number;
+  medicine_name: string;
+  batch_number: string;
+  quantity: number;
+  expiry_date: string;
+  days_to_expiry: number;
+}
+
+export const useExpiryAlerts = () => {
+  return useQuery({
+    queryKey: ["expiry-alerts"],
+    queryFn: async () => {
+      const { data } = await api.get<ExpiryAlert[]>("/dashboard/expiry-alerts");
+      return data;
+    },
+  });
+};

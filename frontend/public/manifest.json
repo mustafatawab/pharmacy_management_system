@@ -1,0 +1,16 @@
+{
+  "name": "Pharmacy Management POS",
+  "short_name": "Pharmacy POS",
+  "description": "Offline-capable POS system for Pharmacy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

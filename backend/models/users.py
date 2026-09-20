@@ -8,9 +8,10 @@ from uuid import UUID, uuid4
 if TYPE_CHECKING:
     from models.tenant import Tenant
 
-class UserRole(str , Enum):
+class UserRole(str, Enum):
     ADMIN = "admin"
-    STAFF = "staff"
+    MANAGER = "manager"
+    CASHIER = "cashier"
 
 class User(SQLModel, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True)
@@ -20,7 +21,7 @@ class User(SQLModel, table=True):
     hashed_password: str = Field(min_length=6)
     created_at : datetime = Field(default=datetime.utcnow())
     updated_at : datetime = Field(default=datetime.utcnow())
-    role: UserRole = Field(default=UserRole.STAFF)
+    role: UserRole = Field(default=UserRole.MANAGER)
     is_active: bool = Field(default=True)
     token_version: int = Field(default=1) # Increment this to logout all devices
 

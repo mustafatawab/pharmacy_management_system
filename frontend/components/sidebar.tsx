@@ -16,15 +16,21 @@ import {
   X,
 } from "lucide-react";
 
+import { useAuth } from "@/providers/AuthProvider";
+
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Inventory", href: "/inventory", icon: Package },
-  { name: "Point of Sale", href: "/pos", icon: ShoppingCart },
-  { name: "Stock", href: "/purchases", icon: TrendingUp },
-  { name: "Suppliers", href: "/supplier", icon: X },
-  { name: "User Management", href: "/users", icon: Users },
-  { name: "Reports", href: "/reports", icon: FileText },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["admin", "manager"] },
+  { name: "Inventory", href: "/inventory", icon: Package, roles: ["admin", "manager", "cashier"] },
+  { name: "Point of Sale", href: "/pos", icon: ShoppingCart, roles: ["admin", "manager", "cashier"] },
+  { name: "Stock", href: "/purchases", icon: TrendingUp, roles: ["admin", "manager"] },
+  { name: "Suppliers", href: "/supplier", icon: X, roles: ["admin", "manager"] },
+  { name: "Transfers (STO)", href: "/inventory/transfers", icon: Package, roles: ["admin", "manager"] },
+  { name: "Customers (Khata)", href: "/customers", icon: Users, roles: ["admin", "manager", "cashier"] },
+  { name: "Insurance Panels", href: "/insurance", icon: FileText, roles: ["admin", "manager"] },
+  { name: "Refill Reminders", href: "/refills", icon: FileText, roles: ["admin", "manager", "cashier"] },
+  { name: "User Management", href: "/users", icon: Users, roles: ["admin"] },
+  { name: "Reports", href: "/reports", icon: FileText, roles: ["admin", "manager"] },
+  { name: "Settings", href: "/settings", icon: Settings, roles: ["admin", "manager"] },
 ];
 
 interface SidebarProps {
@@ -36,9 +42,15 @@ interface SidebarProps {
 export function Sidebar({ isOpen = false, onClose, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname();
   const [isHovered, setIsHovered] = useState(false);
+  const { user } = useAuth();
 
   // The sidebar is effectively expanded if either it's not collapsed OR it's being hovered
   const isExpanded = !isCollapsed || isHovered;
+
+  const filteredNav = navigation.filter(item => {
+    if (!user) return true; // If no user loaded yet, show all or none. Showing all for safety before auth blocks it.
+    return item.roles.includes(user.role);
+  });
 
   return (
     <>
@@ -98,7 +110,7 @@ export function Sidebar({ isOpen = false, onClose, isCollapsed = false }: Sideba
         </div>
 
         <nav className="flex-1 space-y-1 px-3 py-6 overflow-y-auto custom-scrollbar">
-          {navigation.map((item) => {
+          {filteredNav.map((item) => {
             const isActive =
               pathname === item.href ||
               (item.href !== "/dashboard" && pathname.startsWith(item.href));

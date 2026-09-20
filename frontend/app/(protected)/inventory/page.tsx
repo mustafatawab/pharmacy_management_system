@@ -10,8 +10,10 @@ import { ConfirmationModal } from "@/components/confirmation-modal";
 import { AlertTriangle, Calendar, Package, Plus, Tag, Settings2 } from "lucide-react";
 import { useState } from "react";
 import { useMedicines, useDeleteMedicine, MedicineFilter } from "@/hooks/useMedicine";
+import { useExpiryAlerts } from "@/hooks/useDashboard";
 import { useCategories } from "@/hooks/useCategory";
 import { toast } from "react-hot-toast";
+import { ExpiryTable } from "@/components/expiry-table";
 
 export default function InventoryPage() {
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -29,9 +31,12 @@ export default function InventoryPage() {
     sort_by: "name",
     sort_order: "asc",
   });
+  
+  const [activeTab, setActiveTab] = useState<"catalog" | "expiry">("catalog");
 
   const { data: medicines, isLoading } = useMedicines(filters);
   const { data: categories } = useCategories();
+  const { data: expiryAlerts = [], isLoading: isLoadingExpiry } = useExpiryAlerts();
   const deleteMedicine = useDeleteMedicine();
   
   // Use data directly from backend response
@@ -153,13 +158,15 @@ export default function InventoryPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <InventorySummaryCard
-          title="Total Products"
-          value={totalItems.toString()}
-          icon={<Package className="h-6 w-6" />}
-          iconBgColor="bg-blue-50"
-          iconColor="text-blue-600"
-        />
+        <div onClick={() => setActiveTab("catalog")} className="cursor-pointer">
+          <InventorySummaryCard
+            title="Total Products"
+            value={totalItems.toString()}
+            icon={<Package className="h-6 w-6" />}
+            iconBgColor={activeTab === "catalog" ? "bg-blue-100" : "bg-blue-50"}
+            iconColor="text-blue-600"
+          />
+        </div>
         <InventorySummaryCard
           title="Low Stock"
           value="-"
@@ -167,29 +174,44 @@ export default function InventoryPage() {
           iconBgColor="bg-red-50"
           iconColor="text-red-600"
         />
-        <InventorySummaryCard
-          title="Expiring Soon"
-          value="-"
-          icon={<Calendar className="h-6 w-6" />}
-          iconBgColor="bg-amber-50"
-          iconColor="text-amber-600"
-        />
+        <div onClick={() => setActiveTab("expiry")} className="cursor-pointer">
+          <InventorySummaryCard
+            title="Expiring Soon"
+            value={expiryAlerts.length.toString()}
+            icon={<Calendar className="h-6 w-6" />}
+            iconBgColor={activeTab === "expiry" ? "bg-amber-100" : "bg-amber-50"}
+            iconColor="text-amber-600"
+          />
+        </div>
       </div>
 
-      <InventoryTable
-        medicines={displayMedicines}
-        isLoading={isLoading}
-        total={totalItems}
-        page={filters.page || 1}
-        pageSize={filters.page_size || 10}
-        onPageChange={handlePageChange}
-        onSearch={handleSearch}
-        onSort={handleSort}
-        currentSort={filters.sort_by}
-        sortOrder={filters.sort_order}
-        onEdit={handleEdit}
-        onDelete={handleDeleteClick}
-      />
+      {activeTab === "catalog" ? (
+        <InventoryTable
+          medicines={displayMedicines}
+          isLoading={isLoading}
+          total={totalItems}
+          page={filters.page || 1}
+          pageSize={filters.page_size || 10}
+          onPageChange={handlePageChange}
+          onSearch={handleSearch}
+          onSort={handleSort}
+          currentSort={filters.sort_by}
+          sortOrder={filters.sort_order}
+          onEdit={handleEdit}
+          onDelete={handleDeleteClick}
+        />
+      ) : (
+        <div className="space-y-4">
+          <h3 className="text-lg font-bold text-foreground">Expiring Batches (Next 90 Days)</h3>
+          <ExpiryTable 
+            alerts={expiryAlerts} 
+            isLoading={isLoadingExpiry} 
+            onReturn={(batch) => {
+              toast("RTS Workflow coming soon!", { icon: "🔄" });
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

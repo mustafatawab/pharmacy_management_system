@@ -8,6 +8,7 @@ export interface Supplier {
   email: string;
   phone: string;
   address: string;
+  outstanding_balance: number;
   created_at: string;
   updated_at: string;
 }
@@ -28,11 +29,23 @@ export interface SupplierUpdate {
   address?: string;
 }
 
+export interface SupplierLedgerEntry {
+  id: number;
+  supplier_id: string;
+  reference_type: string;
+  reference_id?: number;
+  debit: number;
+  credit: number;
+  balance_after: number;
+  notes?: string;
+  created_at: string;
+}
+
 export const useSuppliers = () => {
   return useQuery({
     queryKey: ["suppliers"],
     queryFn: async () => {
-      const { data } = await api.get("/supplier");
+      const { data } = await api.get<Supplier[]>("/supplier");
       return data;
     },
   });
@@ -42,7 +55,7 @@ export const useSupplier = (id: string) => {
   return useQuery({
     queryKey: ["suppliers", id],
     queryFn: async () => {
-      const { data } = await api.get(`/supplier/${id}`);
+      const { data } = await api.get<Supplier>(`/supplier/${id}`);
       return data;
     },
     enabled: !!id,
@@ -83,6 +96,31 @@ export const useDeleteSupplier = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+    },
+  });
+};
+
+export const useSupplierLedger = (id: string) => {
+  return useQuery({
+    queryKey: ["supplier-ledger", id],
+    queryFn: async () => {
+      const { data } = await api.get<SupplierLedgerEntry[]>(`/supplier/${id}/ledger`);
+      return data;
+    },
+    enabled: !!id,
+  });
+};
+
+export const usePaySupplier = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, amount, notes, payment_method }: { id: string; amount: number, notes?: string, payment_method?: string }) => {
+      const { data } = await api.post(`/supplier/${id}/pay`, { amount, notes, payment_method });
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+      queryClient.invalidateQueries({ queryKey: ["supplier-ledger", variables.id] });
     },
   });
 };

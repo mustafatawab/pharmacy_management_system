@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 from decimal import Decimal
 from datetime import datetime
+from uuid import UUID
 
 class PurchaseItemBase(BaseModel):
     medicine_id: int
@@ -12,7 +13,8 @@ class PurchaseItemBase(BaseModel):
         from_attributes = True
 
 class PurchaseItemCreate(PurchaseItemBase):
-    pass
+    batch_number: Optional[str] = None   # If provided, stored on the ProductBatch
+    expiry_date: Optional[datetime] = None  # Required to create a ProductBatch
 
 class PurchaseItemRead(PurchaseItemBase):
     id: int
@@ -27,7 +29,9 @@ class PurchaseBase(BaseModel):
     discount: Decimal = Field(default=Decimal("0.00"), ge=0)
     final_amount: Decimal
     payment_method: str = "cash" # cash, card, mobile_pay
-    supplier_name: str
+    supplier_name: Optional[str] = None
+    supplier_id: Optional[UUID] = None
+    status: str = "Completed" # Draft, Completed, Cancelled
     supplier_contact: Optional[str] = None
     supplier_email: Optional[str] = None
     supplier_phone: Optional[str] = None

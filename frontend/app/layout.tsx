@@ -8,6 +8,7 @@ import { AuthProvider } from "@/providers/AuthProvider";
 export const metadata = {
   title: "Pharmacy Management System",
   description: "Pharmacy Management System developed by WS",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

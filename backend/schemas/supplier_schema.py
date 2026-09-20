@@ -1,15 +1,18 @@
+from datetime import datetime
+from decimal import Decimal
 from pydantic import BaseModel, EmailStr
 from uuid import UUID, uuid4
 
 class SupplierRead(BaseModel):
-    id: UUID 
+    id: UUID
     company_name: str
     contact_person: str
-    email: str 
-    phone: str 
+    email: str
+    phone: str
     address: str
-    created_at : str 
-    updated_at : str 
+    outstanding_balance: Decimal
+    created_at : datetime
+    updated_at : datetime
 
 class SupplierCreate(BaseModel):
     company_name: str

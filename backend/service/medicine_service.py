@@ -30,42 +30,15 @@ class MedicineService:
             raise HTTPException(status_code=400, detail="Invalid category ID for this pharmacy")
 
         new_medicine = MedicineModel(
-            name=data.name,
-            description=data.description,
-            unit=data.unit,
-            quantity=data.quantity,
-            purchase_price=data.purchase_price,
-            selling_price=data.selling_price,
-            tenant_id=current_user.tenant_id,
-            is_active=data.is_active,
-            category_id=data.category_id
+            **data.model_dump(exclude_unset=True),
+            tenant_id=current_user.tenant_id
         )
 
         session.add(new_medicine)
         session.commit()
         session.refresh(new_medicine)
 
-        result = {
-            "id": new_medicine.id,
-            "name": new_medicine.name,
-            "description": new_medicine.description,
-            "unit": new_medicine.unit,
-            "quantity": new_medicine.quantity,
-            "purchase_price": new_medicine.purchase_price,
-            "selling_price": new_medicine.selling_price,
-            "is_active": new_medicine.is_active,
-            "tenant_id": new_medicine.tenant_id,
-            "created_at": new_medicine.created_at,
-            "updated_at": new_medicine.updated_at,
-            "category" : {
-                "id": category_query.id,
-                "name": category_query.name,
-                "description": category_query.description,
-                "tenant_id": category_query.tenant_id,
-            }
-        }
-
-        return result
+        return new_medicine
 
     def get_all_medicines(self, session: Session, current_user: User, filters: MedicineFilter) -> MedicineListResponse:
         query = select(MedicineModel).where(MedicineModel.tenant_id == current_user.tenant_id).options(selectinload(MedicineModel.category))
@@ -77,16 +50,20 @@ class MedicineService:
                 col(MedicineModel.name).ilike(search_pattern),
                 col(MedicineModel.description).ilike(search_pattern)
             ))
-        
+
+        # Barcode exact-match lookup (used by barcode scanner in POS)
+        if filters.barcode:
+            query = query.where(MedicineModel.barcode == filters.barcode)
+
         if filters.category_id:
             query = query.where(MedicineModel.category_id == filters.category_id)
-        
+
         if filters.is_active is not None:
             query = query.where(MedicineModel.is_active == filters.is_active)
-        
+
         if filters.min_price:
             query = query.where(MedicineModel.selling_price >= filters.min_price)
-        
+
         if filters.max_price:
             query = query.where(MedicineModel.selling_price <= filters.max_price)
 
@@ -140,9 +117,20 @@ class MedicineService:
         session.delete(medicine)
         session.commit()
         return {"message": "Medicine deleted successfully"}
-    
 
-    
+    def get_alternatives(self, medicine_id: int, session: Session, current_user: User):
+        # Fetch the original medicine
+        medicine = self.get_medicine_by_id(medicine_id, session, current_user)
+        if not medicine or not medicine.generic_salt:
+            return []
         
-
-    
+        # Find active medicines with the same generic salt, stock > 0, excluding the original
+        query = select(MedicineModel).where(
+            MedicineModel.tenant_id == current_user.tenant_id,
+            MedicineModel.generic_salt == medicine.generic_salt,
+            MedicineModel.id != medicine_id,
+            MedicineModel.is_active == True,
+            MedicineModel.quantity > 0
+        ).order_by(col(MedicineModel.selling_price).asc())
+        
+        return session.exec(query).all()

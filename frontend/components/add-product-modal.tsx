@@ -26,6 +26,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
     selling_price: 0,
     purchase_price: 0,
     is_active: true,
+    is_narcotic: false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -180,6 +181,19 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             placeholder="Enter medicine description"
             className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
           />
+        </div>
+        
+        <div className="flex items-center gap-4 py-2">
+          <label className="flex items-center gap-2 text-sm font-semibold text-red-600 dark:text-red-400">
+            <input
+              type="checkbox"
+              name="is_narcotic"
+              checked={formData.is_narcotic || false}
+              onChange={(e) => setFormData(prev => ({ ...prev, is_narcotic: e.target.checked }))}
+              className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+            />
+            Controlled Substance (Narcotic)
+          </label>
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-[#2F2F2F]">

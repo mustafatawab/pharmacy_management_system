@@ -42,6 +42,13 @@ def create_purchase(
 ):
     return purchase_service.create_purchase(purchase, session, current_user)
 
+@router.post("/auto-generate", response_model=List[PurchaseRead])
+def auto_generate_drafts(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(require_admin_with_tenant),
+):
+    return purchase_service.auto_generate_drafts(session, current_user)
+
 
 @router.put("/{id}", response_model=PurchaseRead)
 def update_purchase(

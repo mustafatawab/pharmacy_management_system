@@ -17,10 +17,12 @@ class Purchase(SQLModel, table=True):
     final_amount: Decimal
     payment_method: str = Field(default="cash") # cash, card, mobile_pay
     
-    supplier_name: str
+    supplier_name: str | None = None
     supplier_contact: str | None = None
     supplier_email: str | None = None
     supplier_phone: str | None = None
+    
+    status: str = Field(default="Completed") # Draft, Completed, Cancelled
     
     created_at: datetime = Field(default_factory=datetime.utcnow)
     expected_delivery: datetime | None = None
@@ -28,11 +30,13 @@ class Purchase(SQLModel, table=True):
     # Foreign Keys
     tenant_id: int = Field(index=True, foreign_key="tenant.id")
     user_id: UUID = Field(foreign_key="user.id")  # Fixed: UUID instead of str
+    supplier_id: UUID | None = Field(default=None, foreign_key="supplier.id")
     
     # Relationships
     items: List["PurchaseItem"] = Relationship(back_populates="purchase")
     # user: Optional["User"] = Relationship()
     # tenant: Optional["Tenant"] = Relationship()
+    # supplier: Optional["Supplier"] = Relationship()
 
 class PurchaseItem(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)

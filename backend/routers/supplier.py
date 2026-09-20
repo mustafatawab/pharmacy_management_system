@@ -55,3 +55,26 @@ def delete_supplier(
     current_user: User = Depends(require_admin_with_tenant)
 ):
     return supplier_service.delete_supplier(id=id, session=session, tenant_id=current_user.tenant_id)
+
+from service.supplier_ledger_service import SupplierLedgerService
+from schemas.supplier_ledger_schema import SupplierLedgerRead, SupplierPaymentRequest
+from typing import List
+
+ledger_service = SupplierLedgerService()
+
+@router.get("/{id}/ledger", response_model=List[SupplierLedgerRead])
+def get_supplier_ledger(
+    id: UUID,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(require_admin_with_tenant)
+):
+    return ledger_service.get_ledger(supplier_id=id, session=session, current_user=current_user)
+
+@router.post("/{id}/pay", response_model=SupplierLedgerRead)
+def pay_supplier(
+    id: UUID,
+    payment: SupplierPaymentRequest,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(require_admin_with_tenant)
+):
+    return ledger_service.record_payment(supplier_id=id, payment=payment, session=session, current_user=current_user)

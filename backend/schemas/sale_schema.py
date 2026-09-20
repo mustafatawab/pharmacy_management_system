@@ -8,6 +8,7 @@ class SaleItemBase(BaseModel):
     medicine_id: int
     quantity: int
     unit_price: Decimal
+    dispensed_unit: str = Field(default="unit", description="Unit as dispensed, e.g. 'strip', 'box', 'tablet'")
 
 class SaleItemCreate(SaleItemBase):
     pass
@@ -15,7 +16,8 @@ class SaleItemCreate(SaleItemBase):
 class SaleItemRead(SaleItemBase):
     id: int
     total_price: Decimal
-    
+    batch_id: Optional[int] = None  # Which batch was deducted (FIFO traceability)
+
     class Config:
         from_attributes = True
 
@@ -24,6 +26,13 @@ class SaleBase(BaseModel):
     discount: Decimal = Decimal("0.00")
     final_amount: Decimal
     payment_method: str = "cash"
+    customer_id: Optional[int] = None
+    prescription_no: Optional[str] = None
+    doctor_name: Optional[str] = None
+    refill_duration_days: Optional[int] = None # Used to auto-create refill reminder
+    insurance_panel_id: Optional[int] = None
+    insurance_amount: Optional[Decimal] = None
+    patient_copay: Optional[Decimal] = None
 
 class SaleCreate(SaleBase):
     items: List[SaleItemCreate]
