@@ -84,7 +84,7 @@ function LedgerView({ panelId, panel }: { panelId: number, panel: any }) {
         </div>
         <button 
           onClick={() => setShowPaymentModal(true)}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors"
+          className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-colors"
         >
           <Banknote className="h-4 w-4" /> Record Payment
         </button>
@@ -197,7 +197,7 @@ function PaymentModal({ panelId, onClose }: { panelId: number, onClose: () => vo
             <label className="text-xs font-bold text-zinc-500">Reference / Check No</label>
             <input type="text" value={notes} onChange={e => setNotes(e.target.value)} className="w-full mt-1 p-2 border rounded-lg dark:bg-zinc-900 dark:border-zinc-800" />
           </div>
-          <button onClick={handleSubmit} disabled={payInsurance.isPending} className="w-full bg-green-500 text-white font-bold py-2 rounded-xl">Save Payment</button>
+          <button onClick={handleSubmit} disabled={payInsurance.isPending} className="w-full bg-primary text-white font-bold py-2 rounded-xl">Save Payment</button>
         </div>
       </div>
     </div>

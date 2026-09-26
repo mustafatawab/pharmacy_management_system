@@ -10,6 +10,7 @@ import {
   Save,
   Check,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 type Tab = "general" | "auth";
 
@@ -27,7 +28,7 @@ function Switch({
       aria-checked={checked}
       onClick={() => onCheckedChange(!checked)}
       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible-outline:focus-visible:ring-2 focus-visible-ring-blue-600 focus-visible:ring-offset-2 ${
-        checked ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"
+        checked ? "bg-primary" : "bg-gray-200 dark:bg-gray-700"
       }`}
     >
       <span
@@ -41,19 +42,19 @@ function Switch({
 
 function TabButton({
   title,
-  href,
   isActive,
+  onClick,
 }: {
   title: string;
-  href: string;
   isActive: boolean;
+  onClick: () => void;
 }) {
   return (
     <button
-      onClick={() => setActiveTab((prev) => (prev === "general" ? "auth" : "general"))}
+      onClick={onClick}
       className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors whitespace-nowrap min-w-max ${
         isActive
-          ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+          ? "bg-primary/10 text-primary dark:bg-blue-900/20 dark:text-blue-400"
           : "text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-[#3F3F3F]"
         }`}
       title={title}
@@ -83,7 +84,7 @@ function Checkbox({
       <div
         className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
           checked
-            ? "bg-blue-600 border-blue-600 text-white"
+            ? "bg-primary border-blue-600 text-white"
             : "border-gray-300 bg-white dark:border-gray-600 dark:bg-transparent"
         }`}
         onClick={() => onCheckedChange(!checked)}
@@ -105,7 +106,7 @@ export default function SettingsPage() {
     city: "",
     phone: "",
     email: "",
-    currency: "USD",
+    currency: "USD", license_number: "PH-2024-001", tax_id: "TAX-123456789",
   });
   const [password, setPassword] = useState({
     current: "",
@@ -132,6 +133,8 @@ export default function SettingsPage() {
           phone: data.phone || "",
           email: data.email || "",
           currency: data.currency || "USD",
+          license_number: data.license_number || "PH-2024-001",
+          tax_id: data.tax_id || "TAX-123456789",
         });
       }
     } catch (error) {
@@ -199,8 +202,8 @@ export default function SettingsPage() {
         </div>
 
         <div className="flex gap-2 mb-4">
-          <TabButton title="General" href="general" isActive={activeTab === "general"} />
-          <TabButton title="Auth" href="auth" isActive={activeTab === "auth"} />
+          <TabButton title="General" onClick={() => setActiveTab("general")} isActive={activeTab === "general"} />
+          <TabButton title="Auth" onClick={() => setActiveTab("auth")} isActive={(activeTab as string) === "auth"} />
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -333,7 +336,7 @@ export default function SettingsPage() {
         <div className="flex justify-end pt-4">
           <button
             onClick={handleSavePharmacy}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="flex items-center gap-2 rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white hover:bg-primary-hover"
           >
             <Save className="h-4 w-4" />
             Save Changes
@@ -343,7 +346,7 @@ export default function SettingsPage() {
     );
   }
 
-  if (activeTab === "auth") {
+  if ((activeTab as string) === "auth") {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-2">
@@ -402,7 +405,7 @@ export default function SettingsPage() {
             <div className="flex justify-end">
               <button
                 onClick={handleChangePassword}
-                className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-white hover:bg-primary-hover">
                 Change Password
               </button>
             </div>

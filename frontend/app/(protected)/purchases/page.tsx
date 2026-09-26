@@ -68,7 +68,7 @@ export default function PurchasesPage() {
           </button>
           <button
             onClick={() => setIsNewPurchaseModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2"
+            className="px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-medium flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
             New Purchase
@@ -83,8 +83,8 @@ export default function PurchasesPage() {
           value={totalPurchases.toString()}
           subtext=""
           icon={<TrendingUp className="h-6 w-6" />}
-          iconBgColor="bg-blue-50 dark:bg-blue-900/20"
-          iconColor="text-blue-600 dark:text-blue-400"
+          iconBgColor="bg-primary/10 dark:bg-blue-900/20"
+          iconColor="text-primary dark:text-blue-400"
         />
         <StatCard
           title="Pending"
@@ -122,7 +122,6 @@ export default function PurchasesPage() {
       <NewPurchaseModal
         isOpen={isNewPurchaseModalOpen}
         onClose={() => setIsNewPurchaseModalOpen(false)}
-        suppliers={suppliers}
       />
     </div>
   );

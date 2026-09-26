@@ -13,7 +13,7 @@ export function PurchasesTable({ purchases }: { purchases: Purchase[] }) {
           <input
             type="text"
             placeholder="Search purchases..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-[#212121] rounded-lg text-sm bg-white dark:bg-[#212121] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder:text-gray-400"
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-[#212121] rounded-lg text-sm bg-white dark:bg-[#212121] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-gray-400"
           />
         </div>
         <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-[#2F2F2F] rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#212121]">
@@ -76,7 +76,7 @@ export function PurchasesTable({ purchases }: { purchases: Purchase[] }) {
                   >
                     {/* Status Icon */}
                     {purchase.status === "Delivered" && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 current-color" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary current-color" />
                     )}
 
                     {purchase.status}
@@ -85,7 +85,7 @@ export function PurchasesTable({ purchases }: { purchases: Purchase[] }) {
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <button
-                      className="p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                      className="p-1 text-primary hover:bg-primary/10 dark:hover:bg-blue-900/20 rounded transition-colors"
                       title="View Details"
                     >
                       <Eye className="h-4 w-4" />

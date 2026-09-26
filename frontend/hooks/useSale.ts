@@ -13,6 +13,9 @@ export interface SaleCreate {
   discount: number;
   final_amount: number;
   payment_method: string;
+  customer_id?: number;
+  prescription_no?: string;
+  doctor_name?: string;
   refill_duration_days?: number;
   insurance_panel_id?: number;
   insurance_amount?: number;

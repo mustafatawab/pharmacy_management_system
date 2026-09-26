@@ -18,11 +18,11 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
   return (
     <div className="flex flex-col rounded-xl border border-gray-100 bg-white p-6 shadow-sm dark:border-[#212121] dark:bg-[#212121]">
       <div className="mb-6 flex items-start justify-between">
-        <div className="flex items-center justify-center rounded-lg bg-blue-50 p-3 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
+        <div className="flex items-center justify-center rounded-lg bg-primary/10 p-3 text-primary dark:bg-blue-900/20 dark:text-blue-400">
           <Building2 className="h-6 w-6" />
         </div>
         <div className="flex gap-2">
-          <button className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20">
+          <button className="rounded-full p-2 text-primary hover:bg-primary/10 dark:text-blue-400 dark:hover:bg-blue-900/20">
             <Pencil className="h-4 w-4" />
           </button>
           <button className="rounded-full p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20">

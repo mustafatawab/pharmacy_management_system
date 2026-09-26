@@ -7,9 +7,11 @@ from sqlmodel import Session
 from auth.security import decode_refresh_token, create_access_token
 from service.auth_service import AuthService
 from uuid import UUID
+from config import get_settings
 
 router = APIRouter(prefix="/auth" , tags=['auth'])
 auth_service = AuthService()
+settings = get_settings()
 
 @router.post("/register", response_model=UserRead, response_model_exclude={"hashed_password"})
 async def register_user(user: UserRegister, response: Response, session: Session = Depends(get_session)):
@@ -19,14 +21,14 @@ async def register_user(user: UserRegister, response: Response, session: Session
         key="access_token",
         value=result["access_token"],
         httponly=True,
-        secure=True,
+        secure=settings.cookie_secure,
         samesite="strict"
     )
     response.set_cookie(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
-        secure=True,
+        secure=settings.cookie_secure,
         samesite="strict",
         path="/auth/refresh"
     )
@@ -40,14 +42,14 @@ async def login(login_data: UserLogin, response: Response, session: Session = De
         key="access_token",
         value=result["access_token"],
         httponly=True,
-        secure=True,
+        secure=settings.cookie_secure,
         samesite="strict"
     )
     response.set_cookie(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
-        secure=True,
+        secure=settings.cookie_secure,
         samesite="strict",
         path="/auth/refresh"
     )
@@ -80,7 +82,7 @@ async def refresh_token(request: Request, response: Response, session: Session =
         key="access_token",
         value=new_access_token,
         httponly=True,
-        secure=True,
+        secure=settings.cookie_secure,
         samesite="strict"
     )
     

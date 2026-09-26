@@ -12,13 +12,13 @@ export function DateRangePicker() {
       <div className="flex items-center gap-2">
         <input
           type="date"
-          className="rounded border border-gray-200 px-2 py-1 text-gray-700 outline-none focus:border-blue-500 dark:bg-[#3F3F3F] dark:border-gray-600 dark:text-white"
+          className="rounded border border-gray-200 px-2 py-1 text-gray-700 outline-none focus:border-primary dark:bg-[#3F3F3F] dark:border-gray-600 dark:text-white"
           defaultValue="2025-11-12"
         />
         <span className="text-gray-400">to</span>
         <input
           type="date"
-          className="rounded border border-gray-200 px-2 py-1 text-gray-700 outline-none focus:border-blue-500 dark:bg-[#3F3F3F] dark:border-gray-600 dark:text-white"
+          className="rounded border border-gray-200 px-2 py-1 text-gray-700 outline-none focus:border-primary dark:bg-[#3F3F3F] dark:border-gray-600 dark:text-white"
           defaultValue="2025-12-12"
         />
       </div>

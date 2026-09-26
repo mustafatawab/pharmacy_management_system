@@ -45,6 +45,16 @@ export const useTenant = () => {
   });
 };
 
+export const useTenants = () => {
+  return useQuery({
+    queryKey: ["tenants"],
+    queryFn: async () => {
+      const { data } = await api.get("/tenant/");
+      return data;
+    },
+  });
+};
+
 export const useCreateTenant = () => {
   const queryClient = useQueryClient();
   return useMutation({

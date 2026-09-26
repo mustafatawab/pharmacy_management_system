@@ -49,7 +49,7 @@ export default function RefillsPage() {
               <div>
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="font-bold text-lg text-gray-900 dark:text-white">{refill.customer_name}</h3>
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${daysLeft <= 3 ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}`}>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${daysLeft <= 3 ? "bg-red-100 text-red-700" : "bg-primary/20 text-primary"}`}>
                     {daysLeft <= 0 ? "Due Today!" : `In ${daysLeft} Days`}
                   </span>
                 </div>
@@ -62,7 +62,7 @@ export default function RefillsPage() {
               
               <button
                 onClick={() => handleSendWhatsApp(refill)}
-                className="w-full flex items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-bold text-white hover:bg-green-600 transition"
+                className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-hover transition"
               >
                 <MessageCircle className="w-4 h-4" />
                 Send WhatsApp

@@ -52,7 +52,7 @@ export default function CustomersPage() {
         </div>
         <button
           onClick={() => setIsAddingCustomer(true)}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover transition"
         >
           <Plus className="h-4 w-4" />
           Add Customer
@@ -67,23 +67,23 @@ export default function CustomersPage() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Full Name *</label>
-              <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
-              <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Credit Limit ($)</label>
-              <input type="number" required value={formData.credit_limit} onChange={(e) => setFormData({...formData, credit_limit: Number(e.target.value)})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="number" required value={formData.credit_limit} onChange={(e) => setFormData({...formData, credit_limit: Number(e.target.value)})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
-              <input type="text" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="text" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div className="md:col-span-2 mt-4 flex justify-end gap-3">
               <button type="button" onClick={() => setIsAddingCustomer(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:border-zinc-700 dark:hover:bg-zinc-800 transition">Cancel</button>
-              <button type="submit" disabled={createCustomer.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">
+              <button type="submit" disabled={createCustomer.isPending} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover transition">
                 Add Customer
               </button>
             </div>
@@ -120,7 +120,7 @@ export default function CustomersPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right space-x-2">
-                  <button onClick={() => setLedgerCustomerId(customer.id)} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 transition" title="View Ledger">
+                  <button onClick={() => setLedgerCustomerId(customer.id)} className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 dark:bg-blue-900/20 dark:text-blue-400 transition" title="View Ledger">
                     <BookOpen className="w-4 h-4" /> Khata
                   </button>
                 </td>

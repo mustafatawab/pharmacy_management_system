@@ -57,6 +57,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
         selling_price: 0,
         purchase_price: 0,
         is_active: true,
+        is_narcotic: false,
       });
     } catch (error: any) {
       toast.error(error.response?.data?.detail || "Failed to add medicine");
@@ -85,7 +86,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter medicine name"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div className="space-y-2">
@@ -97,7 +98,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               required
               value={formData.category_id}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white dark:bg-[#212121]"
             >
               <option value="">Select category</option>
               {categories?.map((cat: any) => (
@@ -117,7 +118,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               value={formData.selling_price}
               onChange={handleChange}
               placeholder="0.00"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div className="space-y-2">
@@ -131,7 +132,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               value={formData.purchase_price}
               onChange={handleChange}
               placeholder="0.00"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
 
@@ -146,7 +147,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               value={formData.quantity}
               onChange={handleChange}
               placeholder="0"
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           <div className="space-y-2">
@@ -158,7 +159,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
               required
               value={formData.unit}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white dark:bg-[#212121]"
             >
               <option value="tablet">Tablet</option>
               <option value="bottle">Bottle</option>
@@ -179,7 +180,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
             value={formData.description}
             onChange={handleChange}
             placeholder="Enter medicine description"
-            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
           />
         </div>
         
@@ -207,7 +208,7 @@ export function AddProductModal({ isOpen, onClose }: AddProductModalProps) {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20 flex items-center gap-2"
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors shadow-sm shadow-blue-500/20 flex items-center gap-2"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             Add Medicine

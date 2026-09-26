@@ -36,21 +36,31 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen overflow-hidden bg-slate-50">
-      {/* Brand Panel - Left Side */}
+      {/* Brand Panel - Left Side with Curved SVG */}
       <motion.div 
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="hidden lg:flex lg:w-1/2 bg-primary flex-col items-center justify-center p-12 relative overflow-hidden"
+        className="hidden lg:flex lg:w-5/12 bg-primary flex-col items-center justify-center p-12 relative overflow-hidden shrink-0"
       >
         {/* Modern pattern overlay */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-32 h-32 rounded-3xl border-2 border-white rotate-12" />
           <div className="absolute bottom-32 right-16 w-48 h-48 rounded-full border-2 border-white/20" />
-          <div className="absolute top-1/3 right-1/4 w-24 h-24 rounded-xl border border-white/20 -rotate-12" />
+          <div className="absolute top-1/3 left-1/4 w-24 h-24 rounded-xl border border-white/20 -rotate-12" />
         </div>
 
-        <div className="relative z-10 text-center">
+        {/* The Curved Divider SVG */}
+        <svg 
+          className="absolute top-0 right-0 h-full w-32 text-slate-50 translate-x-[1px]" 
+          viewBox="0 0 100 100" 
+          preserveAspectRatio="none" 
+          fill="currentColor"
+        >
+          <path d="M100,0 L100,100 L0,100 C60,75 60,25 0,0 Z" />
+        </svg>
+
+        <div className="relative z-10 text-center pr-12">
           {/* Logo */}
           <div className="mb-8 inline-flex items-center justify-center w-24 h-24 bg-white/10 rounded-3xl backdrop-blur-md shadow-2xl border border-white/20">
             <Pill className="h-12 w-12 text-white" />
@@ -62,8 +72,8 @@ export default function LoginPage() {
           </h1>
 
           {/* Tagline */}
-          <p className="text-white/80 text-lg max-w-sm font-medium leading-relaxed">
-            The next generation of pharmacy management. Fast, secure, and intuitive.
+          <p className="text-white/90 text-lg max-w-sm font-medium leading-relaxed mx-auto">
+            The next generation of pharmacy management. Secure, modern, and clinical.
           </p>
         </div>
       </motion.div>
@@ -72,7 +82,7 @@ export default function LoginPage() {
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="flex-1 flex items-center flex-col justify-center p-6 sm:p-12"
+        className="flex-1 flex items-center flex-col justify-center p-6 sm:p-12 relative z-10"
       >
         <div className="mb-10 flex flex-col items-center text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-premium ring-1 ring-gray-100 mb-6 lg:hidden">

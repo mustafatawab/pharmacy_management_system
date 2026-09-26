@@ -77,7 +77,7 @@ export default function DashboardPage() {
       </motion.h2>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" style={{ animation: "revealCards 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards" }}>
-        <motion.Div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -92,9 +92,9 @@ export default function DashboardPage() {
             iconBgColor="bg-success/10"
             iconColor="text-success"
           />
-        </motion.Div>
+        </motion.div>
 
-        <motion.Div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
@@ -109,9 +109,9 @@ export default function DashboardPage() {
             iconBgColor="bg-primary/10"
             iconColor="text-primary"
           />
-        </motion.Div>
+        </motion.div>
 
-        <motion.Div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -126,9 +126,9 @@ export default function DashboardPage() {
             iconBgColor="bg-warning/10"
             iconColor="text-warning"
           />
-        </motion.Div>
+        </motion.div>
 
-        <motion.Div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -140,14 +140,14 @@ export default function DashboardPage() {
             value={(stats?.activeUsers || 0).toString()}
             subtext="System users"
             icon={<Users className="h-6 w-6" />}
-            iconBgColor="bg-indigo-50"
-            iconColor="text-indigo-600"
+            iconBgColor="bg-primary/10"
+            iconColor="text-primary"
           />
-        </motion.Div>
+        </motion.div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3" style={{ animation: "revealCards 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards" }}>
-        <motion.Div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -158,9 +158,9 @@ export default function DashboardPage() {
             type="low-stock"
             items={lowStockItems}
           />
-        </motion.Div>
+        </motion.div>
 
-        <motion.Div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
@@ -171,7 +171,7 @@ export default function DashboardPage() {
             type="expiring"
             items={[]}
           />
-        </motion.Div>
+        </motion.div>
 
         <RecentActivity
           activities={recentSales.length > 0 ? recentSales : [

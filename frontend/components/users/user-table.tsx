@@ -58,10 +58,12 @@ export function UserTable({ users }: UserTableProps) {
     updateUserMutation.mutate(
       {
         id: userFormValue.id,
+        data: {
         full_name: userFormValue.full_name,
         username: userFormValue.username,
         password: userFormValue.password || undefined,
         is_active: isActive,
+        },
       },
       {
         onSuccess: () => {
@@ -145,7 +147,7 @@ export function UserTable({ users }: UserTableProps) {
                     {user.role === "admin" ? (
                       <ShieldAlert className="h-4 w-4 text-red-500" />
                     ) : (
-                      <Shield className="h-4 w-4 text-blue-500" />
+                      <Shield className="h-4 w-4 text-primary" />
                     )}
                     <span className="text-gray-900 dark:text-white">
                       {user.role}
@@ -178,7 +180,7 @@ export function UserTable({ users }: UserTableProps) {
                       user.permissions.map((perm, index) => (
                         <span
                           key={index}
-                          className="inline-flex items-center rounded bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                          className="inline-flex items-center rounded bg-primary/10 px-2 py-1 text-xs font-medium text-primary dark:bg-blue-900/20 dark:text-blue-400"
                         >
                           {perm}
                         </span>
@@ -200,7 +202,7 @@ export function UserTable({ users }: UserTableProps) {
                         });
                         setIsActive(user.is_active);
                       }}
-                      className="rounded-full p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                      className="rounded-full p-2 text-primary hover:bg-primary/10 dark:text-blue-400 dark:hover:bg-blue-900/20"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
@@ -264,7 +266,7 @@ export function UserTable({ users }: UserTableProps) {
                   flex items-center justify-center border border-blue-700
                   rounded-md bg-primary-600 hover:bg-primary-700
                   px-5 py-2 text-sm font-medium
-                  text-blue-700
+                  text-primary
                   focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
                   focus-visible:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed
                 "
@@ -283,7 +285,7 @@ export function UserTable({ users }: UserTableProps) {
           isOpen={isUpdateModal}
           onClose={() => setIsUpdateModal(false)}
           title="Update User"
-          icon={<Pencil className="h-4 w-4 text-blue-600" />}
+          icon={<Pencil className="h-4 w-4 text-primary" />}
         >
           {/* {error && <p className="text-red-600 mb-2 text-sm">{error}</p>} */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -301,7 +303,7 @@ export function UserTable({ users }: UserTableProps) {
                 onChange={onHandleUpadateChange}
                 type="text"
                 placeholder="Enter username"
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -318,7 +320,7 @@ export function UserTable({ users }: UserTableProps) {
                 onChange={onHandleUpadateChange}
                 type="text"
                 placeholder="Enter full name"
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
 
@@ -337,7 +339,7 @@ export function UserTable({ users }: UserTableProps) {
                   value={userFormValue.password}
                   onChange={onHandleUpadateChange}
                   placeholder="Leave Empty to Keep Same"
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
                 />
                 <button
                   type="button"
@@ -357,7 +359,7 @@ export function UserTable({ users }: UserTableProps) {
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Role *
               </label>
-              <select className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white">
+              <select className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white">
                 <option value="Staff">Staff</option>
                 <option value="Admin">Admin</option>
               </select>
@@ -370,7 +372,7 @@ export function UserTable({ users }: UserTableProps) {
                 checked={isActive}
                 onChange={(e) => setIsActive(e.target.checked)}
                 name="is_active"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <label
                 htmlFor="activeUser"
@@ -391,7 +393,7 @@ export function UserTable({ users }: UserTableProps) {
             <button
               onClick={handleUpdateUser}
               disabled={updateUserMutation.isPending}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {updateUserMutation.isPending ? (
                 <LoaderCircle className="h-4 w-4 animate-spin" />

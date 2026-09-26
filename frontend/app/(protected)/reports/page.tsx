@@ -13,7 +13,7 @@ import { SalesTrendChart } from "@/components/reports/sales-trend-chart";
 import { CategoryChart } from "@/components/reports/category-chart";
 import { TopProducts } from "@/components/reports/top-products";
 import { QuickStats } from "@/components/reports/quick-stats";
-import { useToast } from "@/hooks/use-toast";
+
 import {
   useDashboardStats,
   useRecentSales,
@@ -27,7 +27,7 @@ export default function ReportsPage() {
   const { data: lowStockItems = [] } = useLowStockMedicines();
 
   // Fetch sales data for charts using queries
-  const { data: allSales = [], isLoading: salesLoading } = useQueries({
+  const [salesQuery] = useQueries({
     queries: [
       {
         queryKey: ["sales-recent"],
@@ -41,8 +41,10 @@ export default function ReportsPage() {
       },
     ],
   });
+  const allSales = salesQuery.data || [];
+  const salesLoading = salesQuery.isLoading;
 
-  const { data: categoryData = [] } = useQueries({
+  const [categoryQuery] = useQueries({
     queries: [
       {
         queryKey: ["sales-by-category"],
@@ -56,8 +58,9 @@ export default function ReportsPage() {
       },
     ],
   });
+  const categoryData = categoryQuery.data || [];
 
-  const { data: topProducts = [] } = useQueries({
+  const [topProductsQuery] = useQueries({
     queries: [
       {
         queryKey: ["top-products"],
@@ -71,6 +74,7 @@ export default function ReportsPage() {
       },
     ],
   });
+  const topProducts = topProductsQuery.data || [];
 
   if (salesLoading) {
     return (
@@ -143,8 +147,8 @@ export default function ReportsPage() {
           value={('$' + avgTransaction.toFixed(2))}
           subtext="Per sale"
           icon={<ShoppingCart className="h-6 w-6" />}
-          iconBgColor="bg-blue-50 dark:bg-blue-900/20"
-          iconColor="text-blue-600 dark:text-blue-400"
+          iconBgColor="bg-primary/10 dark:bg-blue-900/20"
+          iconColor="text-primary dark:text-blue-400"
         />
         <StatCard
           title="Total Products"

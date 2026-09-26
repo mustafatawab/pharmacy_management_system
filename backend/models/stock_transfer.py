@@ -1,6 +1,7 @@
 from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime, timezone
+from uuid import UUID
 
 class StockTransferBase(SQLModel):
     from_tenant_id: int = Field(foreign_key="tenant.id")
@@ -10,7 +11,7 @@ class StockTransferBase(SQLModel):
 
 class StockTransfer(StockTransferBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    created_by: int = Field(foreign_key="user.id")
+    created_by: UUID = Field(foreign_key="user.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

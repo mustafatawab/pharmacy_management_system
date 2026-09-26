@@ -163,8 +163,8 @@ export default function InventoryPage() {
             title="Total Products"
             value={totalItems.toString()}
             icon={<Package className="h-6 w-6" />}
-            iconBgColor={activeTab === "catalog" ? "bg-blue-100" : "bg-blue-50"}
-            iconColor="text-blue-600"
+            iconBgColor={activeTab === "catalog" ? "bg-primary/20" : "bg-primary/10"}
+            iconColor="text-primary"
           />
         </div>
         <InventorySummaryCard

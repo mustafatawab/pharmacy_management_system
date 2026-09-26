@@ -68,7 +68,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Supplier *
             </label>
-            <select className="px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select className="px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
               <option value="">Select supplier</option>
               {MOCK_SUPPLIERS.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -84,7 +84,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
             <input
               type="text"
               placeholder="Enter invoice number"
-              className="px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -95,7 +95,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
               <input
                 type="date"
                 defaultValue={new Date().toISOString().split("T")[0]}
-                className="w-full px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
@@ -106,7 +106,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
             <div className="relative">
               <input
                 type="date"
-                className="w-full px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 bg-white dark:bg-[#2F2F2F] border border-gray-200 dark:border-[#212121] rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
@@ -127,7 +127,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 bg-white dark:bg-[#212121] border border-gray-200 dark:border-[#212121] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
+                  className="w-full pl-9 pr-4 py-2 bg-white dark:bg-[#212121] border border-gray-200 dark:border-[#212121] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 dark:text-white"
                 />
               </div>
             </div>
@@ -147,7 +147,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
                   </div>
                   <button
                     onClick={() => handleAddProduct(product)}
-                    className="px-3 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
+                    className="px-3 py-1 bg-primary/10 text-primary rounded text-xs font-medium hover:bg-primary/20 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
                   >
                     Add
                   </button>
@@ -205,7 +205,7 @@ export function NewPurchaseModal({ isOpen, onClose }: NewPurchaseModalProps) {
           >
             Cancel
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">
+          <button className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg">
             Create Purchase Order
           </button>
         </div>

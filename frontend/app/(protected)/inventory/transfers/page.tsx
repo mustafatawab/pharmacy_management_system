@@ -86,7 +86,7 @@ export default function StockTransfersPage() {
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                       t.status === 'received' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                      t.status === 'shipped' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                      t.status === 'shipped' ? 'bg-primary/20 text-primary dark:bg-blue-900/30 dark:text-blue-400' :
                       'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                     }`}>
                       {t.status}
@@ -97,7 +97,7 @@ export default function StockTransfersPage() {
                       <button
                         onClick={() => handleReceive(t.id)}
                         disabled={receiveTransfer.isPending}
-                        className="text-xs bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 ml-auto"
+                        className="text-xs bg-primary hover:bg-primary-hover text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 ml-auto"
                       >
                         <Check className="h-3 w-3" /> Receive
                       </button>

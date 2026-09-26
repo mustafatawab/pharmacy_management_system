@@ -65,7 +65,7 @@ export function AlternativesModal({ medicine, onClose, onAddToCart }: Props) {
                       onAddToCart(alt);
                       onClose();
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-xs font-bold hover:bg-blue-200 transition"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/20 text-primary dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-xs font-bold hover:bg-blue-200 transition"
                   >
                     <PackagePlus className="w-3.5 h-3.5" />
                     ADD

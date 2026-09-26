@@ -228,7 +228,7 @@ export function POSCart({
                   const copay = total - insAmount;
                   return (
                     <div className="flex flex-col gap-1 text-[10px] font-bold">
-                      <div className="flex justify-between text-blue-500">
+                      <div className="flex justify-between text-primary">
                         <span>Insurance Claim ({panel?.discount_percentage}%)</span>
                         <span>{fmt(insAmount)}</span>
                       </div>

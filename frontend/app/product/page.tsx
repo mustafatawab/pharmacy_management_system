@@ -3,18 +3,19 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSuppliers } from "@/hooks/useSupplier";
-import { useMedicine } from "@/hooks/useMedicine";
-import { DollarSign, Package, Check, X, Loader2, Menu } from "lucide-react";
-import { addProductModal } from "@/components/products/add-product-modal";
+import { useMedicines, useCreateMedicine, useUpdateMedicine } from "@/hooks/useMedicine";
+import { DollarSign, Package, Check, X, Loader2, Menu, Plus } from "lucide-react";
+import { AddProductModal } from "@/components/add-product-modal";
 import Link from "next/link";
-import { useNavigate } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function ProductPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { data: suppliers = [], isLoading: suppliersLoading } = useSuppliers();
-  const { data: medicines = [], isLoading: medicinesLoading, refetch } = useMedicine();
-  const { createMedicine } = useCreateMedicine();
-  const { useUpdateMedicine } = useMedicine();
+  const { data: medicinesData, isLoading: medicinesLoading, refetch } = useMedicines();
+  const medicines = medicinesData?.items || [];
+  const createMedicine = useCreateMedicine();
+  const updateMedicine = useUpdateMedicine();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMedicine, setEditingMedicine] = useState<any | null>(null);
@@ -109,7 +110,7 @@ if (suppliersLoading || medicinesLoading) {
       <div className="grid grid-cols-1 gap-2 mb-4">
         <Link href="/product/new">
           <button
-            className="flex-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 text-sm font-medium flex items-center justify-center gap-2"
+            className="flex-1 rounded-lg bg-primary hover:bg-primary-hover text-white py-2 px-4 text-sm font-medium flex items-center justify-center gap-2"
           >
             <Plus className="h-4 w-4" />
             Add New Product

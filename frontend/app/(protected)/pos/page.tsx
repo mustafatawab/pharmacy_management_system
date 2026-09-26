@@ -461,7 +461,7 @@ export default function POSPage() {
                 <span>Terminal Active · {currency}</span>
                 {isOnline ? (
                   <span className="text-green-500 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Online
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> Online
                   </span>
                 ) : (
                   <span className="text-red-500 flex items-center gap-1">

@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     smtp_tls: bool = True
     smtp_ssl: bool = False
 
+    # Cookie Settings
+    cookie_secure: bool = False
+
     class Config:
         env_file = ".env"
 

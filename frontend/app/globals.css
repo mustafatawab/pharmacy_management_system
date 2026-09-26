@@ -1,15 +1,15 @@
+/* ── Google Fonts Import ───────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── Google Fonts Import ───────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @theme inline {
   /* ── Apothecary Design Tokens ────────────────────────────── */
   /* Color Palette: Trust, Purity, Healing */
-  --color-primary: #1e40af;        /* Deep Blue – trust, professionalism */
-  --color-primary-hover: #1e3a81; 
+  --color-primary: #0d9488;        /* Medical Teal 600 */
+  --color-primary-hover: #0f766e;  /* Medical Teal 700 */
   --color-primary-foreground: #ffffff;
 
   --color-secondary: #f59e0b;     /* Amber – warnings, highlights */
@@ -85,7 +85,7 @@
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #1e40af;
+  --primary: #0d9488;
   --primary-foreground: #ffffff;
   --secondary: #f59e0b;
   --secondary-foreground: #1e293b;
@@ -171,7 +171,7 @@ body {
   line-height: 1.4;
 }
 
-/• Body Text using Inter */
+/* Body Text using Inter */
 .p, .text-body, .label {
   font-family: var(--font-sans);
   font-weight: 400;
@@ -230,13 +230,13 @@ a:hover, .link:hover {
 ::-webkit-input-placeholder {
   color: var(--muted);
 }
-:-:-moz-placeholder { /* Firefox 18- */
+:-moz-placeholder { /* Firefox 18- */
   color: var(--muted);
 }
 ::-moz-placeholder { /* Firefox 19+ */
   color: var(--muted);
 }
-:-:-ms-input-placeholder {
+:-ms-input-placeholder {
   color: var(--muted);
 }
 

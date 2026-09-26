@@ -76,7 +76,7 @@ export function SupplierLedgerModal({ supplierId, onClose }: Props) {
                       <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded-full ${
                         entry.reference_type === "purchase" ? "bg-red-50 text-red-600" :
                         entry.reference_type === "payment" ? "bg-green-50 text-green-600" :
-                        "bg-blue-50 text-blue-600"
+                        "bg-primary/10 text-primary"
                       }`}>
                         {entry.reference_type}
                       </span>
@@ -117,7 +117,7 @@ export function SupplierLedgerModal({ supplierId, onClose }: Props) {
                   required 
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-900" 
+                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700 dark:bg-zinc-900" 
                 />
               </div>
               <div>
@@ -127,7 +127,7 @@ export function SupplierLedgerModal({ supplierId, onClose }: Props) {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="e.g. Bank Transfer Ref: 123"
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-900" 
+                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700 dark:bg-zinc-900" 
                 />
               </div>
               <button 

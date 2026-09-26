@@ -39,13 +39,13 @@ export function ConfirmationModal({
   const variantColors = {
     danger: "bg-red-600 hover:bg-red-700 focus:ring-red-500 text-white",
     warning: "bg-amber-500 hover:bg-amber-600 focus:ring-amber-500 text-white",
-    info: "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 text-white",
+    info: "bg-primary hover:bg-primary-hover focus:ring-primary text-white",
   };
 
   const iconColors = {
     danger: "bg-red-50 text-red-600",
     warning: "bg-amber-50 text-amber-600",
-    info: "bg-blue-50 text-blue-600",
+    info: "bg-primary/10 text-primary",
   };
 
   return (
@@ -75,7 +75,7 @@ export function ConfirmationModal({
         <div className="bg-gray-50 dark:bg-[#212121] px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end sm:gap-3">
           <button
             type="button"
-            className="mt-3 inline-flex w-full justify-center rounded-lg border border-gray-300 dark:border-[#3F3F3F] bg-white dark:bg-[#2F2F2F] px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-[#3F3F3F] focus:outline-none focus:ring-2 focus:ring-blue-500 sm:mt-0 sm:w-auto transition-colors"
+            className="mt-3 inline-flex w-full justify-center rounded-lg border border-gray-300 dark:border-[#3F3F3F] bg-white dark:bg-[#2F2F2F] px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-[#3F3F3F] focus:outline-none focus:ring-2 focus:ring-primary sm:mt-0 sm:w-auto transition-colors"
             onClick={onClose}
           >
             {cancelLabel}

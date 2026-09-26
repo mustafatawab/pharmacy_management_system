@@ -102,3 +102,11 @@ async def delete_tenant(
     current_user: User = Depends(get_current_user),
 ):
     return tenant_service.delete_tenant(id, session)
+
+@router.get("/", response_model=list[TenantRead])
+async def get_tenants(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    tenants = tenant_service.get_all_tenants(session)
+    return tenants

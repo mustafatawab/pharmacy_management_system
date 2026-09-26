@@ -95,7 +95,7 @@ export default function SuppliersPage() {
             setFormData({ company_name: "", contact_person: "", email: "", phone: "", address: "" });
             setIsAddingSupplier(true);
           }}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover transition"
         >
           <Plus className="h-4 w-4" />
           Add Supplier
@@ -110,27 +110,27 @@ export default function SuppliersPage() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Company Name *</label>
-              <input type="text" required value={formData.company_name} onChange={(e) => setFormData({...formData, company_name: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="text" required value={formData.company_name} onChange={(e) => setFormData({...formData, company_name: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Contact Person *</label>
-              <input type="text" required value={formData.contact_person} onChange={(e) => setFormData({...formData, contact_person: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="text" required value={formData.contact_person} onChange={(e) => setFormData({...formData, contact_person: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email *</label>
-              <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone *</label>
-              <input type="tel" required value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <input type="tel" required value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div className="md:col-span-2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
-              <textarea rows={2} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-zinc-700" />
+              <textarea rows={2} value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} className="mt-1 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:border-zinc-700" />
             </div>
             <div className="md:col-span-2 mt-4 flex justify-end gap-3">
               <button type="button" onClick={() => setIsAddingSupplier(false)} className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 dark:border-zinc-700 dark:hover:bg-zinc-800 transition">Cancel</button>
-              <button type="submit" disabled={createSupplier.isPending || updateSupplier.isPending} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition">
+              <button type="submit" disabled={createSupplier.isPending || updateSupplier.isPending} className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover transition">
                 {editingSupplier ? "Update" : "Add Supplier"}
               </button>
             </div>
@@ -165,7 +165,7 @@ export default function SuppliersPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right space-x-2">
-                  <button onClick={() => setLedgerSupplierId(supplier.id)} className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 transition" title="View Ledger">
+                  <button onClick={() => setLedgerSupplierId(supplier.id)} className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 dark:bg-blue-900/20 dark:text-blue-400 transition" title="View Ledger">
                     <BookOpen className="w-4 h-4" />
                   </button>
                   <button onClick={() => handleEdit(supplier)} className="p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 dark:bg-zinc-800 dark:text-gray-400 transition" title="Edit">

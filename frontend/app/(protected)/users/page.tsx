@@ -77,7 +77,7 @@ export default function UserManagementPage() {
         </h1>
         <button
           onClick={() => setIsAddingUser(true)}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
         >
           <Plus className="h-4 w-4" />
           Add User
@@ -106,7 +106,7 @@ export default function UserManagementPage() {
                 onChange={handleFormChange}
                 type="text"
                 placeholder="Enter username"
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -123,7 +123,7 @@ export default function UserManagementPage() {
                 value={userFormValue.full_name}
                 type="text"
                 placeholder="Enter full name"
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
 
@@ -141,7 +141,7 @@ export default function UserManagementPage() {
                   type="password"
                   onChange={handleFormChange}
                   placeholder="Enter password"
-                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                  className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
                 />
                 <Eye className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 cursor-pointer" />
               </div>
@@ -151,7 +151,7 @@ export default function UserManagementPage() {
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Role *
               </label>
-              <select className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white">
+              <select className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white">
                 <option value="Staff">Staff</option>
                 <option value="Admin">Admin</option>
               </select>
@@ -164,7 +164,7 @@ export default function UserManagementPage() {
                 name="is_active"
                 checked={userFormValue.is_active}
                 onChange={handleFormChange}
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <label
                 htmlFor="activeUser"
@@ -216,12 +216,12 @@ export default function UserManagementPage() {
                   <input
                     type="checkbox"
                     id={perm.id}
-                    className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                   />
                   <div className="flex flex-col">
                     <label
                       htmlFor={perm.id}
-                      className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 transition-colors"
+                      className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer hover:text-primary transition-colors"
                     >
                       {perm.label}
                     </label>
@@ -244,7 +244,7 @@ export default function UserManagementPage() {
             <button
               onClick={addUser}
               disabled={addUserMutation.isPending}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {addUserMutation.isPending ? (
                 <LoaderCircle className="animate-spin" />
@@ -264,7 +264,7 @@ export default function UserManagementPage() {
           placeholder="Search users..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#212121] dark:bg-[#212121] dark:text-white dark:placeholder-gray-400"
+          className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#212121] dark:bg-[#212121] dark:text-white dark:placeholder-gray-400"
         />
       </div>
 

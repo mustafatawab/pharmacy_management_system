@@ -111,7 +111,7 @@ export default function SuppliersPage() {
         </div>
         <button
           onClick={() => setIsAddingSupplier(true)}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover"
         >
           <Plus className="h-4 w-4" />
           Add Supplier
@@ -136,7 +136,7 @@ export default function SuppliersPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, company_name: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -150,7 +150,7 @@ export default function SuppliersPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, contact_person: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -164,7 +164,7 @@ export default function SuppliersPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -178,7 +178,7 @@ export default function SuppliersPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
             <div className="flex flex-col gap-2 md:col-span-2">
@@ -192,7 +192,7 @@ export default function SuppliersPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, address: e.target.value })
                 }
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#2F2F2F] dark:bg-[#2F2F2F] dark:text-white"
               />
             </div>
           </div>
@@ -206,7 +206,7 @@ export default function SuppliersPage() {
             <button
               onClick={handleSubmit}
               disabled={createSupplier.isPending || updateSupplier.isPending}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-hover disabled:opacity-50"
             >
               {editingSupplier ? "Update Supplier" : "Add Supplier"}
             </button>
@@ -222,7 +222,7 @@ export default function SuppliersPage() {
           placeholder="Search suppliers..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-[#212121] dark:bg-[#212121] dark:text-white dark:placeholder-gray-400"
+          className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-sm text-gray-900 placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-[#212121] dark:bg-[#212121] dark:text-white dark:placeholder-gray-400"
         />
       </div>
 
@@ -245,7 +245,7 @@ export default function SuppliersPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleEdit(supplier)}
-                  className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-[#3F3F3F]"
+                  className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-primary dark:hover:bg-[#3F3F3F]"
                 >
                   <Pencil className="h-4 w-4" />
                 </button>

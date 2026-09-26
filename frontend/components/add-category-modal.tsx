@@ -65,7 +65,7 @@ export function AddCategoryModal({ isOpen, onClose }: AddCategoryModalProps) {
             value={formData.name}
             onChange={handleChange}
             placeholder="e.g. Antibiotics, Painkillers"
-            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121]"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white dark:bg-[#212121]"
           />
         </div>
 
@@ -79,7 +79,7 @@ export function AddCategoryModal({ isOpen, onClose }: AddCategoryModalProps) {
             value={formData.description}
             onChange={handleChange}
             placeholder="Enter category description (optional)"
-            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none bg-white dark:bg-[#212121]"
+            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none bg-white dark:bg-[#212121]"
           />
         </div>
 
@@ -94,7 +94,7 @@ export function AddCategoryModal({ isOpen, onClose }: AddCategoryModalProps) {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm shadow-blue-500/20 flex items-center gap-2"
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors shadow-sm shadow-blue-500/20 flex items-center gap-2"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             Add Category

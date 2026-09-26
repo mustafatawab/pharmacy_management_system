@@ -54,14 +54,14 @@ export function ManageCategoriesModal({ isOpen, onClose }: ManageCategoriesModal
               placeholder="Search categories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white dark:bg-[#212121] dark:border-[#2F2F2F] dark:text-white"
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white dark:bg-[#212121] dark:border-[#2F2F2F] dark:text-white"
             />
           </div>
 
           <div className="max-height-[400px] overflow-y-auto border border-gray-100 dark:border-[#2F2F2F] rounded-lg divide-y divide-gray-100 dark:divide-[#2F2F2F]">
             {isLoading ? (
               <div className="p-8 flex justify-center">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
               </div>
             ) : filteredCategories.length === 0 ? (
               <div className="p-8 text-center text-gray-500 text-sm">
