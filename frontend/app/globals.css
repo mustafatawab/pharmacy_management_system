@@ -5,295 +5,151 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Cormorant Garamond', serif;
+}
+
 @theme inline {
-  /* ── Apothecary Design Tokens ────────────────────────────── */
-  /* Color Palette: Trust, Purity, Healing */
-  --color-primary: #0d9488;        /* Medical Teal 600 */
-  --color-primary-hover: #0f766e;  /* Medical Teal 700 */
+
+  /* ── Fluid Typography (Clamp) ────────────────────────────── */
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.8125rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.3vw, 0.9375rem);
+  --text-base: clamp(1rem, 0.9rem + 0.4vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
+  --text-3xl: clamp(1.875rem, 1.6rem + 1.25vw, 2.25rem);
+  --text-4xl: clamp(2.25rem, 1.9rem + 1.5vw, 3rem);
+  
+  --spacing-sms-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
+  --spacing-sms-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+  --spacing-sms-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  --spacing-sms-lg: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  --spacing-sms-xl: clamp(2rem, 1.6rem + 2vw, 3rem);
+
+  /* ── Apothecary Design Tokens (Modern Minimalist) ────────── */
+  
+  /* Primary: Deep Forest Green / Dark Slate */
+  --color-primary: #0a2a29;        
+  --color-primary-hover: #133c3b;  
   --color-primary-foreground: #ffffff;
 
-  --color-secondary: #f59e0b;     /* Amber – warnings, highlights */
-  --color-secondary-foreground: #1e293b;
-
-  --color-success: #059669;       /* Green – health, success */
+  /* Semantic Colors */
+  --color-success: #10b981;       
   --color-success-foreground: #ffffff;
-
-  --color-warning: #dc2626;       /* Red – errors, alerts */
+  --color-warning: #f43f5e;       
   --color-warning-foreground: #ffffff;
+  --color-info: #3b82f6;          
 
-  --color-info: #3b82f6;          /* Blue – information */
+  /* Neutral Scale */
+  --color-neutral-50: #f4f7f6; /* App Background Light */
+  --color-neutral-100: #e2e8e6;
+  --color-neutral-200: #c9d3d1;
+  --color-neutral-300: #aebdbb;
+  --color-neutral-400: #93a8a6;
+  --color-neutral-500: #7a9390;
+  --color-neutral-600: #5d7572;
+  --color-neutral-700: #4a5c5a;
+  --color-neutral-800: #293332;
+  --color-neutral-900: #141a19; /* App Background Dark */
 
-  /* Neutral Scale: Warm Gray (feels softer than cool gray) */
-  --color-neutral-50: #f8fafc;
-  --color-neutral-100: #f1f5f9;
-  --color-neutral-200: #e2e8f0;
-  --color-neutral-300: #cbd5e1;
-  --color-neutral-400: #94a3b8;
-  --color-neutral-500: #64748b;
-  --color-neutral-600: #475569;
-  --color-neutral-700: #334155;
-  --color-neutral-800: #0f172a;
-  --color-neutral-900: #0f172a;
+  --color-border: var(--color-neutral-200);
+  --color-ring: var(--color-primary);
 
-  --color-border: #e2e8f0;
-  --color-ring: #3b82f6;
+  /* Card & Base Backgrounds */
+  --color-background: var(--color-neutral-50);
+  --color-card: #ffffff;
+  --color-card-foreground: var(--color-neutral-800);
+  
+  --color-muted: var(--color-neutral-500);
+  --color-muted-foreground: var(--color-neutral-500);
 
-  /* Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  /* Custom Pastel Card Colors (Light Mode) */
+  --color-pastel-green: #dcfce7;
+  --color-pastel-teal: #ccfbf1;
+  --color-pastel-pink: #ffe4e6;
+  --color-pastel-purple: #e0e7ff;
 
-  /* Shadow Tokens */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-  --shadow-premium: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --color-pastel-green-fg: #166534;
+  --color-pastel-teal-fg: #115e59;
+  --color-pastel-pink-fg: #9f1239;
+  --color-pastel-purple-fg: #3730a3;
 
-  /* Typography */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Cormorant Garamond", Georgia, serif;  /* Elegant, readable display */
-
-  --font-sans-weight-thin: 100;
-  --font-sans-weight-extralight: 200;
-  --font-sans-weight-light: 300;
-  --font-sans-weight-normal: 400;
-  --font-sans-weight-medium: 500;
-  --font-sans-weight-semibold: 600;
-  --font-sans-weight-bold: 700;
-  --font-sans-weight-extrabold: 800;
-  --font-sans-weight-black: 900;
+  /* Custom Shadows */
+  --shadow-soft: 0 4px 40px -2px rgba(0, 0, 0, 0.04);
 }
 
-@layer utilities {
-  /* Custom focus-visible utility */
-  .focus-visible-ring {
-    @apply focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-  }
-
-  /* Selection color */
-  ::selection {
-    @apply bg-primary/20 text-primary-foreground;
-  }
-}
-
-:root {
-  /* ── Background & Foreground ─────────────────────────────── */
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #0d9488;
-  --primary-foreground: #ffffff;
-  --secondary: #f59e0b;
-  --secondary-foreground: #1e293b;
-  --muted: #64748b;
-  --muted-foreground: #94a3b8;
-  --accent: #f59e0b;
-  --accent-foreground: #1e293b;
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
-
-  /* Card & border variables */
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #3b82f6;
-
-  /* Radius */
-  --radius-lg: 0.75rem;
-  --radius-md: 0.5rem;
-  --radius-sm: 0.375rem;
-
-  /* Shadow */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-}
-
-/* Root dark mode */
+/* Dark Mode Overrides */
 .dark {
-  --background: #0f172a;
-  --foreground: #fafafa;
-  --card: #1e293b;
-  --card-foreground: #fafafa;
-  --primary: #60a5fa;
-  --primary-foreground: #1e293b;
-  --secondary: #fbbf24;
-  --secondary-foreground: #1e293b;
-  --muted: #a3a6af;
-  --muted-foreground: #d1d5db;
-  --border: #374151;
+  --color-background: #0d1111;
+  --color-card: #161b1b;
+  --color-card-foreground: #f4f7f6;
+  
+  --color-border: #293332;
+  
+  --color-primary: #17e0b9;
+  --color-primary-hover: #35edd0;
+  --color-primary-foreground: #0a2a29;
+
+  --color-pastel-green: #064e3b;
+  --color-pastel-teal: #134e4a;
+  --color-pastel-pink: #4c0519;
+  --color-pastel-purple: #1e1b4b;
+
+  --color-pastel-green-fg: #34d399;
+  --color-pastel-teal-fg: #2dd4bf;
+  --color-pastel-pink-fg: #fb7185;
+  --color-pastel-purple-fg: #818cf8;
+
+  --shadow-soft: 0 4px 40px -2px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Typography Rules ──────────────────────────────────────── */
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+/* ── Base Styles ───────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-card-foreground);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
-body {
-  font-family: var(--font-sans);
-  font-feature-settings: "rlig" 1, "calt" 1;
-  line-height: 1.6;
-}
-
-/* Display & Heading Hierarchy using Cormorant Garamond */
-.h1, .heading-1 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 3rem;
-  line-height: 1.1;
-}
-
-.h2, .heading-2 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 2rem;
-  line-height: 1.2;
-}
-
-.h3, .heading-3 {
-  font-family: var(--font-display);
+/* ── Typography (Cormorant Garamond & Inter) ───────────────── */
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-serif);
   font-weight: 600;
-  font-size: 1.75rem;
-  line-height: 1.3;
+  color: var(--color-card-foreground);
+  letter-spacing: -0.02em;
 }
 
-.h4, .heading-4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.5rem;
-  line-height: 1.4;
-}
+.h1 { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1; }
+.h2 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.2; }
+.h3 { font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.3; }
 
 /* Body Text using Inter */
 .p, .text-body, .label {
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: 1rem;
   line-height: 1.6;
 }
 
-/* Small text */
-.small, .text-smaller {
+/* Forms & Inputs */
+input, textarea, select {
   font-family: var(--font-sans);
-  font-weight: 400;
-  font-size: 0.875rem;
-  line-height: 1.5;
 }
 
-/* Caption */
-.caption, .text-caption {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--muted);
-}
+::-webkit-input-placeholder { color: var(--color-muted); }
+:-moz-placeholder { color: var(--color-muted); }
+::-moz-placeholder { color: var(--color-muted); }
+:-ms-input-placeholder { color: var(--color-muted); }
 
-/* Inline & Utility */
-a, .link {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  color: var(--primary);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-a:hover, .link:hover {
-  color: var(--primary-hover);
-}
-
-/* Strong & Emphasis */
-.strong {
-  font-weight: 600;
-}
-
-.emphasis {
-  font-weight: 500;
-  font-style: italic;
-}
-
-/* Code & Monospace */
-.code, .mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, inherit;
-  font-size: 0.875em;
-  color: var(--primary);
-}
-
-/* Placeholder color */
-::-webkit-input-placeholder {
-  color: var(--muted);
-}
-:-moz-placeholder { /* Firefox 18- */
-  color: var(--muted);
-}
-::-moz-placeholder { /* Firefox 19+ */
-  color: var(--muted);
-}
-:-ms-input-placeholder {
-  color: var(--muted);
-}
-
-/* Reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* ── Thermal Receipt Print Styles ───────────────────────────────────────────
-   When window.print() is called from the ReceiptModal, only #receipt-content
-   is rendered. Everything with .no-print is hidden.                          */
-@media print {
-  /* Hide everything by default */
-  body * {
-    visibility: hidden !important;
-  }
-
-  /* Show only the receipt content and its children */
-  #receipt-content,
-  #receipt-content * {
-    visibility: visible !important;
-  }
-
-  /* Position receipt at top-left for thermal paper */
-  #receipt-content {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 80mm !important;      /* Standard 80mm thermal paper */
-    max-width: 80mm !important;
-    padding: 4mm !important;
-    background: white !important;
-    color: black !important;
-    font-family: "Courier New", Courier, monospace !important;
-    font-size: 11px !important;
-    line-height: 1.4 !important;
-  }
-
-  /* Ensure all text is black for thermal printing */
-  #receipt-content * {
-    color: black !important;
-    background: transparent !important;
-    border-color: #ccc !important;
-  }
-
-  /* Hide interactive UI elements */
-  .no-print {
-    display: none !important;
-  }
-
-  /* No page margins */
-  @page {
-    margin: 0;
-    size: 80mm auto;
-  }
+/* Remove default focus outlines, replace with ring */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 4px var(--color-ring);
 }

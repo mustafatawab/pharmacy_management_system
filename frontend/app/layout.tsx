@@ -6,33 +6,33 @@ import TenStackProvider from "@/providers/TenStackProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
 
 export const metadata = {
-  title: "Pharmacy Management System",
-  description: "Pharmacy Management System developed by WS",
-  manifest: "/manifest.json",
+ title: "Pharmacy Management System",
+ description: "Pharmacy Management System developed by WS",
+ manifest: "/manifest.json",
 };
 
 export default function RootLayout({
-  children,
+ children,
 }: {
-  children: React.ReactNode;
+ children: React.ReactNode;
 }) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <TenStackProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </TenStackProvider>
-          <Toaster />
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+ return (
+ <html lang="en" suppressHydrationWarning>
+ <body>
+ <ThemeProvider
+ attribute="class"
+ defaultTheme="system"
+ enableSystem
+ disableTransitionOnChange
+ >
+ <TenStackProvider>
+ <AuthProvider>
+ {children}
+ </AuthProvider>
+ </TenStackProvider>
+ <Toaster />
+ </ThemeProvider>
+ </body>
+ </html>
+ );
 }
