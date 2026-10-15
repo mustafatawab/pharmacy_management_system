@@ -107,7 +107,7 @@ export default function POSPage() {
  setBarcodeScanning(true);
  try {
  const res = await fetch(
- `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/medicine/?barcode=${encodeURIComponent(barcode)}`,
+ `${process.env.API_URL || "http://localhost:8000"}/medicine/?barcode=${encodeURIComponent(barcode)}`,
  { credentials: "include" }
  );
  const data = await res.json();
