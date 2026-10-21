@@ -35,9 +35,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Pharmacy Management API", lifespan=lifespan)
 
 
-@app.get("/")
+@app.get("/health")
 def read_root():
-    return {"message": "Hello from uv on Vercel!"}
+    return {"status": "healthy"}
 
 app.include_router(auth_router)
 app.include_router(user_router)
