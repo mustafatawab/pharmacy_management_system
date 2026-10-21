@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from typing import Literal
 
 
 class Settings(BaseSettings):
@@ -23,6 +24,7 @@ class Settings(BaseSettings):
 
     # Cookie Settings
     cookie_secure: bool = False
+    cookie_samesite: Literal["strict", "lax", "none"] = "strict"
 
     class Config:
         env_file = ".env"
@@ -32,4 +34,3 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

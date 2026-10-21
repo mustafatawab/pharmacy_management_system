@@ -22,14 +22,14 @@ async def register_user(user: UserRegister, response: Response, session: Session
         value=result["access_token"],
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict"
+        samesite=settings.cookie_samesite
     )
     response.set_cookie(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict",
+        samesite=settings.cookie_samesite,
         path="/auth/refresh"
     )
     return result["user"]
@@ -43,14 +43,14 @@ async def login(login_data: UserLogin, response: Response, session: Session = De
         value=result["access_token"],
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict"
+        samesite=settings.cookie_samesite
     )
     response.set_cookie(
         key="refresh_token",
         value=result["refresh_token"],
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict",
+        samesite=settings.cookie_samesite,
         path="/auth/refresh"
     )
 
@@ -83,7 +83,7 @@ async def refresh_token(request: Request, response: Response, session: Session =
         value=new_access_token,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite="strict"
+        samesite=settings.cookie_samesite
     )
     
     return {"message": "Session renewed"}
